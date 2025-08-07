@@ -37,7 +37,8 @@ const allowedOrigins = [
   "https://emprego-4bb54.web.app",
   "https://emprego-4bb54.firebaseapp.com",
   "https://emprego.aloi.com.br",
-  "http://localhost:3000"
+  "http://127.0.0.1:3000",
+  "http://localhost:5002"
 ];
 
 // CORS configuration
