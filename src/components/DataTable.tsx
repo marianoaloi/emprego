@@ -27,10 +27,11 @@ import {
 export default function DataTable() {
   const dispatch = useAppDispatch();
   const { items, displayJobs, loading, error } = useAppSelector((state) => state.data);
+  const { filters } = useAppSelector((state) => state.filter);
 
   useEffect(() => {
-    dispatch(fetchData());
-  }, [dispatch]);
+    dispatch(fetchData(filters));
+  }, [dispatch, filters]);
 
   if (loading) {
     return (

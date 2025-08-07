@@ -55,6 +55,7 @@ export const CloseButton = styled.button`
 
 export const Form = styled.form`
   display: flex;
+  color: black;
   flex-direction: column;
   gap: 1rem; /* space-y-4 */
 `;

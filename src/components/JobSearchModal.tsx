@@ -1,27 +1,26 @@
 'use client';
 
-import { useState } from 'react';
-import { JobSearchFilter, RemoteWorkType, SystemRecruiterType, LanguageCode, DEFAULT_JOB_FILTER } from '@/types/job.filter.types';
+import { useState, useEffect } from 'react';
 import {
-  ModalOverlay,
-  ModalContainer,
-  ModalHeader,
-  ModalTitle,
-  CloseButton,
-  Form,
-  FormGrid,
-  CheckboxGrid,
-  FormField,
-  Label,
-  Input,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
   Select,
-  CheckboxContainer,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Button,
+  Box,
+  FormControlLabel,
   Checkbox,
-  CheckboxLabel,
-  ButtonContainer,
-  SecondaryButton,
-  PrimaryButton
-} from './JobSearchModal.styled';
+  IconButton,
+  Typography
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { JobSearchFilter, RemoteWorkType, SystemRecruiterType, LanguageCode, DEFAULT_JOB_FILTER } from '@/types/job.filter.types';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { setFilter, resetFilters } from '@/lib/features/filter/filterSlice';
 
 interface JobSearchModalProps {
   isOpen: boolean;
@@ -29,262 +28,283 @@ interface JobSearchModalProps {
 }
 
 export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps) {
-  const [filters, setFilters] = useState<JobSearchFilter>(DEFAULT_JOB_FILTER);
+  const dispatch = useAppDispatch();
+  const { filters: reduxFilters } = useAppSelector((state) => state.filter);
+  const [localFilters, setLocalFilters] = useState<JobSearchFilter>(reduxFilters);
+
+  // Update local state when Redux state changes or modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setLocalFilters(reduxFilters);
+    }
+  }, [isOpen, reduxFilters]);
 
   if (!isOpen) return null;
 
   const handleInputChange = (field: keyof JobSearchFilter, value: string | number | boolean) => {
-    setFilters(prev => ({ ...prev, [field]: value }));
+    setLocalFilters(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Applied filters:', filters);
+    // Update Redux state with local form values
+    dispatch(setFilter(localFilters));
     onClose();
   };
 
   const handleReset = () => {
-    setFilters(DEFAULT_JOB_FILTER);
+    setLocalFilters(DEFAULT_JOB_FILTER);
+    dispatch(resetFilters());
   };
 
   return (
-    <ModalOverlay>
-      <ModalContainer>
-        <ModalHeader>
-          <ModalTitle>Job Search Filters</ModalTitle>
-          <CloseButton onClick={onClose}>
-            ×
-          </CloseButton>
-        </ModalHeader>
-
-        <Form onSubmit={handleSubmit}>
-          <FormGrid>
-            <FormField>
-              <Label>
-                Job Title
-              </Label>
-              <Input
-                type="text"
-                value={filters.title || ''}
+    <Dialog open={isOpen} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6">Job Search Filters</Typography>
+          <IconButton onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+      </DialogTitle>
+      <DialogContent>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+          <Box
+            display="grid"
+            gridTemplateColumns={{ xs: '1fr', sm: 'repeat(2, 1fr)' }}
+            gap={2}
+          >
+            <Box>
+              <TextField
+                fullWidth
+                label="Job Title"
+                value={localFilters.title || ''}
                 onChange={(e) => handleInputChange('title', e.target.value)}
                 placeholder="Enter job title"
+                margin="normal"
               />
-            </FormField>
+            </Box>
 
-            <FormField>
-              <Label>
-                Company Name
-              </Label>
-              <Input
-                type="text"
-                value={filters.companyName || ''}
+            <Box>
+              <TextField
+                fullWidth
+                label="Company Name"
+                value={localFilters.companyName || ''}
                 onChange={(e) => handleInputChange('companyName', e.target.value)}
                 placeholder="Enter company name"
+                margin="normal"
               />
-            </FormField>
+            </Box>
 
-            <FormField>
-              <Label>
-                Country
-              </Label>
-              <Input
-                type="text"
-                value={filters.country || ''}
+            <Box>
+              <TextField
+                fullWidth
+                label="Country"
+                value={localFilters.country || ''}
                 onChange={(e) => handleInputChange('country', e.target.value)}
                 placeholder="Enter country"
+                margin="normal"
               />
-            </FormField>
+            </Box>
 
-            <FormField>
-              <Label>
-                Location
-              </Label>
-              <Input
-                type="text"
-                value={filters.formattedLocation || ''}
+            <Box>
+              <TextField
+                fullWidth
+                label="Location"
+                value={localFilters.formattedLocation || ''}
                 onChange={(e) => handleInputChange('formattedLocation', e.target.value)}
                 placeholder="Enter location"
+                margin="normal"
               />
-            </FormField>
+            </Box>
 
-            <FormField>
-              <Label>
-                Remote Work Type
-              </Label>
-              <Select
-                value={filters.remote || ''}
-                onChange={(e) => handleInputChange('remote', e.target.value as RemoteWorkType)}
-              >
-                <option value="">Select remote type</option>
-                <option value="H">Hybrid</option>
-                <option value="R">Remote</option>
-                <option value="O">On-site</option>
-              </Select>
-            </FormField>
+            <Box>
+              <FormControl fullWidth margin="normal">
+                <InputLabel>Remote Work Type</InputLabel>
+                <Select
+                  value={localFilters.remote || ''}
+                  label="Remote Work Type"
+                  onChange={(e) => handleInputChange('remote', e.target.value as RemoteWorkType)}
+                >
+                  <MenuItem value="">Select remote type</MenuItem>
+                  <MenuItem value="H">Hybrid</MenuItem>
+                  <MenuItem value="R">Remote</MenuItem>
+                  <MenuItem value="O">On-site</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
 
-            <FormField>
-              <Label>
-                System Recruiter
-              </Label>
-              <Select
-                value={filters.systemRecruter || ''}
-                onChange={(e) => handleInputChange('systemRecruter', e.target.value as SystemRecruiterType)}
-              >
-                <option value="">Select recruiter type</option>
-                <option value="LinkedIn">LinkedIn</option>
-                <option value="Others">Others</option>
-                <option value="Empty">Empty</option>
-              </Select>
-            </FormField>
+            <Box>
+              <FormControl fullWidth margin="normal">
+                <InputLabel>System Recruiter</InputLabel>
+                <Select
+                  value={localFilters.systemRecruter || ''}
+                  label="System Recruiter"
+                  onChange={(e) => handleInputChange('systemRecruter', e.target.value as SystemRecruiterType)}
+                >
+                  <MenuItem value="">Select recruiter type</MenuItem>
+                  <MenuItem value="LinkedIn">LinkedIn</MenuItem>
+                  <MenuItem value="Others">Others</MenuItem>
+                  <MenuItem value="Empty">Empty</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
 
-            <FormField>
-              <Label>
-                Language
-              </Label>
-              <Select
-                value={filters.lang || ''}
-                onChange={(e) => handleInputChange('lang', e.target.value as LanguageCode)}
-              >
-                <option value="">Select language</option>
-                <option value="pt">Portuguese</option>
-                <option value="it">Italian</option>
-                <option value="en">English</option>
-              </Select>
-            </FormField>
+            <Box>
+              <FormControl fullWidth margin="normal">
+                <InputLabel>Language</InputLabel>
+                <Select
+                  value={localFilters.lang || ''}
+                  label="Language"
+                  onChange={(e) => handleInputChange('lang', e.target.value as LanguageCode)}
+                >
+                  <MenuItem value="">Select language</MenuItem>
+                  <MenuItem value="pt">Portuguese</MenuItem>
+                  <MenuItem value="it">Italian</MenuItem>
+                  <MenuItem value="en">English</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
 
-            <FormField>
-              <Label>
-                Limit
-              </Label>
-              <Input
+            <Box>
+              <TextField
+                fullWidth
                 type="number"
-                value={filters.limit || ''}
+                label="Limit"
+                value={localFilters.limit || ''}
                 onChange={(e) => handleInputChange('limit', parseInt(e.target.value) || 0)}
                 placeholder="Enter limit"
-                min="1"
+                margin="normal"
+                inputProps={{ min: 1 }}
               />
-            </FormField>
+            </Box>
 
-            <FormField>
-              <Label>
-                Start Date Filter
-              </Label>
-              <Input
-                type="text"
-                value={filters.datai || ''}
+            <Box>
+              <TextField
+                fullWidth
+                label="Start Date Filter"
+                value={localFilters.datai || ''}
                 onChange={(e) => handleInputChange('datai', e.target.value)}
-                placeholder="e.g., -7d, -1M"
+                placeholder="e.g., 2025-08-01, *-1M"
+                margin="normal"
               />
-            </FormField>
+            </Box>
 
-            <FormField>
-              <Label>
-                End Date Filter
-              </Label>
-              <Input
-                type="text"
-                value={filters.dataf || ''}
+            <Box>
+              <TextField
+                fullWidth
+                label="End Date Filter"
+                value={localFilters.dataf || ''}
                 onChange={(e) => handleInputChange('dataf', e.target.value)}
-                placeholder="e.g., -7d, -1M"
+                placeholder="e.g., 2025-08-01, *-1M"
+                margin="normal"
               />
-            </FormField>
+            </Box>
 
-            <FormField>
-              <Label>
-                Job IDs
-              </Label>
-              <Input
-                type="text"
-                value={filters.id || ''}
+            <Box>
+              <TextField
+                fullWidth
+                label="Job IDs"
+                value={localFilters.id || ''}
                 onChange={(e) => handleInputChange('id', e.target.value)}
                 placeholder="Comma-separated IDs"
+                margin="normal"
               />
-            </FormField>
+            </Box>
 
-            <FormField>
-              <Label>
-                Location Granular
-              </Label>
-              <Input
-                type="text"
-                value={filters.locationGranular || ''}
+            <Box>
+              <TextField
+                fullWidth
+                label="Location Granular"
+                value={localFilters.locationGranular || ''}
                 onChange={(e) => handleInputChange('locationGranular', e.target.value)}
                 placeholder="Enter granular location"
+                margin="normal"
               />
-            </FormField>
-          </FormGrid>
+            </Box>
+          </Box>
 
-          <CheckboxGrid>
-            <CheckboxContainer>
-              <Checkbox
-                type="checkbox"
-                id="applied"
-                checked={filters.applied || false}
-                onChange={(e) => handleInputChange('applied', e.target.checked)}
+          <Box
+            display="grid"
+            gridTemplateColumns={{ xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)' }}
+            gap={2}
+            sx={{ mt: 2 }}
+          >
+            <Box>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={localFilters.applied || false}
+                    onChange={(e) => handleInputChange('applied', e.target.checked)}
+                  />
+                }
+                label="Applied"
               />
-              <CheckboxLabel htmlFor="applied">
-                Applied
-              </CheckboxLabel>
-            </CheckboxContainer>
+            </Box>
 
-            <CheckboxContainer>
-              <Checkbox
-                type="checkbox"
-                id="ignore"
-                checked={filters.ignore || false}
-                onChange={(e) => handleInputChange('ignore', e.target.checked)}
+            <Box>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={localFilters.ignore || false}
+                    onChange={(e) => handleInputChange('ignore', e.target.checked)}
+                  />
+                }
+                label="Ignore"
               />
-              <CheckboxLabel htmlFor="ignore">
-                Ignore
-              </CheckboxLabel>
-            </CheckboxContainer>
+            </Box>
 
-            <CheckboxContainer>
-              <Checkbox
-                type="checkbox"
-                id="nostatus"
-                checked={filters.nostatus || false}
-                onChange={(e) => handleInputChange('nostatus', e.target.checked)}
+            <Box>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={localFilters.nostatus || false}
+                    onChange={(e) => handleInputChange('nostatus', e.target.checked)}
+                  />
+                }
+                label="No Status"
               />
-              <CheckboxLabel htmlFor="nostatus">
-                No Status
-              </CheckboxLabel>
-            </CheckboxContainer>
+            </Box>
 
-            <CheckboxContainer>
-              <Checkbox
-                type="checkbox"
-                id="wait"
-                checked={filters.wait || false}
-                onChange={(e) => handleInputChange('wait', e.target.checked)}
+            <Box>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={localFilters.wait || false}
+                    onChange={(e) => handleInputChange('wait', e.target.checked)}
+                  />
+                }
+                label="Wait"
               />
-              <CheckboxLabel htmlFor="wait">
-                Wait
-              </CheckboxLabel>
-            </CheckboxContainer>
-          </CheckboxGrid>
+            </Box>
+          </Box>
 
-          <ButtonContainer>
-            <SecondaryButton
+          <Box display="flex" justifyContent="flex-end" gap={2} sx={{ mt: 4 }}>
+            <Button
               type="button"
               onClick={handleReset}
+              variant="outlined"
+              color="secondary"
             >
               Reset
-            </SecondaryButton>
-            <SecondaryButton
+            </Button>
+            <Button
               type="button"
               onClick={onClose}
+              variant="outlined"
             >
               Cancel
-            </SecondaryButton>
-            <PrimaryButton
+            </Button>
+            <Button
               type="submit"
+              variant="contained"
+              color="primary"
             >
               Apply Filters
-            </PrimaryButton>
-          </ButtonContainer>
-        </Form>
-      </ModalContainer>
-    </ModalOverlay>
+            </Button>
+          </Box>
+        </Box>
+      </DialogContent>
+    </Dialog>
   );
 }
