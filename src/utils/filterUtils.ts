@@ -1,4 +1,7 @@
-import { JobSearchFilter, JobFilterParams } from '@/types/job.types';
+import { JobSearchFilter } from '@/types/job.filter.types';
+
+// Type for URL query parameters
+type JobFilterParams = Record<string, string>;
 
 /**
  * Converts JobSearchFilter to URL query parameters for API requests
@@ -39,11 +42,11 @@ export const paramsToFilter = (params: URLSearchParams): JobSearchFilter => {
 
   params.forEach((value, key) => {
     if (booleanFields.includes(key)) {
-      filter[key as keyof JobSearchFilter] = value === 'true';
+      (filter as any)[key] = value === 'true';
     } else if (numberFields.includes(key)) {
-      filter[key as keyof JobSearchFilter] = parseInt(value, 10);
+      (filter as any)[key] = parseInt(value, 10);
     } else {
-      filter[key as keyof JobSearchFilter] = value;
+      (filter as any)[key] = value;
     }
   });
 
