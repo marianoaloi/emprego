@@ -71,8 +71,8 @@ export default function DataTable() {
   };
 
   // Render cell content
-  const renderCellContent = (item: any, column: string): React.ReactNode => {
-    const value = item[column];
+  const renderCellContent = (item: DataItem | JobPostingDisplay, column: string): React.ReactNode => {
+    const value = (item as Record<string, unknown>)[column];
     
     if (isJobData && column === 'title' && (item as JobPostingDisplay).applyUrl) {
       return (
@@ -81,7 +81,7 @@ export default function DataTable() {
           target="_blank" 
           rel="noopener noreferrer"
         >
-          {value}
+          {String(value)}
         </JobLink>
       );
     }
@@ -114,8 +114,8 @@ export default function DataTable() {
           </TableRow>
         </TableHead>
         <tbody>
-          {dataToDisplay.map((item: any, index) => (
-            <TableRow key={item.id || item._id || index}>
+          {dataToDisplay.map((item: DataItem | JobPostingDisplay, index) => (
+            <TableRow key={String((item as Record<string, unknown>).id || (item as Record<string, unknown>)._id || index)}>
               {columns.map((column) => (
                 <TableCell key={column}>
                   {renderCellContent(item, column)}

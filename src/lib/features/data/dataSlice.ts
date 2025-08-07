@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DataRequest } from './dataService';
 import { fetchData } from './dataTruck';
 import { JobPosting, JobPostingDisplay } from '@/types/job.types';
 

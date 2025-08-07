@@ -1,7 +1,6 @@
 
 import { JobSearchFilter, DEFAULT_JOB_FILTER } from '@/types/job.filter.types';
 import { JobPosting } from '@/types/job.types';
-import { filterToParams } from '@/utils/filterUtils';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
   ? 'https://us-central1-affitiudine.cloudfunctions.net/api' 
@@ -14,7 +13,7 @@ function wait(delay: number): Promise<void> {
 }
 
 function fetchRetry(url: string, delay: number, tries: number, fetchOptions = {}): Promise<Response> {
-    const onError = (err: any): Promise<Response> => {
+    const onError = (err: Error): Promise<Response> => {
         const triesLeft = tries - 1;
         if (!triesLeft) {
             throw err;
