@@ -48,3 +48,67 @@ export const DataRequest = async (filter?: JobSearchFilter) : Promise<JobPosting
     return response.json();
 };
 
+export interface JobActionResponse {
+    acknowledged: boolean;
+    modifiedCount: number;
+    upsertedId: null;
+    upsertedCount: number;
+    matchedCount: number;
+}
+
+export const appliedbymeRequest = async (jobId: string, undo?: boolean): Promise<JobActionResponse> => {
+    const params = new URLSearchParams({ id: jobId });
+    if (undo) params.append('undo', 'true');
+    const url = `${API_BASE_URL}/appliedbyme?${params}`;
+    
+    const response = await fetchRetry(url, 10_000, 3);
+    
+    if (!response.ok) {
+        throw new Error(`Failed to mark as applied: ${response.status} ${response.statusText}`);
+    }
+    
+    return response.json();
+};
+
+export const CloseRequest = async (jobId: string, undo?: boolean): Promise<JobActionResponse> => {
+    const params = new URLSearchParams({ id: jobId });
+    if (undo) params.append('undo', 'true');
+    const url = `${API_BASE_URL}/close?${params}`;
+    
+    const response = await fetchRetry(url, 10_000, 3);
+    
+    if (!response.ok) {
+        throw new Error(`Failed to close job: ${response.status} ${response.statusText}`);
+    }
+    
+    return response.json();
+};
+
+export const IgnoreRequest = async (jobId: string, undo?: boolean): Promise<JobActionResponse> => {
+    const params = new URLSearchParams({ id: jobId });
+    if (undo) params.append('undo', 'true');
+    const url = `${API_BASE_URL}/ignore?${params}`;
+    
+    const response = await fetchRetry(url, 10_000, 3);
+    
+    if (!response.ok) {
+        throw new Error(`Failed to ignore job: ${response.status} ${response.statusText}`);
+    }
+    
+    return response.json();
+};
+
+export const WaitRequest = async (jobId: string, undo?: boolean): Promise<JobActionResponse> => {
+    const params = new URLSearchParams({ id: jobId });
+    if (undo) params.append('undo', 'true');
+    const url = `${API_BASE_URL}/wait?${params}`;
+    
+    const response = await fetchRetry(url, 10_000, 3);
+    
+    if (!response.ok) {
+        throw new Error(`Failed to mark as wait: ${response.status} ${response.statusText}`);
+    }
+    
+    return response.json();
+};
+

@@ -1,8 +1,8 @@
 /* eslint-disable import/no-anonymous-default-export */
 // pages/api/data.js
 
-import {Request, Response} from "express";
-import {supperFilter} from "./supperFilter";
+import { Request, Response } from "express";
+import { supperFilter } from "./supperFilter";
 import clientPromise, { jobCollection } from "./util/mongo";
 
 
@@ -13,7 +13,7 @@ export default async (req: Request, res: Response) => {
 
     const limit = parseInt(String(req.body.limit || "100"));
     const offset = parseInt(String(req.query.offset || "0"));
-    const sort = /* req.query ||*/ {lastupdate: -1};
+    const sort = /* req.query ||*/ { lastupdate: -1 };
 
     const query = [
       {
@@ -69,9 +69,24 @@ export default async (req: Request, res: Response) => {
         "$project":
         {
           description: "$description.text",
-          lang: "$description.lang.lang",
+          lang: "$description.lang",
+          formattedEmploymentStatus: 1,
           formattedLocation: 1,
           title: 1,
+          expireAt: 1,
+          lastupdate: 1,
+          ignore: 1,
+          appliedbyme: '$appliedByMe',
+          formattedExperienceLevel: 1,
+          listedAt: 1,
+          originalListedAt: 1,
+          workRemoteAllowed: 1,
+          applies: 1,
+          new: 1,
+          llm: 1,
+          wait: 1,
+          salaryInsights: 1,
+          applicantTrackingSystem: 1,
           employmentStatus: {
             $replaceAll: {
               input: "$employmentStatus",
@@ -94,16 +109,8 @@ export default async (req: Request, res: Response) => {
               replacement: "",
             },
           },
-          expireAt: 1,
-          lastupdate: 1,
-          ignore: 1,
-          appliedByMe: 1,
-          formattedExperienceLevel: 1,
           companyName:
             "$companyDetails.comlinkedinvoyagerdecojobswebsharedWebJobPostingCompany.companyResolutionResult.name",
-          listedAt: 1,
-          originalListedAt: 1,
-          workRemoteAllowed: 1,
           standardizedTitle: {
             $replaceAll: {
               input: "$standardizedTitle",
@@ -113,8 +120,6 @@ export default async (req: Request, res: Response) => {
           },
           applied: "$applyingInfo.applied",
           closed: "$applyingInfo.closed",
-          applies: 1,
-          new: 1,
           headquartercountry:
             "$companyDetails.comlinkedinvoyagerdecojobswebsharedWebJobPostingCompany.companyResolutionResult.headquarter.country",
           headquartergeographicArea:
@@ -155,10 +160,6 @@ export default async (req: Request, res: Response) => {
               default: "NW",
             },
           },
-          llm: 1,
-          wait: 1,
-          salaryInsights: 1,
-          applicantTrackingSystem: 1,
         },
       },
     ];
@@ -174,6 +175,6 @@ export default async (req: Request, res: Response) => {
     res.status(200).json(data);
   } catch (e) {
     console.error(e);
-    res.status(500).json({message: "Internal Server Error"});
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };

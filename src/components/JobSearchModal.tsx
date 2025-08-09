@@ -15,12 +15,14 @@ import {
   FormControlLabel,
   Checkbox,
   IconButton,
-  Typography
+  Typography,
+  Autocomplete
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { JobSearchFilter, RemoteWorkType, SystemRecruiterType, LanguageCode, DEFAULT_JOB_FILTER } from '@/types/job.filter.types';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { setFilter, resetFilters } from '@/lib/features/filter/filterSlice';
+import italianProvinces from './ItalianProvinces.json';
 
 interface JobSearchModalProps {
   isOpen: boolean;
@@ -31,6 +33,13 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
   const dispatch = useAppDispatch();
   const { filters: reduxFilters } = useAppSelector((state) => state.filter);
   const [localFilters, setLocalFilters] = useState<JobSearchFilter>(reduxFilters);
+
+  // Convert Italian provinces to autocomplete options
+  const provinceOptions = Object.entries(italianProvinces).map(([code, name]) => ({
+    code,
+    label: name,
+    value: code
+  }));
 
   // Update local state when Redux state changes or modal opens
   useEffect(() => {
@@ -213,13 +222,24 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
             </Box>
 
             <Box>
-              <TextField
+              <Autocomplete
                 fullWidth
-                label="Location Granular"
-                value={localFilters.locationGranular || ''}
-                onChange={(e) => handleInputChange('locationGranular', e.target.value)}
-                placeholder="Enter granular location"
-                margin="normal"
+                options={provinceOptions}
+                value={provinceOptions.find(option => option.value === localFilters.locationGranular) || null}
+                onChange={(event, newValue) => {
+                  handleInputChange('locationGranular', newValue?.value || '');
+                }}
+                getOptionLabel={(option) => option.label}
+                isOptionEqualToValue={(option, value) => option.value === value.value}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Location Granular"
+                    placeholder="Select Italian province"
+                    margin="normal"
+                  />
+                )}
+                sx={{ mt: 2 }}
               />
             </Box>
           </Box>

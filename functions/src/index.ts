@@ -8,7 +8,7 @@
  */
 
 
-import {onRequest} from "firebase-functions/v2/https";
+import { onRequest } from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 
 import cors from "cors";
@@ -19,7 +19,7 @@ import cors from "cors";
 //   logger.info("Hello logs!", {structuredData: true});
 //   response.send("Hello from Firebase!");
 // });
-import express, {Request, Response} from "express";
+import express, { Request, Response } from "express";
 import appliedByMe from "./appliedByMe";
 import close from "./close";
 import dashboard from "./dashboard";
@@ -37,19 +37,28 @@ const allowedOrigins = [
   "https://emprego-4bb54.web.app",
   "https://emprego-4bb54.firebaseapp.com",
   "https://emprego.aloi.com.br",
-  "http://127.0.0.1:3000",
-  "http://localhost:5002"
 ];
 
 // CORS configuration
 const corsOptions = {
-  origin: function(origin: string | undefined, callback: any) {
+  origin: function (origin: string | undefined, callback: any) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     } else {
-      return callback(new Error("Not allowed by CORS "+origin));
+      if (origin.includes("localhost")) {
+        allowedOrigins.push(origin);
+        return callback(null, true);
+
+      } else 
+      if (origin.includes("127.0.0.1")) {
+        allowedOrigins.push(origin);
+        return callback(null, true);
+
+      } else { 
+        return callback(new Error("Not allowed by CORS"));
+      }
     }
   },
   credentials: true, // if you need to send cookies or auth headers
@@ -62,37 +71,37 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
-  logger.info("Hello logs!", {structuredData: true});
+  logger.info("Hello logs!", { structuredData: true });
   res.send("Hello World!");
 });
 
 
-app.get("/appliedByMe", (req:Request, res:Response) => {
+app.get("/appliedByMe", (req: Request, res: Response) => {
   appliedByMe(req, res);
 });
-app.get("/close", (req:Request, res:Response) => {
+app.get("/close", (req: Request, res: Response) => {
   close(req, res);
 });
-app.post("/dashboard", (req:Request, res:Response) => {
-  dashboard(req, res);
-});
-app.post("/data", (req:Request, res:Response) => {
-  data(req, res);
-});
-app.get("/ignore", (req:Request, res:Response) => {
+app.get("/ignore", (req: Request, res: Response) => {
   ignore(req, res);
 });
-app.get("/llm", (req:Request, res:Response) => {
+app.get("/wait", (req: Request, res: Response) => {
+  wait(req, res);
+});
+app.post("/dashboard", (req: Request, res: Response) => {
+  dashboard(req, res);
+});
+app.post("/data", (req: Request, res: Response) => {
+  data(req, res);
+});
+app.get("/llm", (req: Request, res: Response) => {
   llm(req, res);
 });
-app.post("/skill", (req:Request, res:Response) => {
+app.post("/skill", (req: Request, res: Response) => {
   skill(req, res);
 });
-app.post("/text", (req:Request, res:Response) => {
+app.post("/text", (req: Request, res: Response) => {
   text(req, res);
-});
-app.get("/wait", (req:Request, res:Response) => {
-  wait(req, res);
 });
 
 
@@ -100,7 +109,7 @@ exports.api = onRequest(app);
 
 const PORT = config.server.port;
 
-    app.listen(PORT, () => {
-        logger.log(`Server is running on port ${PORT}`);
-        
-    });
+app.listen(PORT, () => {
+  logger.log(`Server is running on port ${PORT}`);
+
+});

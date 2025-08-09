@@ -7,7 +7,7 @@ export default async (req: Request, res: Response) => {
   try {
     const undoObject : any = {};
     undoObject[req.query.undo ? "$unset" : "$set"] = {wait: new Date()};
-    res.status(200).json(jobCollection.updateOne({"_id": req.query.id} as any, undoObject));
+    res.status(200).json(await jobCollection.updateOne({"_id": req.query.id} as any, undoObject));
   } catch (e) {
     console.error(e);
     res.status(500).json({message: "Internal Server Error"});
