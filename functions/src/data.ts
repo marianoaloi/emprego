@@ -11,7 +11,7 @@ export default async (req: Request, res: Response) => {
     const client = await clientPromise;
     const db = client.db("linkedinjobs");
 
-    const limit = parseInt(String(req.body.limit || "100"));
+    const limit = parseInt(String(req.body.limit || "50"));
     const offset = parseInt(String(req.query.offset || "0"));
     const sort = /* req.query ||*/ { lastupdate: -1 };
 
