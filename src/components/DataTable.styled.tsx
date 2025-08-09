@@ -248,3 +248,26 @@ export const JobCardActions = styled(CardActions)`
     }
   }
 `;
+
+// Subheader Styled Components
+export const SubheaderContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const CompanyNameSpan = styled.span`
+  // No additional styling needed - inherits from parent CardHeader subheader styles
+`;
+
+export const LastUpdateSpan = styled.span`
+  font-size: 0.8em;
+  color: #eee;
+  font-weight: 400;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+  
+  &:hover {
+    opacity: 1;
+  }
+`;

@@ -143,26 +143,17 @@ export default function JobDetailModal({ job, open, onClose,
             </DetailItem>
             <DetailItem>
               <div className="label">Listed At</div>
-              <div className="value">{job.listedAt ? new Date(job.listedAt * 1000).toLocaleDateString() : 'N/A'}</div>
+              <div className="value">{job.listedAt ? new Date(job.listedAt).toLocaleDateString() : 'N/A'}</div>
             </DetailItem>
             <DetailItem>
               <div className="label">Last Update</div>
-              <div className="value">{job.lastupdate ? new Date(job.lastupdate * 1000).toLocaleDateString() : 'N/A'}</div>
+              <div className="value">{job.lastupdate ? new Date(job.lastupdate).toLocaleDateString() : 'N/A'}</div>
             </DetailItem>
             <DetailItem>
               <div className="label">Expires At</div>
-              <div className="value">{job.expireAt ? new Date(job.expireAt * 1000).toLocaleDateString() : 'N/A'}</div>
+              <div className="value">{job.expireAt ? new Date(job.expireAt).toLocaleDateString() : 'N/A'}</div>
             </DetailItem>
           </JobDetailsGrid>
-        </ContentSection>
-
-        <ContentSection>
-          <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
-            <SectionTitle>Job Status</SectionTitle>
-            <Box display="flex" gap={1} flexWrap="wrap">
-              {getStatusChips()}
-            </Box>
-          </Box>
         </ContentSection>
 
 
@@ -187,8 +178,65 @@ export default function JobDetailModal({ job, open, onClose,
                 <div className="value">{job.salaryInsights.compensationSource || 'N/A'}</div>
               </DetailItem>
             </JobDetailsGrid>
+
+            {/* Compensation Breakdown */}
+            {job.salaryInsights.compensationBreakdown && Object.keys(job.salaryInsights.compensationBreakdown).length > 0 && (
+              <Box mt={2}>
+                <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: '#374151' }}>
+                  Compensation Breakdown:
+                </Typography>
+                {Object.entries(job.salaryInsights.compensationBreakdown).map(([key, breakdown]) => (
+                  <Box 
+                    key={key} 
+                    sx={{ 
+                      border: '1px solid #e5e7eb', 
+                      borderRadius: '8px', 
+                      p: 1.5, 
+                      mb: 1,
+                      backgroundColor: '#f9fafb'
+                    }}
+                  >
+                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: '#1f2937' }}>
+                      {key}
+                    </Typography>
+                    <JobDetailsGrid>
+                      <DetailItem>
+                        <div className="label">Salary Range</div>
+                        <div className="value">
+                          {breakdown.minSalary && breakdown.maxSalary 
+                            ? `${breakdown.minSalary} - ${breakdown.maxSalary} ${breakdown.currencyCode || ''}`
+                            : breakdown.minSalary || breakdown.maxSalary || 'N/A'
+                          }
+                        </div>
+                      </DetailItem>
+                      <DetailItem>
+                        <div className="label">Pay Period</div>
+                        <div className="value">{breakdown.payPeriod || 'N/A'}</div>
+                      </DetailItem>
+                      <DetailItem>
+                        <div className="label">Currency</div>
+                        <div className="value">{breakdown.currencyCode || 'N/A'}</div>
+                      </DetailItem>
+                      <DetailItem>
+                        <div className="label">Type</div>
+                        <div className="value">{breakdown.compensationType || 'N/A'}</div>
+                      </DetailItem>
+                    </JobDetailsGrid>
+                  </Box>
+                ))}
+              </Box>
+            )}
           </ContentSection>
         )}
+
+        <ContentSection>
+          <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+            <SectionTitle>Job Status</SectionTitle>
+            <Box display="flex" gap={1} flexWrap="wrap">
+              {getStatusChips()}
+            </Box>
+          </Box>
+        </ContentSection>
 
       </StyledDialogContent>
 
@@ -205,7 +253,7 @@ export default function JobDetailModal({ job, open, onClose,
           <Tooltip title="Open Job">
             <IconButton
               className="go-action"
-              onClick={handleGoAction}
+              onClick={() => handleGoAction(job)}
             >
               <OpenInNewIcon />
             </IconButton>
@@ -214,7 +262,7 @@ export default function JobDetailModal({ job, open, onClose,
           <Tooltip title={job.ignore ? "Undo Ignore" : "Ignore Job"}>
             <IconButton
               className="reject-action"
-              onClick={handleRejectAction}
+              onClick={() => handleRejectAction(job)}
             >
               <ThumbDownIcon />
             </IconButton>
@@ -223,7 +271,7 @@ export default function JobDetailModal({ job, open, onClose,
           <Tooltip title={job.wait ? "Undo Wait" : "Mark as Waiting"}>
             <IconButton
               className="wait-action"
-              onClick={handleWaitAction}
+              onClick={() => handleWaitAction(job)}
             >
               <HourglassEmptyIcon />
             </IconButton>
@@ -232,7 +280,7 @@ export default function JobDetailModal({ job, open, onClose,
           <Tooltip title={job.appliedbyme ? "Undo Applied" : "Mark as Applied"}>
             <IconButton
               className="accept-action"
-              onClick={handleAcceptAction}
+              onClick={() => handleAcceptAction(job)}
             >
               <ThumbUpIcon />
             </IconButton>
@@ -241,7 +289,7 @@ export default function JobDetailModal({ job, open, onClose,
           <Tooltip title={job.closed ? "Reopen Job" : "Close Job"}>
             <IconButton
               className="lock-action"
-              onClick={handleLockAction}
+              onClick={() => handleLockAction(job)}
             >
               <LockIcon />
             </IconButton>

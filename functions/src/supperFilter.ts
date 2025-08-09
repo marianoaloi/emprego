@@ -117,7 +117,7 @@ export const supperFilter = async (req: Request, query: any, db:any) => {
     }
   }
 
-  if (req.body.locationGranular) {
+  if (req.body.locationGranular && !(query as any)[0].$match["formattedLocation"]) {
     const locations = await db.collection("local_code").find({codes: req.body.locationGranular}).toArray();
     (query as any)[0].$match["formattedLocation"] = {"$in": locations.map((x: { _id: any; })=>x._id)};
   }

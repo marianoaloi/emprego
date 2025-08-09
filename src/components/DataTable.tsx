@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Tooltip, Typography } from '@mui/material';
+import moment from 'moment-timezone';
 import {
   OpenInNew as OpenInNewIcon,
   ThumbDown as ThumbDownIcon,
@@ -23,7 +24,10 @@ import {
   JobCardHeader,
   JobCardContent,
   JobCardActions,
-  FooterInfo
+  FooterInfo,
+  SubheaderContainer,
+  CompanyNameSpan,
+  LastUpdateSpan
 } from './DataTable.styled';
 import { JobPosting } from '@/types/job.types';
 import JobDetailModal from './JobDetailModal';
@@ -62,6 +66,16 @@ export default function DataTable() {
   const dataToDisplay = jobPostings.length > 0 ? jobPostings : items;
   const isJobData = jobPostings.length > 0;
 
+  // Format lastupdate timestamp
+  const formatLastUpdate = (timestamp: number) => {
+    return moment(timestamp).format('MM/DD HH:mm');
+  };
+
+  // Format complete date for tooltip
+  const formatCompleteDateForTooltip = (timestamp: number) => {
+    return moment(timestamp).format('YYYY-MM-DD HH:mm:ss');
+  };
+
   if (!dataToDisplay || dataToDisplay.length === 0) {
     return (
       <NoDataContainer>
@@ -82,24 +96,28 @@ export default function DataTable() {
   const handleRejectAction = (job: JobPosting) => {
     if (job._id) {
       dispatch(ignoreJob({ jobId: job._id, undo: job.ignore ? true : false }));
+      handleModalClose()
     }
   };
 
   const handleWaitAction = (job: JobPosting) => {
     if (job._id) {
       dispatch(waitJob({ jobId: job._id, undo: job.wait ? true : false }));
+      handleModalClose()
     }
   };
 
   const handleAcceptAction = (job: JobPosting) => {
     if (job._id) {
       dispatch(appliedbyme({ jobId: job._id, undo: job.appliedbyme ? true : false }));
+      handleModalClose()
     }
   };
 
   const handleLockAction = (job: JobPosting) => {
     if (job._id) {
       dispatch(closeJob({ jobId: job._id, undo: job.closed ? true : false }));
+      handleModalClose()
     }
   };
 
@@ -128,7 +146,16 @@ export default function DataTable() {
               {job.title}
             </div>
           }
-          subheader={job.companyName}
+          subheader={
+            <SubheaderContainer>
+              <CompanyNameSpan>{job.companyName}</CompanyNameSpan>
+              <Tooltip title={formatCompleteDateForTooltip(job.lastupdate)}>
+                <LastUpdateSpan>
+                  {formatLastUpdate(job.lastupdate)}
+                </LastUpdateSpan>
+              </Tooltip>
+            </SubheaderContainer>
+          }
         />
 
         <JobCardContent>
