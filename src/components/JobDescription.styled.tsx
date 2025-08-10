@@ -50,6 +50,10 @@ export const FormattedContent = styled.div`
   color: #374151;
   font-size: 0.95rem;
   
+  /* Emoji and Unicode support */
+  font-variant-emoji: unicode;
+  text-rendering: optimizeLegibility;
+  
   /* Bold text styling */
   .bold {
     font-weight: 600;

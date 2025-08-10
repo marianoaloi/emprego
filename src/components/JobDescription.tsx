@@ -16,10 +16,46 @@ import {
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { fetchJobText } from '@/lib/features/textJob/textJobTruck';
 
+// Unicode-aware string utilities
+const stringToCodePoints = (str: string): number[] => {
+  return Array.from(str, (char) => char.codePointAt(0)!);
+};
+
+const codePointsToString = (codePoints: number[]): string => {
+  return String.fromCodePoint(...codePoints);
+};
+
+const getUnicodeSubstring = (text: string, start: number, end: number): string => {
+  const codePoints = stringToCodePoints(text);
+  const substring = codePoints.slice(start, end);
+  return codePointsToString(substring);
+};
+
+// Function to convert byte positions to Unicode code point positions
+const convertBytePositionToCodePoint = (text: string, bytePosition: number): number => {
+  const codePoints = stringToCodePoints(text);
+  let currentBytePosition = 0;
+  
+  for (let i = 0; i < codePoints.length; i++) {
+    const codePoint = codePoints[i];
+    
+
+    
+    // Calculate UTF-16 code units for this code point
+    if (codePoint <= 0xFFFF) {
+      currentBytePosition += 1; // Single UTF-16 code unit
+    } else {
+      currentBytePosition += 2; // Surrogate pair (2 UTF-16 code units)
+    }
+  }
+  
+  return currentBytePosition;
+};
+
 // Function to apply formatting attributes to text
 const formatTextWithAttributes = (text: string, attributes: Record<string, TextAttribute>): React.ReactNode => {
   // Convert attributes object to array and sort by start position
-  const attributesList = Object.values(attributes).sort((a, b) => a.start - b.start);
+  const attributesList = Object.values(attributes).sort((a, b) => (a.start + a.length) - (b.start + b.length));
 
   // Create segments with their formatting
   const segments: Array<{
@@ -33,6 +69,7 @@ const formatTextWithAttributes = (text: string, attributes: Record<string, TextA
     listType?: 'ordered' | 'unordered';
   }> = [];
 
+  let diffEmoji = 0
   // Build segments from attributes
   attributesList.forEach(
     (attr: TextAttribute, index: number, array: TextAttribute[]) => {
@@ -47,8 +84,12 @@ const formatTextWithAttributes = (text: string, attributes: Record<string, TextA
       ) {
         return;
       }
-      const end = attr.start + attr.length;
-      const segmentText = text.substring(attr.start, end);
+      
+      // Convert byte positions to Unicode code point positions
+      const startCodePoint =  attr.start + diffEmoji;
+      diffEmoji += convertBytePositionToCodePoint(text.substring(startCodePoint,startCodePoint + attr.length),  attr.length) - attr.length;
+      const endCodePoint = startCodePoint + attr.length;
+      const segmentText = getUnicodeSubstring(text, startCodePoint, endCodePoint);
 
       const classes: string[] = [];
       let isListItem = false;
@@ -87,8 +128,8 @@ const formatTextWithAttributes = (text: string, attributes: Record<string, TextA
 
       segments.push({
         text: segmentText,
-        start: attr.start,
-        end,
+        start: startCodePoint,
+        end: endCodePoint,
         classes,
         isListItem,
         isLineBreak,
@@ -154,11 +195,9 @@ const formatTextWithAttributes = (text: string, attributes: Record<string, TextA
           </span>
         );
       } else {
-        // Handle unformatted text
-        const unformattedText = text.substring(
-          segments[segments.indexOf(segment) - 1]?.end || 0,
-          segment.start
-        );
+        // Handle unformatted text using Unicode-safe substring
+        const previousEnd = segments[segments.indexOf(segment) - 1]?.end || 0;
+        const unformattedText = getUnicodeSubstring(text, previousEnd, segment.start);
         if (unformattedText) {
           processedElements.push(unformattedText);
         }
@@ -172,8 +211,9 @@ const formatTextWithAttributes = (text: string, attributes: Record<string, TextA
 
   // Handle any remaining unformatted text at the end
   const lastSegment = segments[segments.length - 1];
-  if (lastSegment && lastSegment.end < text.length) {
-    const remainingText = text.substring(lastSegment.end);
+  const textLength = stringToCodePoints(text).length;
+  if (lastSegment && lastSegment.end < textLength) {
+    const remainingText = getUnicodeSubstring(text, lastSegment.end, textLength);
     processedElements.push(remainingText);
   }
 

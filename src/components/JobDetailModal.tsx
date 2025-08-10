@@ -66,6 +66,128 @@ export default function JobDetailModal({ job, open, onClose,
     return chips;
   };
 
+  const JobDetailsInPart = (
+
+    <ContentSection>
+      <SectionTitle>Job Details</SectionTitle>
+      <JobDetailsGrid>
+        <DetailItem>
+          <div className="label">Location</div>
+          <div className="value">{job.formattedLocation || 'N/A'}</div>
+        </DetailItem>
+        <DetailItem>
+          <div className="label">Experience Level</div>
+          <div className="value">{job.formattedExperienceLevel || 'N/A'}</div>
+        </DetailItem>
+        <DetailItem>
+          <div className="label">Remote Allowed</div>
+          <div className="value">{job.workRemoteAllowed ? 'Yes' : 'No'}</div>
+        </DetailItem>
+        <DetailItem>
+          <div className="label">Language</div>
+          <div className="value">{job.lang || 'N/A'}</div>
+        </DetailItem>
+        <DetailItem>
+          <div className="label">Tracking System</div>
+          <div className="value">{job.applicantTrackingSystem || 'N/A'}</div>
+        </DetailItem>
+        <DetailItem>
+          <div className="label">Applications</div>
+          <div className="value">{job.applies || 0}</div>
+        </DetailItem>
+        <DetailItem>
+          <div className="label">Listed At</div>
+          <div className="value">{job.listedAt ? new Date(job.listedAt).toLocaleDateString() : 'N/A'}</div>
+        </DetailItem>
+        <DetailItem>
+          <div className="label">Last Update</div>
+          <div className="value">{job.lastupdate ? new Date(job.lastupdate).toLocaleDateString() : 'N/A'}</div>
+        </DetailItem>
+        <DetailItem>
+          <div className="label">Expires At</div>
+          <div className="value">{job.expireAt ? new Date(job.expireAt).toLocaleDateString() : 'N/A'}</div>
+        </DetailItem>
+      </JobDetailsGrid>
+    </ContentSection>
+
+  )
+
+  const JobSallaryInPart = (
+    <>
+      {job.salaryInsights && (
+        <ContentSection>
+          <SectionTitle>Salary Information</SectionTitle>
+          <JobDetailsGrid>
+            <DetailItem>
+              <div className="label">Provided by Employer</div>
+              <div className="value">{job.salaryInsights.providedByEmployer ? 'Yes' : 'No'}</div>
+            </DetailItem>
+            <DetailItem>
+              <div className="label">Compensation Available</div>
+              <div className="value">{job.salaryInsights.jobCompensationAvailable ? 'Yes' : 'No'}</div>
+            </DetailItem>
+            <DetailItem>
+              <div className="label">Insight Exists</div>
+              <div className="value">{job.salaryInsights.insightExists ? 'Yes' : 'No'}</div>
+            </DetailItem>
+            <DetailItem>
+              <div className="label">Compensation Source</div>
+              <div className="value">{job.salaryInsights.compensationSource || 'N/A'}</div>
+            </DetailItem>
+          </JobDetailsGrid>
+
+          {/* Compensation Breakdown */}
+          {job.salaryInsights.compensationBreakdown && Object.keys(job.salaryInsights.compensationBreakdown).length > 0 && (
+            <Box mt={2}>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: '#374151' }}>
+                Compensation Breakdown:
+              </Typography>
+              {Object.entries(job.salaryInsights.compensationBreakdown).map(([key, breakdown]) => (
+                <Box
+                  key={key}
+                  sx={{
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    p: 1.5,
+                    mb: 1,
+                    backgroundColor: '#f9fafb'
+                  }}
+                >
+                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: '#1f2937' }}>
+                    {key}
+                  </Typography>
+                  <JobDetailsGrid>
+                    <DetailItem>
+                      <div className="label">Salary Range</div>
+                      <div className="value">
+                        {breakdown.minSalary && breakdown.maxSalary
+                          ? `${breakdown.minSalary} - ${breakdown.maxSalary} ${breakdown.currencyCode || ''}`
+                          : breakdown.minSalary || breakdown.maxSalary || 'N/A'
+                        }
+                      </div>
+                    </DetailItem>
+                    <DetailItem>
+                      <div className="label">Pay Period</div>
+                      <div className="value">{breakdown.payPeriod || 'N/A'}</div>
+                    </DetailItem>
+                    <DetailItem>
+                      <div className="label">Currency</div>
+                      <div className="value">{breakdown.currencyCode || 'N/A'}</div>
+                    </DetailItem>
+                    <DetailItem>
+                      <div className="label">Type</div>
+                      <div className="value">{breakdown.compensationType || 'N/A'}</div>
+                    </DetailItem>
+                  </JobDetailsGrid>
+                </Box>
+              ))}
+            </Box>
+          )}
+        </ContentSection>
+      )}
+    </>
+  )
+
   return (
     <StyledDialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <StyledDialogTitle>
@@ -80,7 +202,7 @@ export default function JobDetailModal({ job, open, onClose,
           <div className="company-name">{job.companyName}</div>
           <div className="job-id">ID: {job._id}</div>
         </CompanyHeader>
-        
+
         {job.llm && (
           <ContentSection>
             <SectionTitle>Job Description (AI Analysis)</SectionTitle>
@@ -93,125 +215,15 @@ export default function JobDetailModal({ job, open, onClose,
           </ContentSection>
         )}
 
+        {JobDetailsInPart}
+        {JobSallaryInPart}
+
         <ContentSection>
           <SectionTitle>Job Description</SectionTitle>
           <JobDescription jobId={job._id} />
         </ContentSection>
 
-        <ContentSection>
-          <SectionTitle>Job Details</SectionTitle>
-          <JobDetailsGrid>
-            <DetailItem>
-              <div className="label">Location</div>
-              <div className="value">{job.formattedLocation || 'N/A'}</div>
-            </DetailItem>
-            <DetailItem>
-              <div className="label">Experience Level</div>
-              <div className="value">{job.formattedExperienceLevel || 'N/A'}</div>
-            </DetailItem>
-            <DetailItem>
-              <div className="label">Remote Allowed</div>
-              <div className="value">{job.workRemoteAllowed ? 'Yes' : 'No'}</div>
-            </DetailItem>
-            <DetailItem>
-              <div className="label">Language</div>
-              <div className="value">{job.lang || 'N/A'}</div>
-            </DetailItem>
-            <DetailItem>
-              <div className="label">Tracking System</div>
-              <div className="value">{job.applicantTrackingSystem || 'N/A'}</div>
-            </DetailItem>
-            <DetailItem>
-              <div className="label">Applications</div>
-              <div className="value">{job.applies || 0}</div>
-            </DetailItem>
-            <DetailItem>
-              <div className="label">Listed At</div>
-              <div className="value">{job.listedAt ? new Date(job.listedAt).toLocaleDateString() : 'N/A'}</div>
-            </DetailItem>
-            <DetailItem>
-              <div className="label">Last Update</div>
-              <div className="value">{job.lastupdate ? new Date(job.lastupdate).toLocaleDateString() : 'N/A'}</div>
-            </DetailItem>
-            <DetailItem>
-              <div className="label">Expires At</div>
-              <div className="value">{job.expireAt ? new Date(job.expireAt).toLocaleDateString() : 'N/A'}</div>
-            </DetailItem>
-          </JobDetailsGrid>
-        </ContentSection>
 
-
-        {job.salaryInsights && (
-          <ContentSection>
-            <SectionTitle>Salary Information</SectionTitle>
-            <JobDetailsGrid>
-              <DetailItem>
-                <div className="label">Provided by Employer</div>
-                <div className="value">{job.salaryInsights.providedByEmployer ? 'Yes' : 'No'}</div>
-              </DetailItem>
-              <DetailItem>
-                <div className="label">Compensation Available</div>
-                <div className="value">{job.salaryInsights.jobCompensationAvailable ? 'Yes' : 'No'}</div>
-              </DetailItem>
-              <DetailItem>
-                <div className="label">Insight Exists</div>
-                <div className="value">{job.salaryInsights.insightExists ? 'Yes' : 'No'}</div>
-              </DetailItem>
-              <DetailItem>
-                <div className="label">Compensation Source</div>
-                <div className="value">{job.salaryInsights.compensationSource || 'N/A'}</div>
-              </DetailItem>
-            </JobDetailsGrid>
-
-            {/* Compensation Breakdown */}
-            {job.salaryInsights.compensationBreakdown && Object.keys(job.salaryInsights.compensationBreakdown).length > 0 && (
-              <Box mt={2}>
-                <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: '#374151' }}>
-                  Compensation Breakdown:
-                </Typography>
-                {Object.entries(job.salaryInsights.compensationBreakdown).map(([key, breakdown]) => (
-                  <Box 
-                    key={key} 
-                    sx={{ 
-                      border: '1px solid #e5e7eb', 
-                      borderRadius: '8px', 
-                      p: 1.5, 
-                      mb: 1,
-                      backgroundColor: '#f9fafb'
-                    }}
-                  >
-                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: '#1f2937' }}>
-                      {key}
-                    </Typography>
-                    <JobDetailsGrid>
-                      <DetailItem>
-                        <div className="label">Salary Range</div>
-                        <div className="value">
-                          {breakdown.minSalary && breakdown.maxSalary 
-                            ? `${breakdown.minSalary} - ${breakdown.maxSalary} ${breakdown.currencyCode || ''}`
-                            : breakdown.minSalary || breakdown.maxSalary || 'N/A'
-                          }
-                        </div>
-                      </DetailItem>
-                      <DetailItem>
-                        <div className="label">Pay Period</div>
-                        <div className="value">{breakdown.payPeriod || 'N/A'}</div>
-                      </DetailItem>
-                      <DetailItem>
-                        <div className="label">Currency</div>
-                        <div className="value">{breakdown.currencyCode || 'N/A'}</div>
-                      </DetailItem>
-                      <DetailItem>
-                        <div className="label">Type</div>
-                        <div className="value">{breakdown.compensationType || 'N/A'}</div>
-                      </DetailItem>
-                    </JobDetailsGrid>
-                  </Box>
-                ))}
-              </Box>
-            )}
-          </ContentSection>
-        )}
 
         <ContentSection>
           <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
