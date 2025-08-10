@@ -12,6 +12,7 @@ export const config = {
     "retryWrites=true&w=majority&appName=Cluster0",
     database: "linkedinjobs",
     collection: "jobs",
+    collectionLocalCode: "local_code",
     certificatePath: path.resolve(__dirname + "/X509-cert-2864290664025085959.pem")
   },
   server: {
