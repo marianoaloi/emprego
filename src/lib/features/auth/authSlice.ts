@@ -14,15 +14,17 @@ export interface AuthState {
   isAuthenticated: boolean;
 }
 
+const COOKIE_KEY = "affito_token"
+
 function getInitialTokenByCookie(): AuthState  {
-  const cookie = Cookies.get('affito_token');
+  const cookie = Cookies.get(COOKIE_KEY);
   if (cookie) {
     try {
       const parsed = JSON.parse(cookie);
       // Check if token has expired
       if (parsed.expiresAt && Date.now() > parsed.expiresAt) {
         // Token expired, clear cookie and return empty state
-        Cookies.remove('affito_token');
+        Cookies.remove(COOKIE_KEY);
         return {
           token: undefined,
           user: undefined,
@@ -69,7 +71,7 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       
       // Save to cookie with same expiration
-      Cookies.set('affito_token', JSON.stringify({
+      Cookies.set(COOKIE_KEY, JSON.stringify({
         token: state.token,
         user: state.user,
         expiresAt: state.expiresAt,
@@ -85,7 +87,7 @@ const authSlice = createSlice({
       state.expiresAt = action.payload.expiresAt || (Date.now() + 3600000); // Default 1 hour
       state.isAuthenticated = !!state.token && (!state.expiresAt || Date.now() < state.expiresAt);
       
-      Cookies.set('affito_token', JSON.stringify(state), { 
+      Cookies.set(COOKIE_KEY, JSON.stringify(state), { 
         expires: new Date(state.expiresAt)
       });
     },
@@ -94,7 +96,7 @@ const authSlice = createSlice({
       state.user = undefined;
       state.expiresAt = undefined;
       state.isAuthenticated = false;
-      Cookies.remove('affito_token');
+      Cookies.remove(COOKIE_KEY);
     },
     checkTokenExpiration: (state) => {
       if (state.expiresAt && Date.now() > state.expiresAt) {
@@ -102,7 +104,7 @@ const authSlice = createSlice({
         state.user = undefined;
         state.expiresAt = undefined;
         state.isAuthenticated = false;
-        Cookies.remove('affito_token');
+        Cookies.remove(COOKIE_KEY);
       }
     },
   },

@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
 import { ThumbPhoto } from './authProvider.styled';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { authFirebase , GoogleAuthProvider, signInWithPopup, signOut } from "./firebaseConfig";
+import { authFirebase, GoogleAuthProvider, signInWithPopup, signOut } from "./firebaseConfig";
 
 export default function AuthProvider() {
     const user = useAppSelector(getUser);
@@ -31,17 +31,18 @@ export default function AuthProvider() {
             const user = userCred.user;
             // This gives you a Google Access Token. You can use it to access the Google API.
             const token = await user?.getIdToken();
-            dispatch(setToken({
-                token: token!,
-                user: {
-                    email: user.email!,
-                    name: user.displayName!,
-                    photoURL: user.photoURL!
-                } as User,
-                expiresIn: 3600 // 1 hour expiration
-            }));
+            if (token) {
+                dispatch(setToken({
+                    token: token!,
+                    user: {
+                        email: user.email!,
+                        name: user.displayName!,
+                        photoURL: user.photoURL!
+                    } as User,
+                    expiresIn: 3600 // 1 hour expiration
+                }));
+            }
             console.log("Signed in user:", user);
-            console.log("ID Token:", await user.getIdToken()); // Get the ID token
             return user;
         } catch (error: any) {
             // Handle Errors here.

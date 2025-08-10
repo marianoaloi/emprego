@@ -1,5 +1,9 @@
 import * as admin from "firebase-admin";
 import { Request, Response } from "express";
+import { config } from "./env";
+
+// Admin email constant from environment variable
+export const ADMIN_EMAIL = config.auth.adminEmail;
 
 // Initialize Firebase Admin SDK.
 // The SDK is initialized automatically when deployed to Firebase Functions.
