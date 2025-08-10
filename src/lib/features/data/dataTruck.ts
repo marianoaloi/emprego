@@ -18,33 +18,33 @@ export const fetchDataCount = createAsyncThunk(
 
 export const appliedbyme = createAsyncThunk(
   'data/appliedbyme',
-  async ({ jobId, undo }: { jobId: string; undo?: boolean }) => {
-    const response = await appliedbymeRequest(jobId, undo);
-    return { ...response, jobId, undo };
+  async ({ jobId, undo, token }: { jobId: string; undo: boolean | undefined, token : string | undefined }) => {
+    const response = await appliedbymeRequest(jobId, undo, token);
+    return { ...response, jobId, undo, token };
   }
 );
 
 export const closeJob = createAsyncThunk(
   'data/closeJob',
-  async ({ jobId, undo }: { jobId: string; undo?: boolean }) => {
-    const response = await CloseRequest(jobId, undo);
-    return { ...response, jobId, undo };
+  async ({ jobId, undo, token }: { jobId: string; undo: boolean | undefined, token : string | undefined }) => {
+    const response = await CloseRequest(jobId, undo, token);
+    return { ...response, jobId, undo, token };
   }
 );
 
 export const ignoreJob = createAsyncThunk(
   'data/ignoreJob',
-  async ({ jobId, undo }: { jobId: string; undo?: boolean }) => {
-    const response = await IgnoreRequest(jobId, undo);
-    return { ...response, jobId, undo };
+  async ({ jobId, undo, token }: { jobId: string; undo: boolean | undefined, token : string | undefined }) => {
+    const response = await IgnoreRequest(jobId, undo, token);
+    return { ...response, jobId, undo, token };
   }
 );
 
 export const waitJob = createAsyncThunk(
   'data/waitJob',
-  async ({ jobId, undo }: { jobId: string; undo?: boolean }) => {
-    const response = await WaitRequest(jobId, undo);
-    return { ...response, jobId, undo };
+  async ({ jobId, undo, token }: { jobId: string; undo: boolean | undefined, token : string | undefined }) => {
+    const response = await WaitRequest(jobId, undo, token);
+    return { ...response, jobId, undo, token };
   }
 );
 
