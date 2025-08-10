@@ -20,15 +20,12 @@ import cors from "cors";
 //   response.send("Hello from Firebase!");
 // });
 import express, { Request, Response } from "express";
-import appliedByMe from "./appliedByMe";
-import close from "./close";
+import actionsRouter from "./actions";
 import dashboard from "./dashboard";
 import dataRouter from "./data";
-import ignore from "./ignore";
 import llm from "./llm";
 import skill from "./skill";
 import text from "./text";
-import wait from "./wait";
 import { config } from "./util/env";
 const app = express();
 
@@ -47,12 +44,11 @@ const corsOptions = {
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     } else {
-      if (origin.includes("localhost")) {
-        allowedOrigins.push(origin);
-        return callback(null, true);
-
-      } else 
-      if (origin.includes("127.0.0.1")) {
+      if (origin.includes("localhost")
+        || 
+        origin.includes("127.0.0.1")
+        || 
+        origin.match(/emprego.+web.app/)) {
         allowedOrigins.push(origin);
         return callback(null, true);
 
@@ -76,18 +72,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 
-app.get("/appliedByMe", (req: Request, res: Response) => {
-  appliedByMe(req, res);
-});
-app.get("/close", (req: Request, res: Response) => {
-  close(req, res);
-});
-app.get("/ignore", (req: Request, res: Response) => {
-  ignore(req, res);
-});
-app.get("/wait", (req: Request, res: Response) => {
-  wait(req, res);
-});
+app.use("/actions", actionsRouter);
 app.post("/dashboard", (req: Request, res: Response) => {
   dashboard(req, res);
 });

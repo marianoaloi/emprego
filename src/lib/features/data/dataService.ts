@@ -60,7 +60,7 @@ export interface JobActionResponse {
 export const appliedbymeRequest = async (jobId: string, undo?: boolean): Promise<JobActionResponse> => {
     const params = new URLSearchParams({ id: jobId });
     if (undo) params.append('undo', 'true');
-    const url = `${API_BASE_URL}/appliedbyme?${params}`;
+    const url = `${API_BASE_URL}/actions/appliedbyme?${params}`;
     
     const response = await fetchRetry(url, 10_000, 3);
     
@@ -74,7 +74,7 @@ export const appliedbymeRequest = async (jobId: string, undo?: boolean): Promise
 export const CloseRequest = async (jobId: string, undo?: boolean): Promise<JobActionResponse> => {
     const params = new URLSearchParams({ id: jobId });
     if (undo) params.append('undo', 'true');
-    const url = `${API_BASE_URL}/close?${params}`;
+    const url = `${API_BASE_URL}/actions/close?${params}`;
     
     const response = await fetchRetry(url, 10_000, 3);
     
@@ -88,7 +88,7 @@ export const CloseRequest = async (jobId: string, undo?: boolean): Promise<JobAc
 export const IgnoreRequest = async (jobId: string, undo?: boolean): Promise<JobActionResponse> => {
     const params = new URLSearchParams({ id: jobId });
     if (undo) params.append('undo', 'true');
-    const url = `${API_BASE_URL}/ignore?${params}`;
+    const url = `${API_BASE_URL}/actions/ignore?${params}`;
     
     const response = await fetchRetry(url, 10_000, 3);
     
@@ -102,7 +102,7 @@ export const IgnoreRequest = async (jobId: string, undo?: boolean): Promise<JobA
 export const WaitRequest = async (jobId: string, undo?: boolean): Promise<JobActionResponse> => {
     const params = new URLSearchParams({ id: jobId });
     if (undo) params.append('undo', 'true');
-    const url = `${API_BASE_URL}/wait?${params}`;
+    const url = `${API_BASE_URL}/actions/wait?${params}`;
     
     const response = await fetchRetry(url, 10_000, 3);
     
