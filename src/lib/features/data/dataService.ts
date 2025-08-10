@@ -1,6 +1,7 @@
 
 import { JobSearchFilter, DEFAULT_JOB_FILTER } from '@/types/job.filter.types';
 import { JobPosting } from '@/types/job.types';
+import { JobDescriptionResponse, JobDescriptionApiResponse } from '@/types/job-description.types';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
   ? 'https://us-central1-affitiudine.cloudfunctions.net/api' 
@@ -110,5 +111,27 @@ export const WaitRequest = async (jobId: string, undo?: boolean): Promise<JobAct
     }
     
     return response.json();
+};
+
+export const fetchJobDescription = async (jobId: string): Promise<JobDescriptionResponse | null> => {
+    try {
+        const response = await fetchRetry(`${API_BASE_URL}/text`, 10_000, 3, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ids: [jobId] }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data: JobDescriptionApiResponse = await response.json();
+        return data.find(item => item._id === jobId) || null;
+    } catch (error) {
+        console.error('Error fetching job description:', error);
+        throw error;
+    }
 };
 

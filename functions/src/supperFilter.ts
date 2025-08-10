@@ -2,8 +2,9 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-dupe-else-if */
 import {Request} from "express";
+import { jobCollectionLC } from "./util/mongo";
 
-export const supperFilter = async (req: Request, query: any, db:any) => {
+export const supperFilter = async (req: Request, query: any) => {
   (query as any)[0].$match["applyingInfo.closed"] = false;
 
 
@@ -29,6 +30,8 @@ export const supperFilter = async (req: Request, query: any, db:any) => {
 
   if (req.body.id) {
     (query as any)[0].$match["_id"] = {"$in": req.body.id.split(",")};
+  }if (req.body.ids) {
+    (query as any)[0].$match["_id"] = {"$in": req.body.ids};
   }
 
   if (req.body.lang) {
@@ -118,7 +121,7 @@ export const supperFilter = async (req: Request, query: any, db:any) => {
   }
 
   if (req.body.locationGranular && !(query as any)[0].$match["formattedLocation"]) {
-    const locations = await db.collection("local_code").find({codes: req.body.locationGranular}).toArray();
+    const locations = await jobCollectionLC.find({codes: req.body.locationGranular}).toArray();
     (query as any)[0].$match["formattedLocation"] = {"$in": locations.map((x: { _id: any; })=>x._id)};
   }
 

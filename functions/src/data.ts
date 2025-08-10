@@ -1,16 +1,13 @@
 /* eslint-disable import/no-anonymous-default-export */
-// pages/api/data.js
-
-import { Request, Response } from "express";
+import { Request, Response, Router } from "express";
 import { supperFilter } from "./supperFilter";
-import clientPromise, { jobCollection } from "./util/mongo";
+import { jobCollection } from "./util/mongo";
 
+const router = Router();
 
-export default async (req: Request, res: Response) => {
+// GET /data endpoint - returns paginated job data
+router.post("/", async (req: Request, res: Response) => {
   try {
-    const client = await clientPromise;
-    const db = client.db("linkedinjobs");
-
     const limit = parseInt(String(req.body.limit || "50"));
     const offset = parseInt(String(req.query.offset || "0"));
     const sort = /* req.query ||*/ { lastupdate: -1 };
@@ -164,7 +161,7 @@ export default async (req: Request, res: Response) => {
       },
     ];
 
-    await supperFilter(req, query, db);
+    await supperFilter(req, query);
 
 
     const data = await jobCollection
@@ -177,4 +174,35 @@ export default async (req: Request, res: Response) => {
     console.error(e);
     res.status(500).json({ message: "Internal Server Error" });
   }
-};
+});
+
+// POST /count endpoint - returns count of jobs matching filter criteria
+router.post("/count", async (req: Request, res: Response) => {
+  try {
+
+    const query = [
+      {
+        "$match": {
+        },
+      },
+      {
+        "$count": "total"
+      }
+    ];
+
+    await supperFilter(req, query);
+
+    const result = await jobCollection
+      .aggregate(query)
+      .toArray();
+
+    const count = result.length > 0 ? result[0].total : 0;
+
+    res.status(200).json({ count });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+export default router;

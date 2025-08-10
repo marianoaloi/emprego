@@ -11,8 +11,7 @@ import {
   Lock as LockIcon
 } from '@mui/icons-material';
 import { JobPosting } from '@/types/job.types';
-import { useAppDispatch } from '@/lib/hooks';
-import { appliedbyme, closeJob, ignoreJob, waitJob } from '@/lib/features/data/dataTruck';
+import JobDescription from './JobDescription';
 import {
   StyledDialog,
   StyledDialogTitle,
@@ -46,19 +45,8 @@ export default function JobDetailModal({ job, open, onClose,
   handleWaitAction,
   handleAcceptAction,
   handleLockAction }: JobDetailModalProps) {
-  const dispatch = useAppDispatch();
 
   if (!job) return null;
-
-  // Format dates for display
-  const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return 'N/A';
-    try {
-      return new Date(dateString).toLocaleString();
-    } catch {
-      return 'Invalid date';
-    }
-  };
 
   // Get status chips
   const getStatusChips = () => {
@@ -81,7 +69,7 @@ export default function JobDetailModal({ job, open, onClose,
   return (
     <StyledDialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <StyledDialogTitle>
-        <Typography variant="h6">{job.title} | {job.workplaceTypes} | {job.country} | {job.formattedEmploymentStatus}</Typography>
+        <Typography variant="h6">{job.title} | {job.workplaceTypes} | {job.country} | {job.formattedEmploymentStatus} | {`AP:${job.applies}`}</Typography>
         <CloseButton onClick={onClose}>
           <CloseIcon />
         </CloseButton>
@@ -105,14 +93,10 @@ export default function JobDetailModal({ job, open, onClose,
           </ContentSection>
         )}
 
-        {job.description && (
-          <ContentSection>
-            <SectionTitle>Original Description</SectionTitle>
-            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-              {job.description}
-            </Typography>
-          </ContentSection>
-        )}
+        <ContentSection>
+          <SectionTitle>Job Description</SectionTitle>
+          <JobDescription jobId={job._id} />
+        </ContentSection>
 
         <ContentSection>
           <SectionTitle>Job Details</SectionTitle>

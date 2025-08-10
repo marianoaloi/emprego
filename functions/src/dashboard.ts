@@ -1,6 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
 // pages/api/data.js
-import clientPromise, { jobCollection } from "./util/mongo";
+import { jobCollection } from "./util/mongo";
 import {Request, Response} from "express";
 import {supperFilter} from "./supperFilter";
 
@@ -318,8 +318,6 @@ const base = async (req: Request, res: Response) => {
 
 export default async (req: Request, res: Response) => {
   try {
-    const client = await clientPromise;
-    const db = client.db("linkedinjobs");
 
 
     const query = req.url?.includes("salary") ?
@@ -330,7 +328,7 @@ export default async (req: Request, res: Response) => {
           await countryLocal(req, res) : await base(req, res);
 
 
-    await supperFilter(req, query, db);
+    await supperFilter(req, query);
 
     let data = await jobCollection
       .aggregate(

@@ -19,4 +19,6 @@ const client = new MongoClient(config.mongodb.url, {
 const clientPromise = client.connect();
 export default clientPromise;
 export const jobCollection = client.db(config.mongodb.database).collection(config.mongodb.collection);
+export const jobCollectionLC = client.db(config.mongodb.database).collection('local_code');
+
 // export const

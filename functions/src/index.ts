@@ -23,7 +23,7 @@ import express, { Request, Response } from "express";
 import appliedByMe from "./appliedByMe";
 import close from "./close";
 import dashboard from "./dashboard";
-import data from "./data";
+import dataRouter from "./data";
 import ignore from "./ignore";
 import llm from "./llm";
 import skill from "./skill";
@@ -91,9 +91,7 @@ app.get("/wait", (req: Request, res: Response) => {
 app.post("/dashboard", (req: Request, res: Response) => {
   dashboard(req, res);
 });
-app.post("/data", (req: Request, res: Response) => {
-  data(req, res);
-});
+app.use("/data", dataRouter);
 app.get("/llm", (req: Request, res: Response) => {
   llm(req, res);
 });
