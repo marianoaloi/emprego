@@ -2,9 +2,10 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-dupe-else-if */
 import {Request} from "express";
-import { jobCollectionLC } from "./util/mongo";
+import { Db } from "mongodb";
+import { config } from "./util/env";
 
-export const supperFilter = async (req: Request, query: any) => {
+export const supperFilter = async (req: Request, query: any,db: Db) => {
   (query as any)[0].$match["applyingInfo.closed"] = false;
 
 
@@ -121,7 +122,7 @@ export const supperFilter = async (req: Request, query: any) => {
   }
 
   if (req.body.locationGranular && !(query as any)[0].$match["formattedLocation"]) {
-    const locations = await jobCollectionLC.find({codes: req.body.locationGranular}).toArray();
+    const locations = await db.collection(config.mongodb.collection).find({codes: req.body.locationGranular}).toArray();
     (query as any)[0].$match["formattedLocation"] = {"$in": locations.map((x: { _id: any; })=>x._id)};
   }
 

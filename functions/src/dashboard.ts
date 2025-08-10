@@ -1,8 +1,15 @@
 /* eslint-disable import/no-anonymous-default-export */
-// pages/api/data.js
-import { jobCollection } from "./util/mongo";
-import {Request, Response} from "express";
-import {supperFilter} from "./supperFilter";
+
+import { Request, Response, Router } from "express";
+import { supperFilter } from "./supperFilter";
+import { Db } from "mongodb";
+import { config } from "./util/env";
+import { logger } from "firebase-functions";
+
+
+export default (db: Db) => {
+
+const router = Router();
 
 
 const salary = async (req: Request, res: Response) => {
@@ -316,40 +323,67 @@ const base = async (req: Request, res: Response) => {
   return query;
 };
 
-export default async (req: Request, res: Response) => {
+// POST /dashboard/salary
+router.post("/salary", async (req: Request, res: Response) => {
   try {
+    const query = await salary(req, res);
+    await supperFilter(req, query,db);
+    const data = await db.collection(config.mongodb.collection).aggregate(query).toArray();
+    res.status(200).json(data);
+  } catch (e) {
+    logger.error(e);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
+// POST /dashboard/countries
+router.post("/countries", async (req: Request, res: Response) => {
+  try {
+    const query = await countries(req, res);
+    await supperFilter(req, query,db);
+    const data = await db.collection(config.mongodb.collection).aggregate(query).toArray();
+    res.status(200).json(data);
+  } catch (e) {
+    logger.error(e);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
-    const query = req.url?.includes("salary") ?
-      await salary(req, res) :
-      req.url?.includes("countries") ?
-        await countries(req, res) :
-        req.url?.includes("countryLocal") ?
-          await countryLocal(req, res) : await base(req, res);
+// POST /dashboard/countryLocal
+router.post("/countryLocal", async (req: Request, res: Response) => {
+  try {
+    const query = await countryLocal(req, res);
+    await supperFilter(req, query,db);
+    const data = await db.collection(config.mongodb.collection).aggregate(query).toArray();
+    res.status(200).json(data);
+  } catch (e) {
+    logger.error(e);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
-
-    await supperFilter(req, query);
-
-    let data = await jobCollection
-      .aggregate(
-        query
-      ).toArray();
-
-    if (!req.url?.includes("salary") &&
-      !req.url?.includes("countries") &&
-      !req.url?.includes("countryLocal")) {
-      data = data.map((item: any) => {
-        return {
-          lang: item._id.lang,
-          country: item._id.country.replace("urn:li:fs_country:", ""),
-          count: item.count,
-        };
-      });
-    }
+// POST /dashboard/ - base dashboard
+router.post("/", async (req: Request, res: Response) => {
+  try {
+    const query = await base(req, res);
+    await supperFilter(req, query,db);
+    let data = await db.collection(config.mongodb.collection).aggregate(query).toArray();
+    
+    data = data.map((item: any) => {
+      return {
+        lang: item._id.lang,
+        country: item._id.country.replace("urn:li:fs_country:", ""),
+        count: item.count,
+      };
+    });
 
     res.status(200).json(data);
   } catch (e) {
-    console.error(e);
-    res.status(500).json({message: "Internal Server Error"});
+    logger.error(e);
+    res.status(500).json({ message: "Internal Server Error" });
   }
+});
+
+return router;
 };
+

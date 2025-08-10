@@ -1,8 +1,13 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { Request, Response, Router } from "express";
 import { supperFilter } from "./supperFilter";
-import { jobCollection } from "./util/mongo";
+import { Db } from "mongodb";
+import { config } from "./util/env";
+import { logger } from "firebase-functions";
 
+
+export default (db: Db) => {
+  
 const router = Router();
 
 // GET /data endpoint - returns paginated job data
@@ -161,17 +166,17 @@ router.post("/", async (req: Request, res: Response) => {
       },
     ];
 
-    await supperFilter(req, query);
+    await supperFilter(req, query,db);
 
 
-    const data = await jobCollection
+    const data = await db.collection(config.mongodb.collection)
       .aggregate(
         query
       ).toArray();
 
     res.status(200).json(data);
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -190,9 +195,9 @@ router.post("/count", async (req: Request, res: Response) => {
       }
     ];
 
-    await supperFilter(req, query);
+    await supperFilter(req, query,db);
 
-    const result = await jobCollection
+    const result = await db.collection(config.mongodb.collection)
       .aggregate(query)
       .toArray();
 
@@ -200,9 +205,10 @@ router.post("/count", async (req: Request, res: Response) => {
 
     res.status(200).json({ count });
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
-export default router;
+return router;
+};

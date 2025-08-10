@@ -1,24 +1,33 @@
 /* eslint-disable import/no-anonymous-default-export */
-// pages/api/llm.js
-import {Request, Response} from "express";
-import { jobCollection } from "./util/mongo";
+import { Request, Response, Router } from "express";
+import { Db } from "mongodb";
+import { config } from "./util/env";
+import { logger } from "firebase-functions";
 
-export default async (req: Request, res: Response) => {
+
+export default (db: Db) => {
+
+const router = Router();
+
+// GET /llm/
+router.get("/", async (req: Request, res: Response) => {
   try {
-
     const query = [
       {
-        "$match": {llm: ""},
+        "$match": { llm: "" },
       },
     ];
-    const data = await jobCollection
-      .aggregate(
-        query
-      ).toArray();
+    const data = await db.collection(config.mongodb.collection)
+      .aggregate(query)
+      .toArray();
 
     res.status(200).json(data);
   } catch (e) {
-    console.error(e);
-    res.status(500).json({message: "Internal Server Error"});
+    logger.error(e);
+    res.status(500).json({ message: "Internal Server Error" });
   }
+});
+
+return router;
 };
+

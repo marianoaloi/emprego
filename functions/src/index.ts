@@ -8,7 +8,6 @@
  */
 
 
-import { onRequest } from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 
 import cors from "cors";
@@ -21,11 +20,11 @@ import cors from "cors";
 // });
 import express, { Request, Response } from "express";
 import actionsRouter from "./actions";
-import dashboard from "./dashboard";
+import dashboardRouter from "./dashboard";
 import dataRouter from "./data";
-import llm from "./llm";
-import skill from "./skill";
-import text from "./text";
+import llmRouter from "./llm";
+import skillRouter from "./skill";
+import textRouter from "./text";
 import { config } from "./util/env";
 const app = express();
 
@@ -45,14 +44,14 @@ const corsOptions = {
       return callback(null, true);
     } else {
       if (origin.includes("localhost")
-        || 
+        ||
         origin.includes("127.0.0.1")
-        || 
+        ||
         origin.match(/emprego.+web.app/)) {
         allowedOrigins.push(origin);
         return callback(null, true);
 
-      } else { 
+      } else {
         return callback(new Error("Not allowed by CORS"));
       }
     }
@@ -66,33 +65,59 @@ app.use(cors(corsOptions));
 // Parse JSON request bodies
 app.use(express.json());
 
-app.get("/", (req: Request, res: Response) => {
-  logger.info("Hello logs!", { structuredData: true });
-  res.send("Hello World!");
-});
+
+async function connectToMongoDB() {
+  try {
+
+    const client = await clientPromise
+    logger.log("Connected to MongoDB successfully");
+
+    // Test the connection
+    const db = client.db(config.mongodb.database);
+    await db.admin().ping();
+    logger.log("Database ping successful");
 
 
-app.use("/actions", actionsRouter);
-app.post("/dashboard", (req: Request, res: Response) => {
-  dashboard(req, res);
-});
-app.use("/data", dataRouter);
-app.get("/llm", (req: Request, res: Response) => {
-  llm(req, res);
-});
-app.post("/skill", (req: Request, res: Response) => {
-  skill(req, res);
-});
-app.post("/text", (req: Request, res: Response) => {
-  text(req, res);
-});
+    app.get("/", (req: Request, res: Response) => {
+      logger.info("Hello logs!", { structuredData: true });
+      res.send("Hello World!");
+    });
 
 
-exports.api = onRequest(app);
+    app.use("/actions", actionsRouter(db));
+    app.use("/dashboard", dashboardRouter(db));
+    app.use("/data", dataRouter(db));
+    app.use("/llm", llmRouter(db));
+    app.use("/skill", skillRouter(db));
+    app.use("/text", textRouter(db));
+  } catch (error) {
+    logger.error("Failed to connect to MongoDB:", error);
+    process.exit(1);;
+  }
+}
 
+
+
+
+
+import { onRequest } from "firebase-functions/v2/https";
+import clientPromise from "./util/mongo";
 const PORT = config.server.port;
+async function startServer() {
+  await connectToMongoDB();
 
-app.listen(PORT, () => {
-  logger.log(`Server is running on port ${PORT}`);
 
-});
+  app.listen(PORT, () => {
+    logger.log(`Server is running on port ${PORT}`);
+
+  });
+}
+try {
+
+  exports.api = onRequest(app);
+} catch (error) {
+  logger.error("General error in server", error)
+}
+
+
+startServer().catch(logger.error);
