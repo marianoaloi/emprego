@@ -3,13 +3,18 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDiOCOedJshAfP66_K4ur0N2t2EaAV6FEY",
-  authDomain: "emprego-4bb54.firebaseapp.com",
-  projectId: "emprego-4bb54",
-  storageBucket: "emprego-4bb54.firebasestorage.app",
-  messagingSenderId: "518380182210",
-  appId: "1:518380182210:web:4581ee3368ea90aef5f95b"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "emprego-4bb54.firebaseapp.com",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "emprego-4bb54",
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "emprego-4bb54.firebasestorage.app",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "518380182210",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:518380182210:web:4581ee3368ea90aef5f95b"
 };
+
+// Validate required environment variables
+if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+  throw new Error('NEXT_PUBLIC_FIREBASE_API_KEY is required but not set in environment variables');
+}
 
 // Initialize Firebase
 const appFirebase = !getApps().length ? initializeApp(firebaseConfig) : getApp();

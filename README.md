@@ -2,6 +2,30 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Environment Setup
+
+Before running the development server, you need to set up your environment variables:
+
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. Update `.env.local` with your Firebase configuration:
+   ```bash
+   # Required: Firebase API Key
+   NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key_here
+   
+   # Optional: Other Firebase config (defaults provided)
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+   # ... other optional variables
+   ```
+
+   **Note**: The `NEXT_PUBLIC_FIREBASE_API_KEY` is required for Firebase authentication to work.
+
+### Development Server
+
 First, run the development server:
 
 ```bash
