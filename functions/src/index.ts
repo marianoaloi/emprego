@@ -47,12 +47,12 @@ const corsOptions = {
         ||
         origin.includes("127.0.0.1")
         ||
-        origin.match(/emprego.+web.app/)) {
+        origin.match(/https:\/\/emprego.+/)) {
         allowedOrigins.push(origin);
         return callback(null, true);
 
       } else {
-        return callback(new Error("Not allowed by CORS"));
+        return callback(new Error("Not allowed by CORS "+origin));
       }
     }
   },

@@ -4,7 +4,7 @@ import { JobPosting } from '@/types/job.types';
 import { JobDescriptionResponse, JobDescriptionApiResponse } from '@/types/job-description.types';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://us-central1-affitiudine.cloudfunctions.net/api' 
+  ? 'https://us-central1-emprego-4bb54.cloudfunctions.net/api' 
   : 'http://localhost:5000';
 
 console.log('Environment:', process.env.NODE_ENV);
@@ -133,5 +133,24 @@ export const fetchJobDescription = async (jobId: string): Promise<JobDescription
         console.error('Error fetching job description:', error);
         throw error;
     }
+};
+
+export const DataCountRequest = async (filter?: JobSearchFilter): Promise<number> => {
+    const finalFilter = { ...DEFAULT_JOB_FILTER, ...filter };
+    
+    const response = await fetchRetry(`${API_BASE_URL}/data/count`, 10_000, 3, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(finalFilter),
+    });
+    
+    if (!response.ok) {
+        throw new Error(`Failed to fetch data count: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    return data.count || 0;
 };
 

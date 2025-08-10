@@ -31,15 +31,13 @@ const getUnicodeSubstring = (text: string, start: number, end: number): string =
   return codePointsToString(substring);
 };
 
-// Function to convert byte positions to Unicode code point positions
-const convertBytePositionToCodePoint = (text: string, bytePosition: number): number => {
+// Function to calculate the difference in UTF-16 code units for a text segment
+const getCodeUnitDifference = (text: string, length: number): number => {
   const codePoints = stringToCodePoints(text);
   let currentBytePosition = 0;
   
-  for (let i = 0; i < codePoints.length; i++) {
+  for (let i = 0; i < Math.min(codePoints.length, length); i++) {
     const codePoint = codePoints[i];
-    
-
     
     // Calculate UTF-16 code units for this code point
     if (codePoint <= 0xFFFF) {
@@ -87,7 +85,7 @@ const formatTextWithAttributes = (text: string, attributes: Record<string, TextA
       
       // Convert byte positions to Unicode code point positions
       const startCodePoint =  attr.start + diffEmoji;
-      diffEmoji += convertBytePositionToCodePoint(text.substring(startCodePoint,startCodePoint + attr.length),  attr.length) - attr.length;
+      diffEmoji += getCodeUnitDifference(text.substring(startCodePoint,startCodePoint + attr.length),  attr.length) - attr.length;
       const endCodePoint = startCodePoint + attr.length;
       const segmentText = getUnicodeSubstring(text, startCodePoint, endCodePoint);
 

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { fetchData, appliedbyme, closeJob, ignoreJob, waitJob } from './dataTruck';
+import { fetchData, fetchDataCount, appliedbyme, closeJob, ignoreJob, waitJob } from './dataTruck';
 import { JobPosting } from '@/types/job.types';
 import { JobActionResponse } from './dataService';
 
@@ -15,6 +15,9 @@ interface DataState {
   error: string | null;
   actionLoading: boolean;
   actionError: string | null;
+  totalCount: number;
+  countLoading: boolean;
+  countError: string | null;
 }
 
 const initialState: DataState = {
@@ -24,6 +27,9 @@ const initialState: DataState = {
   error: null,
   actionLoading: false,
   actionError: null,
+  totalCount: 0,
+  countLoading: false,
+  countError: null,
 };
 
 // Helper function to update job posting in state
@@ -141,6 +147,19 @@ const dataSlice = createSlice({
       .addCase(waitJob.rejected, (state, action) => {
         state.actionLoading = false;
         state.actionError = action.error.message || 'Failed to mark job as wait';
+      })
+      // Fetch Data Count actions
+      .addCase(fetchDataCount.pending, (state) => {
+        state.countLoading = true;
+        state.countError = null;
+      })
+      .addCase(fetchDataCount.fulfilled, (state, action: PayloadAction<number>) => {
+        state.countLoading = false;
+        state.totalCount = action.payload;
+      })
+      .addCase(fetchDataCount.rejected, (state, action) => {
+        state.countLoading = false;
+        state.countError = action.error.message || 'Failed to fetch data count';
       });
   },
 });

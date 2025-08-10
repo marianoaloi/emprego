@@ -11,7 +11,7 @@ import {
   Lock as LockIcon
 } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { fetchData, appliedbyme, closeJob, ignoreJob, waitJob } from '@/lib/features/data/dataTruck';
+import { fetchData, fetchDataCount, appliedbyme, closeJob, ignoreJob, waitJob } from '@/lib/features/data/dataTruck';
 import {
   LoadingContainer,
   Spinner,
@@ -34,7 +34,7 @@ import JobDetailModal from './JobDetailModal';
 
 export default function DataTable() {
   const dispatch = useAppDispatch();
-  const { items, jobPostings, loading, error } = useAppSelector((state) => state.data);
+  const { items, jobPostings, loading, error, totalCount, countLoading } = useAppSelector((state) => state.data);
   const { filters } = useAppSelector((state) => state.filter);
 
   // Modal state
@@ -43,6 +43,7 @@ export default function DataTable() {
 
   useEffect(() => {
     dispatch(fetchData(filters));
+    dispatch(fetchDataCount(filters));
   }, [dispatch, filters]);
 
   if (loading) {
@@ -243,6 +244,11 @@ export default function DataTable() {
           </JobsGridContainer>
           <FooterInfo>
             Displaying {dataToDisplay.length} job posting{dataToDisplay.length !== 1 ? 's' : ''}
+            {countLoading ? (
+              <span> | Loading total count...</span>
+            ) : (
+              <span> | Total available: {totalCount.toLocaleString()}</span>
+            )}
           </FooterInfo>
         </>
       ) : (
