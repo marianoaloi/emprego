@@ -1,9 +1,7 @@
 import * as admin from "firebase-admin";
 import { Request, Response } from "express";
-import { config } from "./env";
+import { logger } from "firebase-functions";
 
-// Admin email constant from environment variable
-export const ADMIN_EMAIL = config.auth.adminEmail;
 
 // Initialize Firebase Admin SDK.
 // The SDK is initialized automatically when deployed to Firebase Functions.
@@ -15,7 +13,7 @@ if (admin.apps.length === 0) {
 // Middleware to verify Firebase ID Token
 const authenticate = async (req: Request, res: Response) => {
   if (!req.headers.authorization || !req.headers.authorization.startsWith("Bearer ")) {
-    console.error("No Firebase ID token was passed as a Bearer token in the Authorization header.",
+    logger.error("No Firebase ID token was passed as a Bearer token in the Authorization header.",
         "Make sure you authorize your request by providing the following HTTP header:",
         "    Authorization: Bearer <Firebase ID Token>");
     res.status(403).send("Unauthorized");
@@ -30,7 +28,7 @@ const authenticate = async (req: Request, res: Response) => {
     // next();
     return decodedIdToken;
   } catch (error) {
-    console.error("Error while verifying Firebase ID token:", error);
+    logger.error("Error while verifying Firebase ID token:", error);
     res.status(403).send("Unauthorized");
   }
   return;

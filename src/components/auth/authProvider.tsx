@@ -42,7 +42,6 @@ export default function AuthProvider() {
                     expiresIn: 3600 // 1 hour expiration
                 }));
             }
-            console.log("Signed in user:", user);
             return user;
         } catch (error: any) {
             // Handle Errors here.

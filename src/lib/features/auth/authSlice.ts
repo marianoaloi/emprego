@@ -14,7 +14,7 @@ export interface AuthState {
   isAuthenticated: boolean;
 }
 
-const COOKIE_KEY = "affito_token"
+const COOKIE_KEY = "employee_token"
 
 function getInitialTokenByCookie(): AuthState  {
   const cookie = Cookies.get(COOKIE_KEY);

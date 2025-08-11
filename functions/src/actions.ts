@@ -3,7 +3,7 @@ import { Request, Response, Router } from "express";
 import { Db } from "mongodb";
 import { config } from "./util/env";
 import { logger } from "firebase-functions";
-import authenticate, { ADMIN_EMAIL } from "./util/firebaseAuth";
+import authenticate from "./util/firebaseAuth";
 
 
 export default (db: Db) => {
@@ -23,7 +23,7 @@ export default (db: Db) => {
         undoObject["$set"] = {}
       }
       undoObject["$set"].user = user.email ;
-      if (user.email !== ADMIN_EMAIL) {
+      if (user.email !== config.auth.adminEmail) {
         throw new Error("Only the admin can change the status.");
       }
       res.status(200).json(await db.collection(config.mongodb.collection).updateOne({ "_id": req.query.id } as any, undoObject));
@@ -49,7 +49,7 @@ export default (db: Db) => {
       undoObject["$set"].user = user.email ;
 
 
-      if (user.email !== ADMIN_EMAIL) {
+      if (user.email !== config.auth.adminEmail) {
         throw new Error("Only the admin can change the status.");
       }
       res.status(200).json(await db.collection(config.mongodb.collection).updateOne({ "_id": req.query.id } as any, undoObject));
@@ -74,7 +74,7 @@ export default (db: Db) => {
       }
       undoObject["$set"].user = user.email ;
 
-      if (user.email !== ADMIN_EMAIL) {
+      if (user.email !== config.auth.adminEmail) {
         throw new Error("Only the admin can change the status.");
       }
       res.status(200).json(await db.collection(config.mongodb.collection).updateOne({ "_id": req.query.id } as any, undoObject));
@@ -100,7 +100,7 @@ export default (db: Db) => {
         undoObject["$set"] = {}
       }
       undoObject["$set"].user = user.email ;
-      if (user.email !== ADMIN_EMAIL) {
+      if (user.email !== config.auth.adminEmail) {
         throw new Error("Only the admin can change the status.");
       }
       res.status(200).json(await db.collection(config.mongodb.collection).updateOne({ "_id": req.query.id } as any, undoObject));
