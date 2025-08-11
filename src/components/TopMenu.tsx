@@ -11,6 +11,7 @@ import {
   ButtonContainer,
   FilterButton
 } from './TopMenu.styled';
+import AuthProvider from './auth/authProvider';
 
 export default function TopMenu() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,6 +29,7 @@ export default function TopMenu() {
                 Search Filters
               </FilterButton>
             </ButtonContainer>
+            <AuthProvider/>
           </NavContent>
         </NavContainer>
       </Nav>

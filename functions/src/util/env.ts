@@ -18,5 +18,8 @@ export const config = {
   server: {
     port: process.env.PORT || 5000,
     nodeEnv: process.env.NODE_ENV || "development"
+  },
+  auth: {
+    adminEmail: process.env.ADMIN_EMAIL || "mbr"
   }
 };
