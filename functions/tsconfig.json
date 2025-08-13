@@ -8,7 +8,10 @@
     "outDir": "lib",
     "sourceMap": true,
     "strict": true,
+    "allowJs": true,
+    "skipLibCheck": true,
     "target": "es2017"
+
   },
   "compileOnSave": true,
   "include": [
