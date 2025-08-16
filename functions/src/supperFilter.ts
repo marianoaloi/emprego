@@ -36,7 +36,7 @@ export const supperFilter = async (req: Request, query: any,db: Db) => {
   }
 
   if (req.body.lang) {
-    (query as any)[0].$match["description.lang.lang"] = req.body.lang;
+    (query as any)[0].$match["description.lang"] = req.body.lang;
   }
 
 
