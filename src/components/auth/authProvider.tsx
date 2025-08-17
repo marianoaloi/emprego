@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
 import { ThumbPhoto } from './authProvider.styled';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { authFirebase, GoogleAuthProvider, signInWithPopup, signOut } from "./firebaseConfig";
+import { authFirebase, googleProvider, signInWithPopup, signOut } from "./firebaseConfig";
 
 export default function AuthProvider() {
     const user = useAppSelector(getUser);
@@ -23,7 +23,7 @@ export default function AuthProvider() {
 
     const signInWithGoogle = async () => {
         try {
-            const provider = new GoogleAuthProvider();
+            const provider = googleProvider;
             provider.addScope('profile');
             provider.addScope('email');
             const userCred = await signInWithPopup(authFirebase, provider);
