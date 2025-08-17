@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Typography, Tooltip, IconButton, Box } from '@mui/material';
 import {
   Close as CloseIcon,
@@ -8,10 +8,12 @@ import {
   ThumbDown as ThumbDownIcon,
   HourglassEmpty as HourglassEmptyIcon,
   ThumbUp as ThumbUpIcon,
-  Lock as LockIcon
+  Lock as LockIcon,
+  ContentCopy as ContentCopyIcon
 } from '@mui/icons-material';
 import { JobPosting } from '@/types/job.types';
 import JobDescription from './JobDescription';
+import { useAppSelector } from '@/lib/hooks';
 import {
   StyledDialog,
   StyledDialogTitle,
@@ -46,7 +48,24 @@ export default function JobDetailModal({ job, open, onClose,
   handleAcceptAction,
   handleLockAction }: JobDetailModalProps) {
 
+  const [copySuccess, setCopySuccess] = useState(false);
+
+  // Get job description from Redux store
+  const jobDescription = useAppSelector(state => state.textJob.descriptions[job?._id || '']);
+
   if (!job) return null;
+
+  const handleCopyDescription = async () => {
+    try {
+      // Get the job description text from the Redux store or fallback to job.description
+      const textToCopy = jobDescription?.text || job.description || 'No description available';
+      await navigator.clipboard.writeText(textToCopy);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000); // Hide success message after 2 seconds
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
 
   // Get status chips
   const getStatusChips = () => {
@@ -219,7 +238,33 @@ export default function JobDetailModal({ job, open, onClose,
         {JobSallaryInPart}
 
         <ContentSection>
-          <SectionTitle>Job Description</SectionTitle>
+          <Box display="flex" alignItems="center" gap={1} mb={2}>
+            <SectionTitle style={{ margin: 0 }}>Job Description</SectionTitle>
+            <Tooltip title="Copy job description">
+              <IconButton 
+                onClick={handleCopyDescription}
+                size="small"
+                sx={{ 
+                  color: '#6b7280',
+                  '&:hover': { color: '#374151' }
+                }}
+              >
+                <ContentCopyIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            {copySuccess && (
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  color: '#10b981', 
+                  fontWeight: 500,
+                  ml: 1
+                }}
+              >
+                Copied!
+              </Typography>
+            )}
+          </Box>
           <JobDescription jobId={job._id} />
         </ContentSection>
 
