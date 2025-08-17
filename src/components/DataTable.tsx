@@ -31,7 +31,7 @@ import {
 } from './DataTable.styled';
 import { JobPosting } from '@/types/job.types';
 import JobDetailModal from './JobDetailModal';
-import { getToken } from '@/lib/features/auth/authSlice';
+import { useAuth } from './auth/AuthContext';
 
 export default function DataTable() {
   const dispatch = useAppDispatch();
@@ -39,7 +39,7 @@ export default function DataTable() {
   const { filters } = useAppSelector((state) => state.filter);
 
   
-  const token = useAppSelector(getToken);
+  const { getAuthToken } = useAuth();
 
   // Modal state
   const [selectedJob, setSelectedJob] = useState<JobPosting | null>(null);
@@ -100,28 +100,28 @@ export default function DataTable() {
 
   const handleRejectAction = (job: JobPosting) => {
     if (job._id) {
-      dispatch(ignoreJob({ jobId: job._id, undo: job.ignore ? true : false , token }));
+      getAuthToken().then(token => dispatch(ignoreJob({ jobId: job._id, undo: job.ignore ? true : false , token })))
       handleModalClose()
     }
   };
 
   const handleWaitAction = (job: JobPosting) => {
     if (job._id) {
-      dispatch(waitJob({ jobId: job._id, undo: job.wait ? true : false , token }));
+      getAuthToken().then(token => dispatch(waitJob({ jobId: job._id, undo: job.wait ? true : false , token })))
       handleModalClose()
     }
   };
 
   const handleAcceptAction = (job: JobPosting) => {
     if (job._id) {
-      dispatch(appliedbyme({ jobId: job._id, undo: job.appliedbyme ? true : false , token }));
+      getAuthToken().then(token => dispatch(appliedbyme({ jobId: job._id, undo: job.appliedbyme ? true : false , token })))
       handleModalClose()
     }
   };
 
   const handleLockAction = (job: JobPosting) => {
     if (job._id) {
-      dispatch(closeJob({ jobId: job._id, undo: job.closed ? true : false , token }));
+      getAuthToken().then(token => dispatch(closeJob({ jobId: job._id, undo: job.closed ? true : false , token })))
       handleModalClose()
     }
   };
