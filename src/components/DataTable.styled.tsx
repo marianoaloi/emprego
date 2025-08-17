@@ -108,7 +108,7 @@ export const ObjectPlaceholder = styled.span`
 `;
 
 export const FooterInfo = styled.div`
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 1.5rem;
   background-color: #f9fafb;
   font-size: 0.875rem;
   color: #4b5563;
@@ -117,9 +117,9 @@ export const FooterInfo = styled.div`
 // New Job Cards Layout Components
 export const JobsGridContainer = styled.div`
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1.5rem;
-    padding: 1rem 0;
+    // padding: 1rem 0;
     align-items: start;
     justify-items: start;
 `;

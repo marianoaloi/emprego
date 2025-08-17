@@ -6,10 +6,30 @@
     "configurations": [
         {
             "type": "node-terminal",
-            "name": "Run Script: dev (emprego)",
+            "name": "back (emprego)",
+            "request": "launch",
+            "command": "npm run dev",
+            "cwd": "${workspaceFolder}/functions",
+            "env": {
+                "ADMIN_EMAIL":"mariano@aloi.com.br"
+            }
+        },
+        {
+            "type": "node-terminal",
+            "name": "front (emprego)",
             "request": "launch",
             "command": "npm run dev",
             "cwd": "${workspaceFolder}"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Run Both (Front + Back)",
+            "configurations": [
+                "front (emprego)",
+                "back (emprego)"
+            ],
+            "stopAll": true
         }
     ]
 }

@@ -57,7 +57,7 @@ export interface JobActionResponse {
     matchedCount: number;
 }
 
-export const appliedbymeRequest = async (jobId: string, undo: boolean | undefined, token: string | undefined): Promise<JobActionResponse> => {
+export const appliedbymeRequest = async (jobId: string, undo: boolean | undefined, token: string | null): Promise<JobActionResponse> => {
     const params = new URLSearchParams({ id: jobId });
     if (undo) params.append('undo', 'true');
     const url = `${API_BASE_URL}/actions/appliedbyme?${params}`;
@@ -76,7 +76,7 @@ export const appliedbymeRequest = async (jobId: string, undo: boolean | undefine
     return response.json();
 };
 
-export const CloseRequest = async (jobId: string, undo: boolean | undefined, token: string | undefined): Promise<JobActionResponse> => {
+export const CloseRequest = async (jobId: string, undo: boolean | undefined, token: string | null): Promise<JobActionResponse> => {
     const params = new URLSearchParams({ id: jobId });
     if (undo) params.append('undo', 'true');
     const url = `${API_BASE_URL}/actions/close?${params}`;
@@ -95,7 +95,7 @@ export const CloseRequest = async (jobId: string, undo: boolean | undefined, tok
     return response.json();
 };
 
-export const IgnoreRequest = async (jobId: string, undo: boolean | undefined, token: string | undefined): Promise<JobActionResponse> => {
+export const IgnoreRequest = async (jobId: string, undo: boolean | undefined, token: string | null): Promise<JobActionResponse> => {
     const params = new URLSearchParams({ id: jobId });
     if (undo) params.append('undo', 'true');
     const url = `${API_BASE_URL}/actions/ignore?${params}`;
@@ -114,7 +114,7 @@ export const IgnoreRequest = async (jobId: string, undo: boolean | undefined, to
     return response.json();
 };
 
-export const WaitRequest = async (jobId: string, undo: boolean | undefined, token: string | undefined): Promise<JobActionResponse> => {
+export const WaitRequest = async (jobId: string, undo: boolean | undefined, token: string | null): Promise<JobActionResponse> => {
     const params = new URLSearchParams({ id: jobId });
     if (undo) params.append('undo', 'true');
     const url = `${API_BASE_URL}/actions/wait?${params}`;
