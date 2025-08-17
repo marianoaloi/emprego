@@ -243,9 +243,6 @@ export default function DataTable() {
     <div>
       {isJobData ? (
         <>
-          <JobsGridContainer>
-            {(dataToDisplay as JobPosting[]).map((job) => renderJobCard(job))}
-          </JobsGridContainer>
           <FooterInfo>
             Displaying {dataToDisplay.length} job posting{dataToDisplay.length !== 1 ? 's' : ''}
             {countLoading ? (
@@ -254,6 +251,9 @@ export default function DataTable() {
               <span> | Total available: {totalCount.toLocaleString()}</span>
             )}
           </FooterInfo>
+          <JobsGridContainer>
+            {(dataToDisplay as JobPosting[]).map((job) => renderJobCard(job))}
+          </JobsGridContainer>
         </>
       ) : (
         <NoDataContainer>

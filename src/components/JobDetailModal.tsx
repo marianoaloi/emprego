@@ -252,6 +252,7 @@ export default function JobDetailModal({ job, open, onClose,
                 <ContentCopyIcon fontSize="small" />
               </IconButton>
             </Tooltip>
+            {job._id}
             {copySuccess && (
               <Typography 
                 variant="caption" 
