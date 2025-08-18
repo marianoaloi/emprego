@@ -20,6 +20,13 @@
             "request": "launch",
             "command": "npm run dev",
             "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "name":"browser",
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}",
         }
     ],
     "compounds": [
@@ -27,7 +34,8 @@
             "name": "Run Both (Front + Back)",
             "configurations": [
                 "front (emprego)",
-                "back (emprego)"
+                "back (emprego)",
+                "browser"
             ],
             "stopAll": true
         }

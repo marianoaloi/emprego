@@ -1,0 +1,1 @@
+Run the command [npm run build] and fix the errors to build the solution.

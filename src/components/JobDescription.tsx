@@ -35,10 +35,10 @@ const getUnicodeSubstring = (text: string, start: number, end: number): string =
 const getCodeUnitDifference = (text: string, length: number): number => {
   const codePoints = stringToCodePoints(text);
   let currentBytePosition = 0;
-  
+
   for (let i = 0; i < Math.min(codePoints.length, length); i++) {
     const codePoint = codePoints[i];
-    
+
     // Calculate UTF-16 code units for this code point
     if (codePoint <= 0xFFFF) {
       currentBytePosition += 1; // Single UTF-16 code unit
@@ -46,46 +46,51 @@ const getCodeUnitDifference = (text: string, length: number): number => {
       currentBytePosition += 2; // Surrogate pair (2 UTF-16 code units)
     }
   }
-  
+
   return currentBytePosition;
 };
 
 // Function to apply formatting attributes to text
 const formatTextWithAttributes = (text: string, attributes: Record<string, TextAttribute>): React.ReactNode => {
   // Convert attributes object to array and sort by start position
-  const attributesList = Object.values(attributes).sort((a, b) => (a.start + a.length) - (b.start + b.length));
+  const attributesList = Object.values(attributes).sort((a, b) => (a.start + a.length) - (b.start + a.length));
 
-  // Create segments with their formatting
-  const segments: Array<{
+  interface LinkedinSegment {
     text: string;
     start: number;
     end: number;
     classes: string[];
     isListItem?: boolean;
     isLineBreak?: boolean;
+    unformated?: boolean;
     hyperlink?: string;
     listType?: 'ordered' | 'unordered';
-  }> = [];
+    children: LinkedinSegment[]
+  }
+  // Create segments with their formatting
+  let segments: Array<LinkedinSegment> = [];
 
   let diffEmoji = 0
   // Build segments from attributes
   attributesList.forEach(
-    (attr: TextAttribute, index: number, array: TextAttribute[]) => {
+    (attr: TextAttribute) => {
       if (attr.attributeKindUnion.list) {
         return;
       }
-      if (attr.attributeKindUnion.lineBreak
-        &&
-        index>0
-        &&
-        array[index - 1].attributeKindUnion.lineBreak
-      ) {
-        return;
-      }
-      
+      // if (attr.attributeKindUnion.lineBreak
+      //   &&
+      //   index > 0
+      //   &&
+      //   array[index - 1].attributeKindUnion.lineBreak
+      // ) {
+      //   return;
+      // }
+
+
+
       // Convert byte positions to Unicode code point positions
-      const startCodePoint =  attr.start + diffEmoji;
-      diffEmoji += getCodeUnitDifference(text.substring(startCodePoint,startCodePoint + attr.length),  attr.length) - attr.length;
+      const startCodePoint = attr.start + diffEmoji;
+      diffEmoji += getCodeUnitDifference(text.substring(startCodePoint, startCodePoint + attr.length), attr.length) - attr.length;
       const endCodePoint = startCodePoint + attr.length;
       const segmentText = getUnicodeSubstring(text, startCodePoint, endCodePoint);
 
@@ -94,6 +99,21 @@ const formatTextWithAttributes = (text: string, attributes: Record<string, TextA
       let isLineBreak = false;
       let listType: 'ordered' | 'unordered' | undefined;
       let hyperlink: string | undefined;
+
+
+      const previousEnd = segments[segments.length - 1]?.end || 0;
+      const unformattedText = getUnicodeSubstring(text, previousEnd, startCodePoint);
+      if (unformattedText) {
+        const unformated = true;
+        segments.push({
+          text: unformattedText,
+          start: previousEnd,
+          end: startCodePoint,
+          unformated,
+          classes: [],
+          children: []
+        });
+      }
 
       // Determine formatting classes
       if (attr.attributeKindUnion.bold) {
@@ -132,7 +152,8 @@ const formatTextWithAttributes = (text: string, attributes: Record<string, TextA
         isListItem,
         isLineBreak,
         listType,
-        hyperlink
+        hyperlink,
+        children: []
       });
     });
 
@@ -159,11 +180,25 @@ const formatTextWithAttributes = (text: string, attributes: Record<string, TextA
     }
   };
 
-  // Process segments into React elements
-  segments.forEach(segment => {
+  const childrens = (segmentsInter: LinkedinSegment[]): LinkedinSegment[] => {
+    let childrensAux: LinkedinSegment[] = [];
+    segmentsInter.forEach(fatherSeg => {
+      fatherSeg.children = segmentsInter.filter(seg => seg.start >= fatherSeg.start && seg.end <= fatherSeg.end && seg !== fatherSeg)
+      if(fatherSeg.children.length == 0) return;
+      childrens(fatherSeg.children)
+      childrensAux = childrensAux.concat(fatherSeg.children)
+    })
+    return segmentsInter.filter(seg => !childrensAux.includes(seg))
+  }
+
+  segments = childrens(segments)
+
+  const formatItem = (segment: LinkedinSegment) => {
     if (segment.isLineBreak) {
       flushList();
       processedElements.push(<br key={`br-${elementKey++}`} />);
+    } else if (segment.unformated) {
+      processedElements.push(segment.text);
     } else if (segment.isListItem) {
       // Determine list type from context or default to unordered
       const listType = segment.listType || 'unordered';
@@ -192,16 +227,13 @@ const formatTextWithAttributes = (text: string, attributes: Record<string, TextA
             {segment.text}
           </span>
         );
-      } else {
-        // Handle unformatted text using Unicode-safe substring
-        const previousEnd = segments[segments.indexOf(segment) - 1]?.end || 0;
-        const unformattedText = getUnicodeSubstring(text, previousEnd, segment.start);
-        if (unformattedText) {
-          processedElements.push(unformattedText);
-        }
-        processedElements.push(segment.text);
-      }
+      } 
     }
+  }
+
+  // Process segments into React elements
+  segments.forEach(segment => {
+    formatItem(segment)
   });
 
   // Flush any remaining list items
@@ -225,11 +257,11 @@ const formatTextWithAttributes = (text: string, attributes: Record<string, TextA
 
 export default function JobDescription({ jobId, className }: JobDescriptionProps) {
   const dispatch = useAppDispatch();
-  
+
   // Get description from Redux state
   const description = useAppSelector(state => state.textJob.descriptions[jobId]);
   const loadingState = useAppSelector(state => state.textJob.loadingStates[jobId]);
-  
+
   const loading = loadingState?.loading || false;
   const error = loadingState?.error || null;
 
