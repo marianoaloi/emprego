@@ -7,7 +7,17 @@ import {
   LoadingContainer,
   ErrorContainer,
   FormattedContent,
-  RetryButton
+  RetryButton,
+  JobDetailBold,
+  JobDetailHyperlink,
+  JobDetailItalic,
+  JobDetailLineBreak,
+  JobDetailListOrdered,
+  JobDetailListUnordered,
+  JobDetailParagraph,
+  JobDetailListItem,
+  JobDetailSuperscript,
+  JobDetailUnderline
 } from './JobDescription.styled';
 import {
   JobDescriptionProps,
@@ -53,40 +63,35 @@ const getCodeUnitDifference = (text: string, length: number): number => {
 // Function to apply formatting attributes to text
 const formatTextWithAttributes = (text: string, attributes: Record<string, TextAttribute>): React.ReactNode => {
   // Convert attributes object to array and sort by start position
-  const attributesList = Object.values(attributes).sort((a, b) => (a.start + a.length) - (b.start + a.length));
+  const attributesList = Object.values(attributes).sort((a, b) => a.start !== b.start ? (a.start) - (b.start)
+    : (b.length) - (a.length)
+  );
 
   interface LinkedinSegment {
-    text: string;
+    index: number;
+    text: React.ReactNode;
     start: number;
     end: number;
-    classes: string[];
-    isListItem?: boolean;
-    isLineBreak?: boolean;
+    attributeKindUnion?: TextAttribute['attributeKindUnion'];
     unformated?: boolean;
-    hyperlink?: string;
-    listType?: 'ordered' | 'unordered';
     children: LinkedinSegment[]
   }
   // Create segments with their formatting
   let segments: Array<LinkedinSegment> = [];
 
   let diffEmoji = 0
-  // Build segments from attributes
+  // Build segments from attributes 
   attributesList.forEach(
-    (attr: TextAttribute) => {
-      if (attr.attributeKindUnion.list) {
+    (attr: TextAttribute, index: number) => {
+
+      if (attr.attributeKindUnion.lineBreak
+        &&
+        index > 0
+        &&
+        attributesList[index - 1].attributeKindUnion.lineBreak
+      ) {
         return;
       }
-      // if (attr.attributeKindUnion.lineBreak
-      //   &&
-      //   index > 0
-      //   &&
-      //   array[index - 1].attributeKindUnion.lineBreak
-      // ) {
-      //   return;
-      // }
-
-
 
       // Convert byte positions to Unicode code point positions
       const startCodePoint = attr.start + diffEmoji;
@@ -94,97 +99,45 @@ const formatTextWithAttributes = (text: string, attributes: Record<string, TextA
       const endCodePoint = startCodePoint + attr.length;
       const segmentText = getUnicodeSubstring(text, startCodePoint, endCodePoint);
 
-      const classes: string[] = [];
-      let isListItem = false;
-      let isLineBreak = false;
-      let listType: 'ordered' | 'unordered' | undefined;
-      let hyperlink: string | undefined;
-
-
       const previousEnd = segments[segments.length - 1]?.end || 0;
       const unformattedText = getUnicodeSubstring(text, previousEnd, startCodePoint);
       if (unformattedText) {
         const unformated = true;
         segments.push({
+          index,
           text: unformattedText,
           start: previousEnd,
           end: startCodePoint,
           unformated,
-          classes: [],
           children: []
         });
       }
 
-      // Determine formatting classes
-      if (attr.attributeKindUnion.bold) {
-        classes.push('bold');
-      }
-      if (attr.attributeKindUnion.italic) {
-        classes.push('italic');
-      }
-      if (attr.attributeKindUnion.listItem) {
-        classes.push('list-item');
-        isListItem = true;
-      }
-      if (attr.attributeKindUnion.lineBreak) {
-        isLineBreak = true;
-        classes.push('line-break');
-      }
-      if (attr.attributeKindUnion.underline) {
-        classes.push('underline');
-      }
-      if (attr.attributeKindUnion.hyperlink) {
-        classes.push('hyperlink');
-        hyperlink = attr.attributeKindUnion.hyperlink.url
-      }
-      if (attr.attributeKindUnion.superscript) {
-        classes.push('superscript');
-      }
-      if (attr.attributeKindUnion.paragraph) {
-        classes.push('paragraph');
-      }
 
       segments.push({
+        index,
         text: segmentText,
         start: startCodePoint,
         end: endCodePoint,
-        classes,
-        isListItem,
-        isLineBreak,
-        listType,
-        hyperlink,
+        attributeKindUnion: attr.attributeKindUnion,
         children: []
       });
     });
 
   // Group list items and create proper list structure
   const processedElements: React.ReactNode[] = [];
-  let currentListItems: typeof segments = [];
-  let currentListType: 'ordered' | 'unordered' | null = null;
   let elementKey = 0;
-
-  const flushList = () => {
-    if (currentListItems.length > 0) {
-      const listClass = `list ${currentListType}`;
-      processedElements.push(
-        <div key={`list-${elementKey++}`} className={listClass}>
-          {currentListItems.map((item, index) => (
-            <div key={`item-${index}`} className="list-item">
-              {item.text}
-            </div>
-          ))}
-        </div>
-      );
-      currentListItems = [];
-      currentListType = null;
-    }
-  };
 
   const childrens = (segmentsInter: LinkedinSegment[]): LinkedinSegment[] => {
     let childrensAux: LinkedinSegment[] = [];
     segmentsInter.forEach(fatherSeg => {
-      fatherSeg.children = segmentsInter.filter(seg => seg.start >= fatherSeg.start && seg.end <= fatherSeg.end && seg !== fatherSeg)
-      if(fatherSeg.children.length == 0) return;
+      fatherSeg.children = segmentsInter.filter(seg =>
+        seg.start >= fatherSeg.start &&
+        seg.end <= fatherSeg.end &&
+        seg !== fatherSeg &&
+        !childrensAux.includes(fatherSeg)
+      )
+      if (fatherSeg.children.length == 0) return;
       childrens(fatherSeg.children)
       childrensAux = childrensAux.concat(fatherSeg.children)
     })
@@ -193,51 +146,94 @@ const formatTextWithAttributes = (text: string, attributes: Record<string, TextA
 
   segments = childrens(segments)
 
-  const formatItem = (segment: LinkedinSegment) => {
-    if (segment.isLineBreak) {
-      flushList();
-      processedElements.push(<br key={`br-${elementKey++}`} />);
-    } else if (segment.unformated) {
-      processedElements.push(segment.text);
-    } else if (segment.isListItem) {
-      // Determine list type from context or default to unordered
-      const listType = segment.listType || 'unordered';
-
-      if (currentListType !== listType) {
-        flushList();
-        currentListType = listType;
-      }
-      currentListItems.push(segment);
-    } else {
-      flushList();
-
-      if (segment.hyperlink) {
-        processedElements.push(
-          <a
-            key={`hyperlink-${elementKey++}`}
-            className='hyperlink'
-            href={segment.hyperlink}>
-            {segment.text}
-          </a>
-        )
-
-      } else if (segment.classes.length > 0) {
-        processedElements.push(
-          <span key={`span-${elementKey++}`} className={segment.classes.join(' ')}>
-            {segment.text}
-          </span>
-        );
-      } 
+  const formatItem = (segment: LinkedinSegment): React.ReactNode => {
+    if (segment.unformated) {
+      return (segment.text);
     }
+    const index = segment.index;
+    if (segment.attributeKindUnion?.bold) {
+      return <JobDetailBold key={index}>{segment.text}</JobDetailBold>
+    }
+    if (segment.attributeKindUnion?.hyperlink) {
+      return <JobDetailHyperlink key={index}>{segment.text}</JobDetailHyperlink>
+    }
+    if (segment.attributeKindUnion?.italic) {
+      return <JobDetailItalic key={index}>{segment.text}</JobDetailItalic>
+    }
+    if (segment.attributeKindUnion?.lineBreak) {
+      return <JobDetailLineBreak key={index} />
+    }
+    if (segment.attributeKindUnion?.list && segment.attributeKindUnion?.list.ordered) {
+      return <JobDetailListOrdered key={index}>{segment.text}</JobDetailListOrdered>
+    }
+    if (segment.attributeKindUnion?.list && !segment.attributeKindUnion?.list.ordered) {
+      return <JobDetailListUnordered key={index}>{segment.text}</JobDetailListUnordered>
+    }
+    if (segment.attributeKindUnion?.listItem) {
+      return <JobDetailListItem key={index}>{segment.text}</JobDetailListItem>
+    }
+    if (segment.attributeKindUnion?.paragraph) {
+      return <JobDetailParagraph key={index}>{segment.text}</JobDetailParagraph>
+    }
+    if (segment.attributeKindUnion?.superscript) {
+      return <JobDetailSuperscript key={index}>{segment.text}</JobDetailSuperscript>
+    }
+    if (segment.attributeKindUnion?.underline) {
+      return <JobDetailUnderline key={index}>{segment.text}</JobDetailUnderline>
+    }
+    return segment.text;
   }
+
+  const textInArrayNode = (textStr: string, childText: string, content: React.ReactNode): React.ReactNode[] => {
+    return [textStr.substring(0, textStr.indexOf(childText)), content, textStr.substring(textStr.indexOf(childText) + childText.length)];
+  }
+
+  const embededTagContent = (text: React.ReactNode, childText: React.ReactNode, content: React.ReactNode): React.ReactNode => {
+    if (typeof text === 'string' && typeof childText === 'string') {
+      const textStr = text as string;
+      const chieldStr = childText as string;
+      return textInArrayNode(textStr, chieldStr, content)
+    }
+    if (Array.isArray(text) && typeof childText === 'string') {
+      const textArr = text as React.ReactNode[];
+      const result: React.ReactNode[] = [];
+
+      textArr.forEach(item => {
+        if (typeof item === 'string') {
+          const itemStr = item as string;
+          textInArrayNode(itemStr, childText, content).forEach(item => {
+            result.push(item)
+          })
+        } else {
+          result.push(item)
+        }
+
+      })
+
+      return result;
+    }
+    return text;
+  }
+
+  const segChield = (segment: LinkedinSegment) => {
+
+    segment.children.forEach(child => {
+      if (segment.children.length > 0)
+        segChield(child)
+      segment.text = embededTagContent(segment.text, child.text, formatItem(child))
+
+
+    })
+  }
+
 
   // Process segments into React elements
   segments.forEach(segment => {
-    formatItem(segment)
+    if (segment.children.length > 0)
+      segChield(segment)
+    processedElements.push(formatItem(segment))
   });
 
-  // Flush any remaining list items
-  flushList();
 
   // Handle any remaining unformatted text at the end
   const lastSegment = segments[segments.length - 1];
