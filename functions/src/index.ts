@@ -102,6 +102,7 @@ async function connectToMongoDB() {
 
 import { onRequest } from "firebase-functions/v2/https";
 import clientPromise from "./util/mongo";
+import { generateCv } from "./cv/cvCreator";
 const PORT = config.server.port;
 async function startServer() {
   await connectToMongoDB();
@@ -121,3 +122,4 @@ try {
 
 
 startServer().catch(logger.error);
+exports.generateCv = generateCv

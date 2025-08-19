@@ -45,6 +45,27 @@ export const ErrorContainer = styled.div`
   text-align: center;
 `;
 
+export const JobDetailBold = styled.b`
+`
+export const JobDetailHyperlink = styled.a`
+`
+export const JobDetailItalic = styled.i`
+`
+export const JobDetailLineBreak = styled.br`
+`
+export const JobDetailListUnordered = styled.ul`
+`
+export const JobDetailListOrdered = styled.ol`
+`
+export const JobDetailListItem = styled.li`
+`
+export const JobDetailParagraph = styled.p`
+`
+export const JobDetailSuperscript = styled.pre`
+`
+export const JobDetailUnderline = styled.u`
+`
+
 export const FormattedContent = styled.div`
   line-height: 1.6;
   color: #374151;
@@ -108,10 +129,7 @@ export const FormattedContent = styled.div`
     height: 0.5rem;
   }
   
-  /* Paragraph styling */
-  p {
-    margin: 0.75rem 0;
-  }
+
   
   /* Heading-like bold text at start of lines */
   .bold:first-child {

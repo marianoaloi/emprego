@@ -6,7 +6,7 @@ import { useAuth } from "./AuthContext";
 
 export default function AuthProvider() {
 
-    const { user, loading: authLoading, signInWithGoogle, logout, getAuthToken } = useAuth();
+    const { user, loading: authLoading, signInWithGoogle, logout } = useAuth();
 
     if (authLoading) {
         return null;
