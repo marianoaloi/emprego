@@ -8,7 +8,7 @@
             "type": "node-terminal",
             "name": "back (emprego)",
             "request": "launch",
-            "command": "npm run dev",
+            "command": "npm run serve",
             "cwd": "${workspaceFolder}/functions",
             "env": {
                 "ADMIN_EMAIL":"mariano@aloi.com.br"

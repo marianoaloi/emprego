@@ -5,7 +5,7 @@ import { JobDescriptionResponse, JobDescriptionApiResponse } from '@/types/job-d
 
 const API_BASE_URL = process.env.NODE_ENV === 'production'
     ? 'https://us-central1-emprego-4bb54.cloudfunctions.net/api'
-    : 'http://localhost:5000';
+    : 'http://localhost:5001/emprego-4bb54/us-central1/api';
 
 console.log('Environment:', process.env.NODE_ENV);
 

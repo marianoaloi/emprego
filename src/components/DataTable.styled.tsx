@@ -128,6 +128,7 @@ interface JobCardProps {
   appliedbyme?: string;
   ignore?: string;
   wait?: string;
+  close?: boolean;
 }
 
 export const JobCard = styled(Card)<JobCardProps>`
@@ -135,10 +136,11 @@ export const JobCard = styled(Card)<JobCardProps>`
     border-radius: 12px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     transition: all 0.3s ease;
-    background-color: ${({ appliedbyme, ignore, wait }) => {
+    background-color: ${({ appliedbyme, ignore, wait , close }) => {
       if (appliedbyme) return '#dcfce7'; // Light green
       if (ignore) return '#fecaca'; // Light red
       if (wait) return '#fef3c7'; // Light yellow
+      if (close) return '#d0cfce'; // Light gray
       return 'white'; // Default white background
     }};
     

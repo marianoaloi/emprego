@@ -10,14 +10,14 @@ interface JobTextState {
 
 interface TextJobState {
   // Cache of job descriptions by jobId
-  descriptions: Record<string, JobDescriptionResponse>;
+  descriptions: JobDescriptionResponse | null;
   // Current loading/error states by jobId
-  loadingStates: Record<string, JobTextState>;
+  loadingStates: JobTextState | null;
 }
 
 const initialState: TextJobState = {
-  descriptions: {},
-  loadingStates: {},
+  descriptions: null,
+  loadingStates: null,
 };
 
 const textJobSlice = createSlice({
@@ -25,22 +25,21 @@ const textJobSlice = createSlice({
   initialState,
   reducers: {
     // Clear description from cache
-    clearJobDescription: (state, action: PayloadAction<string>) => {
-      const jobId = action.payload;
-      delete state.descriptions[jobId];
-      delete state.loadingStates[jobId];
+    clearJobDescription: (state) => {
+      state.descriptions = null;
+      state.loadingStates = null;
     },
     // Clear all cached descriptions
     clearAllJobDescriptions: (state) => {
-      state.descriptions = {};
-      state.loadingStates = {};
+      state.descriptions = null;
+      state.loadingStates = null;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchJobText.pending, (state, action) => {
         const jobId = action.meta.arg;
-        state.loadingStates[jobId] = {
+        state.loadingStates = {
           jobId,
           loading: true,
           error: null,
@@ -50,14 +49,14 @@ const textJobSlice = createSlice({
         const { jobId, _id, text, attributes } = action.payload;
         
         // Store the job description
-        state.descriptions[jobId] = {
+        state.descriptions = {
           _id,
           text,
           attributes,
         };
         
         // Update loading state
-        state.loadingStates[jobId] = {
+        state.loadingStates = {
           jobId,
           loading: false,
           error: null,
@@ -65,7 +64,7 @@ const textJobSlice = createSlice({
       })
       .addCase(fetchJobText.rejected, (state, action) => {
         const jobId = action.meta.arg;
-        state.loadingStates[jobId] = {
+        state.loadingStates = {
           jobId,
           loading: false,
           error: action.error.message || 'Failed to fetch job description',
