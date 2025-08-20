@@ -32,7 +32,6 @@ import {
 import { JobPosting } from '@/types/job.types';
 import JobDetailModal from './JobDetailModal';
 import { useAuth } from './auth/AuthContext';
-import { fetchJobText } from '@/lib/features/textJob/textJobTruck';
 
 export default function DataTable() {
   const dispatch = useAppDispatch();

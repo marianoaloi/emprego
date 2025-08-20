@@ -129,7 +129,6 @@ export const formatTextWithAttributes = (text: string, attributes: Record<string
 
   // Group list items and create proper list structure
   const processedElements: React.ReactNode[] = [];
-  let elementKey = 0;
 
   const childrens = (segmentsAnalise: LinkedinSegment[]): LinkedinSegment[] => {
     let allSegmentsChieldren: LinkedinSegment[] = [];

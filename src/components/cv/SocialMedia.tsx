@@ -1,5 +1,4 @@
 
-import Image from 'next/image';
 
 const SocialMedia = () => {
     const size = '24px'

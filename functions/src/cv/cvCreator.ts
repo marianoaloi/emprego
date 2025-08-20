@@ -31,7 +31,11 @@ const drive = google.drive({ version: 'v3', auth: authDrive });
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API || "ERROR+API");
 
 export const generateCv = functions
-  .https.onCall({ timeoutSeconds: 540 }, async (data, context: any) => {
+  .https.onCall({ 
+    timeoutSeconds: 540 , 
+    cors: /aloi\.com\.br/
+
+   }, async (data, context: any) => {
     // Verify authentication
     if (!data || !data.auth) {
       functions.logger.warn("Unauthenticated request to generateCv");
