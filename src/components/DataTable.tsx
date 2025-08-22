@@ -27,11 +27,13 @@ import {
   FooterInfo,
   SubheaderContainer,
   CompanyNameSpan,
-  LastUpdateSpan
+  LastUpdateSpan,
 } from './DataTable.styled';
 import { JobPosting } from '@/types/job.types';
 import JobDetailModal from './JobDetailModal';
 import { useAuth } from './auth/AuthContext';
+import { fetchSkills } from '@/lib/features/skill/skillsTruck';
+import { fetchJobText } from '@/lib/features/textJob/textJobTruck';
 
 export default function DataTable() {
   const dispatch = useAppDispatch();
@@ -128,6 +130,11 @@ export default function DataTable() {
 
   const handleTitleClick = (job: JobPosting) => {
     setSelectedJob(job);
+    const jobId = job._id;
+    if (jobId) {
+      dispatch(fetchSkills(jobId));
+      dispatch(fetchJobText(jobId));
+    }
     setIsModalOpen(true);
   };
 
@@ -145,11 +152,20 @@ export default function DataTable() {
         ignore={job.ignore}
         wait={job.wait}
         close={job.closed}
+        foto={
+          !job.appliedbyme &&
+            !job.ignore &&
+            !job.wait &&
+            !job.closed
+            ?
+
+            job.foto : undefined}
       >
         <JobCardHeader
           title={
             <div onClick={() => handleTitleClick(job)}>
               {job.title}
+
             </div>
           }
           subheader={
@@ -163,6 +179,7 @@ export default function DataTable() {
             </SubheaderContainer>
           }
         />
+
 
         <JobCardContent>
 

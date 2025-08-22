@@ -7,7 +7,7 @@ import { logger } from "firebase-functions";
 // The SDK is initialized automatically when deployed to Firebase Functions.
 // This check prevents a "default app already exists" error when running locally.
 if (admin.apps.length === 0) {
-  admin.initializeApp({projectId: "emprego-4bb54"});
+  admin.initializeApp({projectId: process.env.PROJECT_ID});
 }
 
 // Middleware to verify Firebase ID Token

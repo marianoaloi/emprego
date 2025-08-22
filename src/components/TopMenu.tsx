@@ -12,10 +12,12 @@ import {
   FilterButton
 } from './TopMenu.styled';
 import AuthProvider from './auth/authProvider';
+import { useAuth } from './auth/AuthContext';
 
 export default function TopMenu() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { user } = useAuth();
   return (
     <>
       <Nav>
@@ -24,19 +26,21 @@ export default function TopMenu() {
             <TitleContainer>
               <Title>Emprego</Title>
             </TitleContainer>
-            <ButtonContainer>
-              <FilterButton onClick={() => setIsModalOpen(true)}>
-                Search Filters
-              </FilterButton>
-            </ButtonContainer>
-            <AuthProvider/>
+            {user &&
+              <ButtonContainer>
+                <FilterButton onClick={() => setIsModalOpen(true)}>
+                  Search Filters
+                </FilterButton>
+              </ButtonContainer>
+            }
+            <AuthProvider />
           </NavContent>
         </NavContainer>
       </Nav>
-      
-      <JobSearchModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+
+      <JobSearchModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
     </>
   );

@@ -22,9 +22,18 @@ export interface JobSearchFilter {
   systemRecruter?: SystemRecruiterType;
   title?: string;
   wait?: boolean;
+  sort?: {
+    lastupdate?: -1 | 0 | 1;
+    expireAt?: -1 | 0 | 1;
+    listedAt?: -1 | 0 | 1;
+    originalListedAt?: -1 | 0 | 1;
+  }
 }
 
 // Default filter values
 export const DEFAULT_JOB_FILTER: JobSearchFilter = {
   limit: 100,
+  sort: {
+    lastupdate: -1,
+  },
 };

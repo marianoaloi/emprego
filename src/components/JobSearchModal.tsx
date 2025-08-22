@@ -54,6 +54,16 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
     setLocalFilters(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleSortChange = (field: 'lastupdate' | 'expireAt' | 'listedAt' | 'originalListedAt', value: -1 | 0 | 1) => {
+    setLocalFilters(prev => ({
+      ...prev,
+      sort: {
+        ...prev.sort,
+        [field]: value
+      }
+    }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Update Redux state with local form values
@@ -296,6 +306,78 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
                 }
                 label="Wait"
               />
+            </Box>
+          </Box>
+
+          {/* Sorting Controls */}
+          <Box sx={{ mt: 3 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Sort By
+            </Typography>
+            <Box
+              display="grid"
+              gridTemplateColumns={{ xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
+              gap={2}
+            >
+              <Box>
+                <FormControl fullWidth>
+                  <InputLabel>Last Update</InputLabel>
+                  <Select
+                    value={localFilters.sort?.lastupdate ?? 0}
+                    label="Last Update"
+                    onChange={(e) => handleSortChange('lastupdate', e.target.value as -1 | 0 | 1)}
+                  >
+                    <MenuItem value={0}>No Sort</MenuItem>
+                    <MenuItem value={1}>Ascending</MenuItem>
+                    <MenuItem value={-1}>Descending</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+
+              <Box>
+                <FormControl fullWidth>
+                  <InputLabel>Expire At</InputLabel>
+                  <Select
+                    value={localFilters.sort?.expireAt ?? 0}
+                    label="Expire At"
+                    onChange={(e) => handleSortChange('expireAt', e.target.value as -1 | 0 | 1)}
+                  >
+                    <MenuItem value={0}>No Sort</MenuItem>
+                    <MenuItem value={1}>Ascending</MenuItem>
+                    <MenuItem value={-1}>Descending</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+
+              <Box>
+                <FormControl fullWidth>
+                  <InputLabel>Listed At</InputLabel>
+                  <Select
+                    value={localFilters.sort?.listedAt ?? 0}
+                    label="Listed At"
+                    onChange={(e) => handleSortChange('listedAt', e.target.value as -1 | 0 | 1)}
+                  >
+                    <MenuItem value={0}>No Sort</MenuItem>
+                    <MenuItem value={1}>Ascending</MenuItem>
+                    <MenuItem value={-1}>Descending</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+
+              <Box>
+                <FormControl fullWidth>
+                  <InputLabel>Original Listed At</InputLabel>
+                  <Select
+                    value={localFilters.sort?.originalListedAt ?? 0}
+                    label="Original Listed At"
+                    onChange={(e) => handleSortChange('originalListedAt', e.target.value as -1 | 0 | 1)}
+                  >
+                    <MenuItem value={0}>No Sort</MenuItem>
+                    <MenuItem value={1}>Ascending</MenuItem>
+                    <MenuItem value={-1}>Descending</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
             </Box>
           </Box>
 

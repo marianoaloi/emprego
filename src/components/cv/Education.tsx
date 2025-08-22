@@ -1,5 +1,11 @@
 import { convertDate } from "../util/componentDate";
 import React from 'react';
+import {
+  EducationContainer,
+  EducationItem,
+  EducationDegree,
+  EducationInfo
+} from './Education.styled';
 
 interface EducationProps {
   data: {
@@ -15,14 +21,14 @@ const Education: React.FC<EducationProps> = ({ data }) => {
   data.sort((a, b) => new Date(b.start).getTime() - new Date(a.start).getTime());
 
   return (
-    <div className="mb-8">
+    <EducationContainer>
       {data.map((item, index) => (
-        <div key={index} className="mb-4">
-          <h3 className="text-xl font-bold">{item.degree}</h3>
-          <p className="text-xs font-semibold">{item.school} | {convertDate(item.start)} - {convertDate(item.end)}</p>
-        </div>
+        <EducationItem key={index}>
+          <EducationDegree>{item.degree}</EducationDegree>
+          <EducationInfo>{item.school} | {convertDate(item.start)} - {convertDate(item.end)}</EducationInfo>
+        </EducationItem>
       ))}
-    </div>
+    </EducationContainer>
   );
 };
 

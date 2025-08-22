@@ -15,7 +15,7 @@ router.post("/", async (req: Request, res: Response) => {
   try {
     const limit = parseInt(String(req.body.limit || "50"));
     const offset = parseInt(String(req.query.offset || "0"));
-    const sort = /* req.query ||*/ { lastupdate: -1 };
+    const sort =  req.body.sort || { lastupdate: -1 };
 
     const query = [
       {
@@ -89,6 +89,9 @@ router.post("/", async (req: Request, res: Response) => {
           wait: 1,
           salaryInsights: 1,
           applicantTrackingSystem: 1,
+          foto:{$concat:[
+            "$companyDetails.comlinkedinvoyagerdecojobswebsharedWebJobPostingCompany.companyResolutionResult.logo.image.comlinkedincommonVectorImage.rootUrl",
+            "$companyDetails.comlinkedinvoyagerdecojobswebsharedWebJobPostingCompany.companyResolutionResult.logo.image.comlinkedincommonVectorImage.artifacts.1.fileIdentifyingUrlPathSegment"]},
           employmentStatus: {
             $replaceAll: {
               input: "$employmentStatus",

@@ -27,13 +27,6 @@ export default function JobDescription({ jobId, className }: JobDescriptionProps
   const loading = loadingState?.loading || false;
   const error = loadingState?.error || null;
 
-  // Fetch job text when jobId changes
-  useEffect(() => {
-    if (jobId && (!description || loadingState?.jobId !== jobId)) {
-      dispatch(fetchJobText(jobId));
-    }
-  }, [jobId, dispatch, description, loadingState?.jobId]);
-
 
   const formattedContent = useMemo(() => {
     if (!description) return null;

@@ -68,6 +68,7 @@ const dataSlice = createSlice({
         } else {
           // Fallback to generic data items
           state.items = payload;
+          state.jobPostings = [];
         }
       })
       .addCase(fetchData.rejected, (state, action) => {

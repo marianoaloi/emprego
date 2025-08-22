@@ -129,6 +129,7 @@ interface JobCardProps {
   ignore?: string;
   wait?: string;
   close?: boolean;
+  foto?: string;
 }
 
 export const JobCard = styled(Card)<JobCardProps>`
@@ -136,11 +137,41 @@ export const JobCard = styled(Card)<JobCardProps>`
     border-radius: 12px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     transition: all 0.3s ease;
-    background-color: ${({ appliedbyme, ignore, wait , close }) => {
+    position: relative;
+    overflow: hidden;
+    
+    ${({ foto }) => foto && `
+      background-image: url(${foto});
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    `}
+    
+    ${({ foto }) => foto && `
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+        z-index: 1;
+      }
+      
+      & > * {
+        position: relative;
+        z-index: 2;
+      }
+    `}
+    
+    background-color: ${({ appliedbyme, ignore, wait , close, foto }) => {
+      
       if (appliedbyme) return '#dcfce7'; // Light green
       if (ignore) return '#fecaca'; // Light red
       if (wait) return '#fef3c7'; // Light yellow
       if (close) return '#d0cfce'; // Light gray
+      if (foto) return 'transparent';
       return 'white'; // Default white background
     }};
     
@@ -257,6 +288,9 @@ export const SubheaderContainer = styled.div`
   align-items: center;
   gap: 8px;
 `;
+
+
+
 
 export const CompanyNameSpan = styled.span`
   // No additional styling needed - inherits from parent CardHeader subheader styles

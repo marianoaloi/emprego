@@ -1,4 +1,13 @@
 import React from 'react';
+import {
+  LanguageContainer,
+  LanguageList,
+  LanguageItem,
+  LanguageName,
+  ProgressContainer,
+  ProgressBar,
+  ProgressFill
+} from './Language.styled';
 
 interface LanguageItem {
   name: string;
@@ -24,23 +33,20 @@ const Languages: React.FC<LanguagesProps> = ({lang}) => {
     }
   ]
   return (
-    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm h-fit">
-      <div className="space-y-3">
+    <LanguageContainer>
+      <LanguageList>
         {data.map((item, index) => (
-          <div key={index} className="flex items-center gap-3">
-            <div className="w-24 text-sm font-medium text-gray-700">{item.name}</div>
-            <div className="flex-1">
-              <div className="w-full bg-gray-300 rounded-full h-2">
-                <div
-                  className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${item.value}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
+          <LanguageItem key={index}>
+            <LanguageName>{item.name}</LanguageName>
+            <ProgressContainer>
+              <ProgressBar>
+                <ProgressFill width={item.value} />
+              </ProgressBar>
+            </ProgressContainer>
+          </LanguageItem>
         ))}
-      </div>
-    </div>
+      </LanguageList>
+    </LanguageContainer>
   );
 };
 

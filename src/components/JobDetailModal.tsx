@@ -1,8 +1,8 @@
 'use client';
 
-import React, { use, useState } from 'react';
+import React, { useState } from 'react';
 
-import { getFunctions, httpsCallable } from "firebase/functions";
+import { httpsCallable } from "firebase/functions";
 import { Button, Typography, Tooltip, IconButton, Box, CircularProgress } from '@mui/material';
 import {
   Close as CloseIcon,
@@ -16,6 +16,7 @@ import {
 } from '@mui/icons-material';
 import { JobPosting } from '@/types/job.types';
 import JobDescription from './JobDescription';
+import SkillsGrid from './SkillsGrid';
 import { useAppSelector } from '@/lib/hooks';
 import {
   StyledDialog,
@@ -30,10 +31,12 @@ import {
   StatusChip,
   LLMContent,
   StyledDialogActions,
-  ActionButtonsGroup
+  ActionButtonsGroup,
+  LogoAzienda
 } from './JobDetailModal.styled';
 import { useAuth } from './auth/AuthContext';
-import { appFirebase, functions } from './auth/firebaseConfig';
+import { functions } from './auth/firebaseConfig';
+import skill from '../../functions/src/skill';
 
 interface JobDetailModalProps {
   job: JobPosting | null;
@@ -59,6 +62,8 @@ export default function JobDetailModal({ job, open, onClose,
 
   // Get job description from Redux store
   const jobDescription = useAppSelector(state => state.textJob.descriptions);
+  const skillsJob = useAppSelector(state => state.skills.skills);
+
 
   if (!job) return null;
 
@@ -82,7 +87,9 @@ export default function JobDetailModal({ job, open, onClose,
       const token = await getAuthToken();
       const result = await generateCv({
         jobDescription: job.description,
-        authToken: token
+        authToken: token,
+        lang: job.lang,
+        skills: skillsJob ? skillsJob.match.map(skill => skill.localizedSkillDisplayName) : [],
       });
       const cvData = result.data;
       // Store CV data and opportunity ID in local storage to pass to the CV page
@@ -146,15 +153,19 @@ export default function JobDetailModal({ job, open, onClose,
         </DetailItem>
         <DetailItem>
           <div className="label">Listed At</div>
-          <div className="value">{job.listedAt ? new Date(job.listedAt).toLocaleDateString() : 'N/A'}</div>
+          <div className="value" title={new Date(job.listedAt).toString()}>{job.listedAt ? new Date(job.listedAt).toLocaleDateString() : 'N/A'}</div>
+        </DetailItem>
+        <DetailItem>
+          <div className="label">Original At</div>
+          <div className="value" title={new Date(job.originalListedAt).toString()}>{job.originalListedAt ? new Date(job.originalListedAt).toLocaleDateString() : 'N/A'}</div>
         </DetailItem>
         <DetailItem>
           <div className="label">Last Update</div>
-          <div className="value">{job.lastupdate ? new Date(job.lastupdate).toLocaleDateString() : 'N/A'}</div>
+          <div className="value" title={new Date(job.lastupdate).toString()}>{job.lastupdate ? new Date(job.lastupdate).toLocaleDateString() : 'N/A'}</div>
         </DetailItem>
         <DetailItem>
           <div className="label">Expires At</div>
-          <div className="value">{job.expireAt ? new Date(job.expireAt).toLocaleDateString() : 'N/A'}</div>
+          <div className="value" title={new Date(job.expireAt).toString()}>{job.expireAt ? new Date(job.expireAt).toLocaleDateString() : 'N/A'}</div>
         </DetailItem>
       </JobDetailsGrid>
     </ContentSection>
@@ -273,21 +284,27 @@ export default function JobDetailModal({ job, open, onClose,
 
   const boxLoad = (
     <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-        <CircularProgress />
-        BUILDING CURRICULUM VITAE
-      </Box>
+      <CircularProgress />
+      BUILDING CURRICULUM VITAE
+    </Box>
   )
 
   const contentBody = (
     <>
-    
+
       <StyledDialogContent>
         <CompanyHeader>
           <div className="company-name">{job.companyName}</div>
           <div className="job-id">ID: {job._id}</div>
+
+          <LogoAzienda size={70} alt={job.companyName} src={job.foto} />
         </CompanyHeader>
 
-
+        {skillsJob &&
+          <ContentSection>
+            <SkillsGrid />
+          </ContentSection>
+        }
 
         {job.llm && (
           <ContentSection>
@@ -300,6 +317,7 @@ export default function JobDetailModal({ job, open, onClose,
             </LLMContent>
           </ContentSection>
         )}
+
 
         {JobDetailsInPart}
         {JobSallaryInPart}
@@ -393,7 +411,7 @@ export default function JobDetailModal({ job, open, onClose,
             </>}
         </ActionButtonsGroup>
       </StyledDialogActions>
-</>
+    </>
   )
   return (
     <StyledDialog open={open} onClose={onClose} maxWidth="md" fullWidth>
