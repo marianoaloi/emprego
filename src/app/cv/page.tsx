@@ -3,14 +3,14 @@
 import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth/AuthContext";
-import PersonalInfo from "../../components/cv/PersonalInfo";
-import Summary from "../../components/cv/Summary";
-import Skills from "../../components/cv/Skills";
-import SocialMedia from "../../components/cv/SocialMedia";
-import Experience from "../../components/cv/Experience";
-import Education from "../../components/cv/Education";
-import Languages from "../../components/cv/Language";
-import Certificate from "../../components/cv/Certificate";
+import PersonalInfo from "./components/PersonalInfo";
+import Summary from "./components/Summary";
+import Skills from "./components/Skills";
+import SocialMedia from "./components/SocialMedia";
+import Experience from "./components/Experience";
+import Education from "./components/Education";
+import Languages from "./components/Language";
+import Certificate from "./components/Certificate";
 import {
   CVPageContainer,
   CVContainer,
