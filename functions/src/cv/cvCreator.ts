@@ -3,7 +3,8 @@ import * as admin from "firebase-admin";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { configDotenv } from "dotenv";
 import * as fs from "fs";
-import cors = require("cors");
+
+import cors from "cors";
 
 import { google } from "googleapis";
 import prompt from "./prompt";

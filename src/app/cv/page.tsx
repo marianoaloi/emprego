@@ -70,7 +70,7 @@ export default function CVPage() {
   const [jumpLineCount, setJumpLineCount] = useState<number>(0);
   const [jumpSocialCount, setJumpSocialCount] = useState<number>(0);
 
-  const { user, loading: authLoading, logout } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {

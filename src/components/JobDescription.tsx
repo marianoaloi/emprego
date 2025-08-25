@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { CircularProgress } from '@mui/material';
 import {
   JobDescriptionContainer,

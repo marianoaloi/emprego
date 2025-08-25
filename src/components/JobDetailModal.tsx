@@ -36,7 +36,6 @@ import {
 } from './JobDetailModal.styled';
 import { useAuth } from './auth/AuthContext';
 import { functions } from './auth/firebaseConfig';
-import skill from '../../functions/src/skill';
 
 interface JobDetailModalProps {
   job: JobPosting | null;

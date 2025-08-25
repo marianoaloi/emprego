@@ -59,7 +59,7 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
       ...prev,
       sort: {
         ...prev.sort,
-        [field]: value
+        [field]: value === 0 ? undefined : value
       }
     }));
   };

@@ -37,7 +37,7 @@ export default (db: Db) => {
 
 
 
-  async function setParameter(req: Request, objSet: Object, res: Response) {
+  async function setParameter(req: Request, objSet: any, res: Response) {
     const user = await authenticate(req, res);
     if (!user) {
       return;

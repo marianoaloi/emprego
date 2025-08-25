@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Box, Chip, Typography, CircularProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { fetchSkills } from '@/lib/features/skill/skillsTruck';
 
 const SkillsContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -56,7 +55,6 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 
 
 export default function SkillsGrid() {
-  const dispatch = useAppDispatch();
   const { skills, loading, error } = useAppSelector((state) => state.skills);
 
 
