@@ -27,19 +27,21 @@ import {
   FooterInfo,
   SubheaderContainer,
   CompanyNameSpan,
-  LastUpdateSpan
+  LastUpdateSpan,
 } from './DataTable.styled';
 import { JobPosting } from '@/types/job.types';
 import JobDetailModal from './JobDetailModal';
 import { useAuth } from './auth/AuthContext';
+import { fetchSkills } from '@/lib/features/skill/skillsTruck';
+import { fetchJobText } from '@/lib/features/textJob/textJobTruck';
 
 export default function DataTable() {
   const dispatch = useAppDispatch();
   const { items, jobPostings, loading, error, totalCount, countLoading } = useAppSelector((state) => state.data);
   const { filters } = useAppSelector((state) => state.filter);
 
-  
-  const { getAuthToken } = useAuth();
+
+  const { user, getAuthToken } = useAuth();
 
   // Modal state
   const [selectedJob, setSelectedJob] = useState<JobPosting | null>(null);
@@ -100,34 +102,39 @@ export default function DataTable() {
 
   const handleRejectAction = (job: JobPosting) => {
     if (job._id) {
-      getAuthToken().then(token => dispatch(ignoreJob({ jobId: job._id, undo: job.ignore ? true : false , token })))
+      getAuthToken().then(token => dispatch(ignoreJob({ jobId: job._id, undo: job.ignore ? true : false, token })))
       handleModalClose()
     }
   };
 
   const handleWaitAction = (job: JobPosting) => {
     if (job._id) {
-      getAuthToken().then(token => dispatch(waitJob({ jobId: job._id, undo: job.wait ? true : false , token })))
+      getAuthToken().then(token => dispatch(waitJob({ jobId: job._id, undo: job.wait ? true : false, token })))
       handleModalClose()
     }
   };
 
   const handleAcceptAction = (job: JobPosting) => {
     if (job._id) {
-      getAuthToken().then(token => dispatch(appliedbyme({ jobId: job._id, undo: job.appliedbyme ? true : false , token })))
+      getAuthToken().then(token => dispatch(appliedbyme({ jobId: job._id, undo: job.appliedbyme ? true : false, token })))
       handleModalClose()
     }
   };
 
   const handleLockAction = (job: JobPosting) => {
     if (job._id) {
-      getAuthToken().then(token => dispatch(closeJob({ jobId: job._id, undo: job.closed ? true : false , token })))
+      getAuthToken().then(token => dispatch(closeJob({ jobId: job._id, undo: job.closed ? true : false, token })))
       handleModalClose()
     }
   };
 
   const handleTitleClick = (job: JobPosting) => {
     setSelectedJob(job);
+    const jobId = job._id;
+    if (jobId) {
+      dispatch(fetchSkills(jobId));
+      dispatch(fetchJobText(jobId));
+    }
     setIsModalOpen(true);
   };
 
@@ -144,11 +151,21 @@ export default function DataTable() {
         appliedbyme={job.appliedbyme}
         ignore={job.ignore}
         wait={job.wait}
+        close={job.closed}
+        foto={
+          !job.appliedbyme &&
+            !job.ignore &&
+            !job.wait &&
+            !job.closed
+            ?
+
+            job.foto : undefined}
       >
         <JobCardHeader
           title={
             <div onClick={() => handleTitleClick(job)}>
               {job.title}
+
             </div>
           }
           subheader={
@@ -162,6 +179,7 @@ export default function DataTable() {
             </SubheaderContainer>
           }
         />
+
 
         <JobCardContent>
 
@@ -193,46 +211,49 @@ export default function DataTable() {
                 <OpenInNewIcon />
               </IconButton>
             </Tooltip>
+            {user &&
+              <>
+                <Tooltip title="Reject Job">
+                  <IconButton
+                    className="reject-action"
+                    onClick={() => handleRejectAction(job)}
+                    size="small"
+                  >
+                    <ThumbDownIcon />
+                  </IconButton>
+                </Tooltip>
 
-            <Tooltip title="Reject Job">
-              <IconButton
-                className="reject-action"
-                onClick={() => handleRejectAction(job)}
-                size="small"
-              >
-                <ThumbDownIcon />
-              </IconButton>
-            </Tooltip>
+                <Tooltip title="Wait">
+                  <IconButton
+                    className="wait-action"
+                    onClick={() => handleWaitAction(job)}
+                    size="small"
+                  >
+                    <HourglassEmptyIcon />
+                  </IconButton>
+                </Tooltip>
 
-            <Tooltip title="Wait">
-              <IconButton
-                className="wait-action"
-                onClick={() => handleWaitAction(job)}
-                size="small"
-              >
-                <HourglassEmptyIcon />
-              </IconButton>
-            </Tooltip>
+                <Tooltip title="Accept Job">
+                  <IconButton
+                    className="accept-action"
+                    onClick={() => handleAcceptAction(job)}
+                    size="small"
+                  >
+                    <ThumbUpIcon />
+                  </IconButton>
+                </Tooltip>
 
-            <Tooltip title="Accept Job">
-              <IconButton
-                className="accept-action"
-                onClick={() => handleAcceptAction(job)}
-                size="small"
-              >
-                <ThumbUpIcon />
-              </IconButton>
-            </Tooltip>
-
-            <Tooltip title="Lock Job">
-              <IconButton
-                className="lock-action"
-                onClick={() => handleLockAction(job)}
-                size="small"
-              >
-                <LockIcon />
-              </IconButton>
-            </Tooltip>
+                <Tooltip title="Lock Job">
+                  <IconButton
+                    className="lock-action"
+                    onClick={() => handleLockAction(job)}
+                    size="small"
+                  >
+                    <LockIcon />
+                  </IconButton>
+                </Tooltip>
+              </>
+            }
           </div>
         </JobCardActions>
       </JobCard>

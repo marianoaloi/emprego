@@ -10,6 +10,13 @@ export const StyledDialog = styled(Dialog)`
   }
 `;
 
+export const LogoAzienda = styled.img((props:{size: number}) => `
+  width: ${props.size}px;
+  height: ${props.size}px;
+  border-radius: 50%;
+  object-fit: cover;
+`);
+
 export const StyledDialogTitle = styled(DialogTitle)`
   && {
     background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);

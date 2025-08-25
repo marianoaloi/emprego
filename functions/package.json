@@ -4,22 +4,27 @@
     "lint": "eslint --ext .js,.ts .",
     "build": "tsc && copyfiles -u 2 ./src/util/X509-cert-2864290664025085959.pem ./lib/util/",
     "build:watch": "tsc --watch",
-    "serve": "npm run build && firebase emulators:start --only functions",
+    "serveBuild": "npm run build && firebase emulators:start --only functions",
+    "serve": "nodemon -e ts --exec npm run serveBuild",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-   "dev": "ts-node src/index.ts"
+    "dev": "ts-node src/index.ts"
   },
   "engines": {
     "node": "20"
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "firebase-admin": "^12.6.0",
     "firebase-functions": "^6.0.1",
+    "googleapis": "^156.0.0",
+    "marked": "^16.2.0",
     "mongodb": "^6.15.0"
   },
   "devDependencies": {
@@ -29,10 +34,9 @@
     "eslint": "^8.9.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.25.4",
-    "ts-node": "^10.9.2",
     "firebase-functions-test": "^3.1.0",
+    "ts-node": "^10.9.2",
     "typescript": "^4.9.0"
-    
   },
   "private": true
 }

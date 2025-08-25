@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Typography, Tooltip, IconButton, Box } from '@mui/material';
+
+import { httpsCallable } from "firebase/functions";
+import { Button, Typography, Tooltip, IconButton, Box, CircularProgress } from '@mui/material';
 import {
   Close as CloseIcon,
   OpenInNew as OpenInNewIcon,
@@ -9,10 +11,12 @@ import {
   HourglassEmpty as HourglassEmptyIcon,
   ThumbUp as ThumbUpIcon,
   Lock as LockIcon,
-  ContentCopy as ContentCopyIcon
+  ContentCopy as ContentCopyIcon,
+  ArrowForward as ArrowForwardIcon
 } from '@mui/icons-material';
 import { JobPosting } from '@/types/job.types';
 import JobDescription from './JobDescription';
+import SkillsGrid from './SkillsGrid';
 import { useAppSelector } from '@/lib/hooks';
 import {
   StyledDialog,
@@ -27,8 +31,11 @@ import {
   StatusChip,
   LLMContent,
   StyledDialogActions,
-  ActionButtonsGroup
+  ActionButtonsGroup,
+  LogoAzienda
 } from './JobDetailModal.styled';
+import { useAuth } from './auth/AuthContext';
+import { functions } from './auth/firebaseConfig';
 
 interface JobDetailModalProps {
   job: JobPosting | null;
@@ -49,9 +56,13 @@ export default function JobDetailModal({ job, open, onClose,
   handleLockAction }: JobDetailModalProps) {
 
   const [copySuccess, setCopySuccess] = useState(false);
+  const { user, getAuthToken } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   // Get job description from Redux store
-  const jobDescription = useAppSelector(state => state.textJob.descriptions[job?._id || '']);
+  const jobDescription = useAppSelector(state => state.textJob.descriptions);
+  const skillsJob = useAppSelector(state => state.skills.skills);
+
 
   if (!job) return null;
 
@@ -64,6 +75,31 @@ export default function JobDetailModal({ job, open, onClose,
       setTimeout(() => setCopySuccess(false), 2000); // Hide success message after 2 seconds
     } catch (err) {
       console.error('Failed to copy text: ', err);
+    }
+  };
+
+
+  const handleOpenCV = async () => {
+    setLoading(true);
+    const generateCv = httpsCallable(functions, "generateCv");
+    try {
+      const token = await getAuthToken();
+      const result = await generateCv({
+        jobDescription: job.description,
+        authToken: token,
+        lang: job.lang,
+        skills: skillsJob ? skillsJob.match.map(skill => skill.localizedSkillDisplayName) : [],
+      });
+      const cvData = result.data;
+      // Store CV data and opportunity ID in local storage to pass to the CV page
+      localStorage.setItem("cvData", JSON.stringify(cvData));
+      localStorage.setItem("opportunityId", job._id);
+      window.open('/cv', '_blank');
+    } catch (error) {
+      console.error("Error generating CV:", error);
+      alert("Error generating CV. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -116,15 +152,19 @@ export default function JobDetailModal({ job, open, onClose,
         </DetailItem>
         <DetailItem>
           <div className="label">Listed At</div>
-          <div className="value">{job.listedAt ? new Date(job.listedAt).toLocaleDateString() : 'N/A'}</div>
+          <div className="value" title={new Date(job.listedAt).toString()}>{job.listedAt ? new Date(job.listedAt).toLocaleDateString() : 'N/A'}</div>
+        </DetailItem>
+        <DetailItem>
+          <div className="label">Original At</div>
+          <div className="value" title={new Date(job.originalListedAt).toString()}>{job.originalListedAt ? new Date(job.originalListedAt).toLocaleDateString() : 'N/A'}</div>
         </DetailItem>
         <DetailItem>
           <div className="label">Last Update</div>
-          <div className="value">{job.lastupdate ? new Date(job.lastupdate).toLocaleDateString() : 'N/A'}</div>
+          <div className="value" title={new Date(job.lastupdate).toString()}>{job.lastupdate ? new Date(job.lastupdate).toLocaleDateString() : 'N/A'}</div>
         </DetailItem>
         <DetailItem>
           <div className="label">Expires At</div>
-          <div className="value">{job.expireAt ? new Date(job.expireAt).toLocaleDateString() : 'N/A'}</div>
+          <div className="value" title={new Date(job.expireAt).toString()}>{job.expireAt ? new Date(job.expireAt).toLocaleDateString() : 'N/A'}</div>
         </DetailItem>
       </JobDetailsGrid>
     </ContentSection>
@@ -207,20 +247,63 @@ export default function JobDetailModal({ job, open, onClose,
     </>
   )
 
-  return (
-    <StyledDialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <StyledDialogTitle>
-        <Typography variant="h6">{job.title} | {job.workplaceTypes} | {job.country} | {job.formattedEmploymentStatus} | {`AP:${job.applies}`}</Typography>
-        <CloseButton onClick={onClose}>
-          <CloseIcon />
-        </CloseButton>
-      </StyledDialogTitle>
+  const JobDescriptionTag = (
+    <ContentSection>
+      <Box display="flex" alignItems="center" gap={1} mb={2}>
+        <SectionTitle style={{ margin: 0 }}>Job Description</SectionTitle>
+        <Tooltip title="Copy job description">
+          <IconButton
+            onClick={handleCopyDescription}
+            size="small"
+            sx={{
+              color: '#6b7280',
+              '&:hover': { color: '#374151' }
+            }}
+          >
+            <ContentCopyIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+        {job._id}
+        {copySuccess && (
+          <Typography
+            variant="caption"
+            sx={{
+              color: '#10b981',
+              fontWeight: 500,
+              ml: 1
+            }}
+          >
+            Copied!
+          </Typography>
+        )}
+      </Box>
+      <JobDescription jobId={job._id} />
+    </ContentSection>
+  )
+
+  const boxLoad = (
+    <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+      <CircularProgress />
+      BUILDING CURRICULUM VITAE
+    </Box>
+  )
+
+  const contentBody = (
+    <>
 
       <StyledDialogContent>
         <CompanyHeader>
           <div className="company-name">{job.companyName}</div>
           <div className="job-id">ID: {job._id}</div>
+
+          <LogoAzienda size={70} alt={job.companyName} src={job.foto} />
         </CompanyHeader>
+
+        {skillsJob &&
+          <ContentSection>
+            <SkillsGrid />
+          </ContentSection>
+        }
 
         {job.llm && (
           <ContentSection>
@@ -234,42 +317,12 @@ export default function JobDetailModal({ job, open, onClose,
           </ContentSection>
         )}
 
+
         {JobDetailsInPart}
         {JobSallaryInPart}
 
-        <ContentSection>
-          <Box display="flex" alignItems="center" gap={1} mb={2}>
-            <SectionTitle style={{ margin: 0 }}>Job Description</SectionTitle>
-            <Tooltip title="Copy job description">
-              <IconButton 
-                onClick={handleCopyDescription}
-                size="small"
-                sx={{ 
-                  color: '#6b7280',
-                  '&:hover': { color: '#374151' }
-                }}
-              >
-                <ContentCopyIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            {job._id}
-            {copySuccess && (
-              <Typography 
-                variant="caption" 
-                sx={{ 
-                  color: '#10b981', 
-                  fontWeight: 500,
-                  ml: 1
-                }}
-              >
-                Copied!
-              </Typography>
-            )}
-          </Box>
-          <JobDescription jobId={job._id} />
-        </ContentSection>
 
-
+        {JobDescriptionTag}
 
         <ContentSection>
           <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
@@ -282,6 +335,7 @@ export default function JobDetailModal({ job, open, onClose,
 
       </StyledDialogContent>
 
+
       <StyledDialogActions>
         <Button
           variant="outlined"
@@ -292,6 +346,8 @@ export default function JobDetailModal({ job, open, onClose,
         </Button>
 
         <ActionButtonsGroup>
+
+
           <Tooltip title="Open Job">
             <IconButton
               className="go-action"
@@ -300,44 +356,71 @@ export default function JobDetailModal({ job, open, onClose,
               <OpenInNewIcon />
             </IconButton>
           </Tooltip>
+          {user &&
+            <>
+              <Tooltip title="Open CV">
+                <IconButton
+                  onClick={handleOpenCV}
+                  sx={{
+                    color: '#10b981',
+                    '&:hover': {
+                      color: '#059669',
+                      backgroundColor: 'rgba(16, 185, 129, 0.1)'
+                    }
+                  }}
+                >
+                  <ArrowForwardIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={job.ignore ? "Undo Ignore" : "Ignore Job"}>
+                <IconButton
+                  className="reject-action"
+                  onClick={() => handleRejectAction(job)}
+                >
+                  <ThumbDownIcon />
+                </IconButton>
+              </Tooltip>
 
-          <Tooltip title={job.ignore ? "Undo Ignore" : "Ignore Job"}>
-            <IconButton
-              className="reject-action"
-              onClick={() => handleRejectAction(job)}
-            >
-              <ThumbDownIcon />
-            </IconButton>
-          </Tooltip>
+              <Tooltip title={job.wait ? "Undo Wait" : "Mark as Waiting"}>
+                <IconButton
+                  className="wait-action"
+                  onClick={() => handleWaitAction(job)}
+                >
+                  <HourglassEmptyIcon />
+                </IconButton>
+              </Tooltip>
 
-          <Tooltip title={job.wait ? "Undo Wait" : "Mark as Waiting"}>
-            <IconButton
-              className="wait-action"
-              onClick={() => handleWaitAction(job)}
-            >
-              <HourglassEmptyIcon />
-            </IconButton>
-          </Tooltip>
+              <Tooltip title={job.appliedbyme ? "Undo Applied" : "Mark as Applied"}>
+                <IconButton
+                  className="accept-action"
+                  onClick={() => handleAcceptAction(job)}
+                >
+                  <ThumbUpIcon />
+                </IconButton>
+              </Tooltip>
 
-          <Tooltip title={job.appliedbyme ? "Undo Applied" : "Mark as Applied"}>
-            <IconButton
-              className="accept-action"
-              onClick={() => handleAcceptAction(job)}
-            >
-              <ThumbUpIcon />
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip title={job.closed ? "Reopen Job" : "Close Job"}>
-            <IconButton
-              className="lock-action"
-              onClick={() => handleLockAction(job)}
-            >
-              <LockIcon />
-            </IconButton>
-          </Tooltip>
+              <Tooltip title={job.closed ? "Reopen Job" : "Close Job"}>
+                <IconButton
+                  className="lock-action"
+                  onClick={() => handleLockAction(job)}
+                >
+                  <LockIcon />
+                </IconButton>
+              </Tooltip>
+            </>}
         </ActionButtonsGroup>
       </StyledDialogActions>
+    </>
+  )
+  return (
+    <StyledDialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <StyledDialogTitle>
+        <Typography >{job.title} | {job.workplaceTypes} | {job.country} | {job.formattedEmploymentStatus} | {`AP:${job.applies}`}</Typography>
+        <CloseButton onClick={onClose}>
+          <CloseIcon />
+        </CloseButton>
+      </StyledDialogTitle>
+      {loading ? boxLoad : contentBody}
     </StyledDialog>
   );
 }

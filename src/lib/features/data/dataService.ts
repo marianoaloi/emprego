@@ -2,34 +2,14 @@
 import { JobSearchFilter, DEFAULT_JOB_FILTER } from '@/types/job.filter.types';
 import { JobPosting } from '@/types/job.types';
 import { JobDescriptionResponse, JobDescriptionApiResponse } from '@/types/job-description.types';
+import { fetchRetry } from '../UtilREquest';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production'
     ? 'https://us-central1-emprego-4bb54.cloudfunctions.net/api'
-    : 'http://localhost:5000';
+    : 'http://localhost:5001/emprego-4bb54/us-central1/api';
 
 console.log('Environment:', process.env.NODE_ENV);
 
-function wait(delay: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, delay));
-}
-
-function fetchRetry(url: string, delay: number, tries: number, fetchOptions = {}): Promise<Response> {
-    const onError = (err: Error): Promise<Response> => {
-        const triesLeft = tries - 1;
-        if (!triesLeft) {
-            throw err;
-        }
-        return wait(delay).then(() => fetchRetry(url, delay, triesLeft, fetchOptions));
-    }
-
-    const errorIn404 = (response: Response): Response => {
-        if (response.status === 404) {
-            throw new Error(`404 Not Found: ${url}`);
-        }
-        return response;
-    }
-    return fetch(url, fetchOptions).then(errorIn404).catch(onError);
-}
 
 export const DataRequest = async (filter?: JobSearchFilter): Promise<JobPosting[]> => {
     const finalFilter = { ...DEFAULT_JOB_FILTER, ...filter };
@@ -67,7 +47,7 @@ export const appliedbymeRequest = async (jobId: string, undo: boolean | undefine
             'Authorization': `Bearer ${token}`,
         }
     }
-    const response = await fetchRetry(url, 10_000, 3, headers);
+    const response = await fetchRetry(url, 10_000, 5, headers);
 
     if (!response.ok) {
         throw new Error(`Failed to mark as applied: ${response.status} ${response.statusText}`);
@@ -86,7 +66,7 @@ export const CloseRequest = async (jobId: string, undo: boolean | undefined, tok
             'Authorization': `Bearer ${token}`,
         }
     }
-    const response = await fetchRetry(url, 10_000, 3, headers);
+    const response = await fetchRetry(url, 10_000, 5, headers);
 
     if (!response.ok) {
         throw new Error(`Failed to close job: ${response.status} ${response.statusText}`);
@@ -105,7 +85,7 @@ export const IgnoreRequest = async (jobId: string, undo: boolean | undefined, to
             'Authorization': `Bearer ${token}`,
         }
     }
-    const response = await fetchRetry(url, 10_000, 3, headers);
+    const response = await fetchRetry(url, 10_000, 5, headers);
 
     if (!response.ok) {
         throw new Error(`Failed to ignore job: ${response.status} ${response.statusText}`);
@@ -124,7 +104,7 @@ export const WaitRequest = async (jobId: string, undo: boolean | undefined, toke
             'Authorization': `Bearer ${token}`,
         }
     }
-    const response = await fetchRetry(url, 10_000, 3, headers);
+    const response = await fetchRetry(url, 10_000, 5, headers);
 
     if (!response.ok) {
         throw new Error(`Failed to mark as wait: ${response.status} ${response.statusText}`);
@@ -135,7 +115,7 @@ export const WaitRequest = async (jobId: string, undo: boolean | undefined, toke
 
 export const fetchJobDescription = async (jobId: string): Promise<JobDescriptionResponse | null> => {
     try {
-        const response = await fetchRetry(`${API_BASE_URL}/text`, 10_000, 3, {
+        const response = await fetchRetry(`${API_BASE_URL}/text`, 10_000, 5, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -158,7 +138,7 @@ export const fetchJobDescription = async (jobId: string): Promise<JobDescription
 export const DataCountRequest = async (filter?: JobSearchFilter): Promise<number> => {
     const finalFilter = { ...DEFAULT_JOB_FILTER, ...filter };
 
-    const response = await fetchRetry(`${API_BASE_URL}/data/count`, 10_000, 3, {
+    const response = await fetchRetry(`${API_BASE_URL}/data/count`, 10_000, 5, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

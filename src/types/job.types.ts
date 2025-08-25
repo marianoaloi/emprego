@@ -52,4 +52,5 @@ export interface JobPosting {
   wait?: string;
   workplaceTypes: string;
   workRemoteAllowed: boolean;
+  foto:string;
 }

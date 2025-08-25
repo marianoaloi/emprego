@@ -8,3 +8,6 @@ typings/
 # Node.js dependency directory
 node_modules/
 *.local
+
+
+./cert/curriculum-29102-9e559bc27c95.json

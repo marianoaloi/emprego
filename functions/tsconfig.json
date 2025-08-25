@@ -1,20 +1,22 @@
 {
+  "compileOnSave": true,
   "compilerOptions": {
-    "module": "NodeNext",
+    "allowJs": true,
     "esModuleInterop": true,
-    "moduleResolution": "nodenext",
+    "module": "commonjs",
+    "noImplicitAny": false,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "lib",
+    "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "allowJs": true,
-    "skipLibCheck": true,
-    "target": "es2017"
-
+    "target": "es2021"
   },
-  "compileOnSave": true,
   "include": [
     "src"
+  ],
+  "exclude": [
+    "functions"
   ]
 }

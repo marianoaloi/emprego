@@ -1,5 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 
 
 const firebaseConfig = {
@@ -19,8 +20,13 @@ if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
 // Initialize Firebase
 const appFirebase = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
+  if(process.env.NODE_ENV === 'development'){
+    connectFunctionsEmulator(getFunctions(appFirebase), 'localhost', 5001);
+  }
 // Initialize Firebase Authentication and get a reference to the service
 const authFirebase = getAuth(appFirebase);
-export const googleProvider = new GoogleAuthProvider();
+const functions = getFunctions(appFirebase);
+const googleProvider = new GoogleAuthProvider();
 
-export { appFirebase, authFirebase,  signInWithPopup, signOut };
+export { appFirebase, authFirebase, functions, googleProvider, getAuth, 
+  signInWithPopup, signOut };
