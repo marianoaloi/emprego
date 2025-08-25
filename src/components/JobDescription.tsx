@@ -20,7 +20,9 @@ import { formatTextWithAttributes } from './processText/FormatText';
 export default function JobDescription({ jobId, className }: JobDescriptionProps) {
   const dispatch = useAppDispatch();
 
+
   // Get description from Redux state
+
   const description = useAppSelector(state => state.textJob.descriptions);
   const loadingState = useAppSelector(state => state.textJob.loadingStates);
 
