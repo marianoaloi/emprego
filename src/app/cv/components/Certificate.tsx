@@ -1,4 +1,4 @@
-import { convertDate } from "../util/componentDate";
+import { convertDate } from '@/components/util/componentDate';
 import {
   CertificateContainer,
   CertificateTitle,

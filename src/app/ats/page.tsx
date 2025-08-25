@@ -1,0 +1,222 @@
+"use client";
+
+import { useRef, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/auth/AuthContext";
+import PersonalInfo from "./components/PersonalInfo";
+import Summary from "./components/Summary";
+import Skills from "./components/Skills";
+import Experience from "./components/Experience";
+import Education from "./components/Education";
+import Languages from "./components/Language";
+import Certificate from "./components/Certificate";
+import {
+  ATSPageContainer,
+  ATSContainer,
+  ATSContent,
+  ActionButton,
+  LoadingContainer,
+  LoadingText,
+  ATSSection
+} from "./page.styled";
+import SocialMedia from "./components/SocialMedia";
+
+interface CVData {
+  personalInformation: {
+    name: string;
+    email: string;
+    phone: string;
+    linkedin: string;
+  };
+  summary: string;
+  relevantSkills: Array<{
+    skillName: string;
+    skillLevel: number;
+  }>;
+  experience: Array<{
+    title: string;
+    company: string;
+    end: string;
+    start: string;
+    description: string;
+    technologies: string[];
+  }>;
+  educations: Array<{
+    degree: string;
+    school: string;
+    start: string;
+    end: string;
+  }>;
+  certificates: Array<{
+    name: string;
+    institute: string;
+    credential: string;
+    issued: string;
+    url: string;
+  }>;
+  languageCodeOfJobDescription: string;
+}
+
+export default function ATSPage() {
+  const atsRef = useRef<HTMLDivElement>(null);
+  const [cvData, setCvData] = useState<CVData | null>(null);
+  const [opportunityId, setOpportunityId] = useState<string>("");
+  const [language, setLanguage] = useState<string>("en");
+
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/");
+      return;
+    }
+
+    const lang = localStorage.getItem("lang");
+    if (lang) {
+      setLanguage(lang);
+    }
+    const data = localStorage.getItem("cvData");
+    if (data) {
+      const dataj = JSON.parse(data);
+      dataj.languageCodeOfJobDescription = dataj.languageCodeOfJobDescription || lang;
+      
+      setCvData(dataj);
+    }
+
+    const oppId = localStorage.getItem("opportunityId");
+    if (oppId) {
+      setOpportunityId(oppId);
+    }
+  }, [user, authLoading, router]);
+
+  useEffect(() => {
+    if (cvData) {
+      changeTitle(opportunityId, cvData);
+    }
+  }, [cvData, opportunityId]);
+
+  if (authLoading) {
+    return (
+      <LoadingContainer>
+        <LoadingText>Loading...</LoadingText>
+      </LoadingContainer>
+    );
+  }
+
+  if (!user) {
+    return (
+      <LoadingContainer>
+        <LoadingText>Redirecting to login...</LoadingText>
+      </LoadingContainer>
+    );
+  }
+
+  const handleExport = () => {
+    if (atsRef.current && cvData) {
+      changeTitle(opportunityId, cvData);
+      const style = Array
+        .from(document.querySelectorAll('style'))
+        .map(x => `<style>${x.innerHTML}</style>`)
+        .join('');
+      const tailcss = `<style>@layer theme {  :root, :host {    --spacing: .25rem;    } } .indent-5 {text-indent: calc(var(--spacing) * 5);} .text-justify {text-align: justify;}</style>`;
+      const htmlCenter = atsRef.current.innerHTML;
+      const fixHTML = `<html><head>  <meta charset="UTF-8" />    <meta name="viewport" content="width=device-width, initial-scale=1.0" />${style}${tailcss}</head><body>${htmlCenter}</body></html>`;
+      const blob = new Blob([fixHTML], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const filename = `${defineTitle(opportunityId, cvData)}_ATS.html`;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  const handlePrint = () => {
+    const atsElement = document.getElementById("ats");
+    if (atsElement && cvData) {
+      const originalContents = document.body.innerHTML;
+      const printContents = atsElement.innerHTML;
+      document.body.innerHTML = printContents;
+      changeTitle(opportunityId, cvData);
+      window.print();
+      document.body.innerHTML = originalContents;
+    }
+  };
+
+  return (
+    <ATSPageContainer>
+      <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem", alignItems: "center" }}>
+        <ActionButton
+          variant="green"
+          onClick={handlePrint}
+        >
+          Print ATS CV
+        </ActionButton>
+
+        <ActionButton
+          variant="indigo"
+          onClick={handleExport}
+        >
+          Export as HTML
+        </ActionButton>
+        <div>
+          {cvData && changeTitle(opportunityId, cvData)}
+        </div>
+      </div>
+      
+      <ATSContainer id="ats" ref={atsRef}>
+        {cvData ? (
+          <ATSContent>
+            <ATSSection>
+              <PersonalInfo lang={cvData.languageCodeOfJobDescription} />
+            </ATSSection>
+            
+            <ATSSection>
+              <Summary data={cvData.summary} lang={cvData.languageCodeOfJobDescription} />
+            </ATSSection>
+
+            <ATSSection>
+              <SocialMedia />
+            </ATSSection>
+            
+            <ATSSection>
+              <Skills data={cvData.relevantSkills} lang={cvData.languageCodeOfJobDescription} />
+            </ATSSection>
+            
+            <ATSSection>
+              <Experience data={cvData.experience} lang={cvData.languageCodeOfJobDescription} />
+            </ATSSection>
+            
+            <ATSSection>
+              <Education data={cvData.educations} lang={cvData.languageCodeOfJobDescription} />
+            </ATSSection>
+            
+            <ATSSection>
+              <Languages lang={cvData.languageCodeOfJobDescription} />
+            </ATSSection>
+            
+            <ATSSection>
+              <Certificate data={cvData.certificates} lang={cvData.languageCodeOfJobDescription} />
+            </ATSSection>
+          </ATSContent>
+        ) : (
+          <p>Loading CV data...</p>
+        )}
+      </ATSContainer>
+    </ATSPageContainer>
+  );
+}
+
+function changeTitle(opportunityId?: string, cvData?: CVData) {
+  const title = defineTitle(opportunityId, cvData) + "-ATS_Format";
+  document.title = title;
+  return title;
+}
+
+function defineTitle(opportunityId?: string, cvData?: CVData) {
+  return opportunityId
+    ? `Mariano_Aloi_${opportunityId}_${cvData?.languageCodeOfJobDescription}`
+    : `Mariano_Aloi_${cvData?.languageCodeOfJobDescription}`;
+}

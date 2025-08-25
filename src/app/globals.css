@@ -12,6 +12,9 @@
   --font-mono: var(--font-geist-mono);
 }
 
+
+  @layer theme {  :root, :host {    --spacing: .25rem;    } } 
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;

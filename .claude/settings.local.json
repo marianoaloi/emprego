@@ -5,7 +5,8 @@
       "Bash(npm install:*)",
       "mcp__mui-mcp__useMuiDocs",
       "Bash(npm run build:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": []
   }
