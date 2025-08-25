@@ -7,7 +7,17 @@ import {
   LoadingContainer,
   ErrorContainer,
   FormattedContent,
-  RetryButton
+  RetryButton,
+  JobDetailBold,
+  JobDetailHyperlink,
+  JobDetailItalic,
+  JobDetailLineBreak,
+  JobDetailListOrdered,
+  JobDetailListUnordered,
+  JobDetailParagraph,
+  JobDetailListItem,
+  JobDetailSuperscript,
+  JobDetailUnderline
 } from './JobDescription.styled';
 import {
   JobDescriptionProps
