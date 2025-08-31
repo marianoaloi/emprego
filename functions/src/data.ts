@@ -27,50 +27,13 @@ export default (db: Db) => {
           "$limit": limit,
         }, {
           "$skip": offset,
-        }, {
-          "$lookup": {
-            "from": "skils",
-            "let": {
-              "id": "$_id",
-            },
-            "pipeline": [
-              {
-                "$match": {
-                  "$expr": {
-                    "$and": [
-                      {
-                        "$eq": [
-                          "$$id", "$_id",
-                        ],
-                      },
-                    ],
-                  },
-                },
-              }, {
-                "$project": {
-                  match: {
-                    $map: {
-                      as: "match",
-                      input: { $objectToArray: "$skillMatchStatuses" },
-                      in: {
-                        skillOnProfile: "$$match.v.skillOnProfile",
-                        localizedSkillDisplayName: "$$match.v.localizedSkillDisplayName",
-                        skillMatchActionButton: "$$match.v.skillMatchActionButton.actionUrl",
-                      }
-                    }
-                  },
-                  text: "$insightSummary.text.text"
-                },
-              }
-            ],
-            "as": "skills",
-          },
-        },
+       },
         {
           "$project":
           {
             description: "$description.text",
             lang: "$description.lang",
+            skills:1,
             formattedEmploymentStatus: 1,
             formattedLocation: 1,
             title: 1,

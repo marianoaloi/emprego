@@ -158,7 +158,7 @@ export const formatTextWithAttributes = (text: string, attributes: Record<string
       return <JobDetailBold key={"bold-"+segment.start+"_"+index+"-"+(keyCount++)}>{segment.text}</JobDetailBold>
     }
     if (segment.attributeKindUnion?.hyperlink) {
-      return <JobDetailHyperlink href={segment.attributeKindUnion?.hyperlink.url} key={"hyperlink-"+segment.start+"_"+index+"-"+(keyCount++)}>{segment.text}</JobDetailHyperlink>
+      return <JobDetailHyperlink target="_blank" rel="noopener noreferrer" href={segment.attributeKindUnion?.hyperlink.url} key={"hyperlink-"+segment.start+"_"+index+"-"+(keyCount++)}>{segment.text}</JobDetailHyperlink>
     }
     if (segment.attributeKindUnion?.italic) {
       return <JobDetailItalic key={"italic-"+segment.start+"_"+index+"-"+(keyCount++)}>{segment.text}</JobDetailItalic>
