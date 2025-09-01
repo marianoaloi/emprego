@@ -414,7 +414,11 @@ export default function JobDetailModal({ job, open, onClose,
   )
   return (
     <StyledDialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <StyledDialogTitle>
+      <StyledDialogTitle    
+            appliedbyme={job.appliedbyme}
+            ignore={job.ignore}
+            wait={job.wait}
+            close={job.closed?"true":undefined}>
         <Typography >{job.title} | {job.workplaceTypes} | {job.country} | {job.formattedEmploymentStatus} | {`AP:${job.applies}`}</Typography>
         <CloseButton onClick={onClose}>
           <CloseIcon />

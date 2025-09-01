@@ -18,6 +18,8 @@ export interface JobSearchFilter {
   limit?: number;
   locationGranular?: string;
   nostatus?: boolean;
+  percentualMatch?: number; // Percentual Match filter (0-100 integer)
+  percentualMatchGreaterThan?: boolean; // true = greater than, false = less than
   remote?: RemoteWorkType;
   systemRecruter?: SystemRecruiterType;
   title?: string;

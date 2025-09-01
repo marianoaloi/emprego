@@ -128,7 +128,7 @@ interface JobCardProps {
   appliedbyme?: string;
   ignore?: string;
   wait?: string;
-  close?: boolean;
+  close?: string;
   foto?: string;
 }
 

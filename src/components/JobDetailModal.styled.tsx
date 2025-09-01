@@ -17,9 +17,23 @@ export const LogoAzienda = styled.img((props:{size: number}) => `
   object-fit: cover;
 `);
 
-export const StyledDialogTitle = styled(DialogTitle)`
+interface JobCardProps {
+  appliedbyme?: string;
+  ignore?: string;
+  wait?: string;
+  close?: string;
+}
+
+export const StyledDialogTitle = styled(DialogTitle)<JobCardProps>`
   && {
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    background: ${({ appliedbyme, ignore, wait , close }) => {
+      
+      if (appliedbyme) return 'linear-gradient(135deg, #1f8a1e 0%, #3bf64c 100%)'; // Light green
+      if (ignore) return 'linear-gradient(135deg, #8a1e1e 0%, #f63b48 100%)'; // Light red
+      if (wait) return 'linear-gradient(135deg, #8a811e 0%, #f2f63b 100%)'; // Light yellow
+      if (close) return 'linear-gradient(135deg, #000000 0%, #afafad 100%)'; // Light gray
+      return 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)'; // Default white background
+    }};
     color: white;
     padding: 1.5rem 2rem;
     position: relative;

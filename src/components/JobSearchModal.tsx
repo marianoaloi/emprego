@@ -201,6 +201,29 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
             <Box>
               <TextField
                 fullWidth
+                type="number"
+                label="Percentual Match"
+                value={localFilters.percentualMatch || ''}
+                onChange={(e) => handleInputChange('percentualMatch', parseInt(e.target.value) || 0)}
+                placeholder="Enter percentage (0-100)"
+                margin="normal"
+                inputProps={{ min: 0, max: 100 }}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={localFilters.percentualMatchGreaterThan || false}
+                    onChange={(e) => handleInputChange('percentualMatchGreaterThan', e.target.checked)}
+                  />
+                }
+                label="Greater than (unchecked = less than)"
+                sx={{ mt: 1 }}
+              />
+            </Box>
+
+            <Box>
+              <TextField
+                fullWidth
                 label="Start Date Filter"
                 value={localFilters.datai || ''}
                 onChange={(e) => handleInputChange('datai', e.target.value)}

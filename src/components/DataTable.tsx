@@ -151,7 +151,7 @@ export default function DataTable() {
         appliedbyme={job.appliedbyme}
         ignore={job.ignore}
         wait={job.wait}
-        close={job.closed}
+        close={job.closed?"true":undefined}
         foto={
           !job.appliedbyme &&
             !job.ignore &&

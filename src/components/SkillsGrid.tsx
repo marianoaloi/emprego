@@ -18,17 +18,17 @@ const SkillsFlow = styled(Box)(({ theme }) => ({
   alignItems: 'flex-start',
 }));
 
-const SkillChip = styled(Chip)<{ skillOnProfile?: boolean }>(({ theme, skillOnProfile }) => ({
+const SkillChip = styled(Chip)<{ skillonprofile?: string }>(({ theme, skillonprofile }) => ({
   borderRadius: theme.spacing(3),
   height: 'auto',
   padding: theme.spacing(0.5, 1),
   fontSize: '0.875rem',
   fontWeight: 500,
-  backgroundColor: skillOnProfile ? '#e8f5e8' : '#f3f4f6',
-  color: skillOnProfile ? '#2d7d2d' : '#374151',
-  border: skillOnProfile ? '1px solid #4ade80' : '1px solid #d1d5db',
+  backgroundColor: skillonprofile ? '#e8f5e8' : '#f3f4f6',
+  color: skillonprofile ? '#2d7d2d' : '#374151',
+  border: skillonprofile ? '1px solid #4ade80' : '1px solid #d1d5db',
   '&:hover': {
-    backgroundColor: skillOnProfile ? '#dcf2dc' : '#e5e7eb',
+    backgroundColor: skillonprofile ? '#dcf2dc' : '#e5e7eb',
   },
   '& .MuiChip-label': {
     padding: theme.spacing(0.5, 1),
@@ -105,7 +105,7 @@ export default function SkillsGrid() {
               <LinkSkillChip
                 key={`${skill.localizedSkillDisplayName}-${index}`}
                 label={skill.localizedSkillDisplayName}
-                skillOnProfile={skill.skillOnProfile}
+                skillonprofile={skill.skillOnProfile?'true':undefined}
                 onClick={() => handleSkillClick(skill)}
               />
             );
@@ -115,7 +115,7 @@ export default function SkillsGrid() {
             <SkillChip
               key={`${skill.localizedSkillDisplayName}-${index}`}
               label={skill.localizedSkillDisplayName}
-              skillOnProfile={skill.skillOnProfile}
+              skillonprofile={skill.skillOnProfile?'true':undefined}
             />
           );
         })}

@@ -1,11 +1,11 @@
 /* eslint-disable require-jsdoc */
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-dupe-else-if */
-import {Request} from "express";
+import { Request } from "express";
 import { Db } from "mongodb";
 import { config } from "./util/env";
 
-export const supperFilter = async (req: Request, query: any,db: Db) => {
+export const supperFilter = async (req: Request, query: any, db: Db) => {
   (query as any)[0].$match["applyingInfo.closed"] = false;
 
 
@@ -15,24 +15,24 @@ export const supperFilter = async (req: Request, query: any,db: Db) => {
 
   if (req.body.systemRecruter) {
     switch (req.body.systemRecruter) {
-    case "LinkedIn":
-      (query as any)[0].$match["applicantTrackingSystem"] = "LinkedIn";
-      break;
-    case "Others":
-      (query as any)[0].$match["applicantTrackingSystem"] = {$ne: "LinkedIn"};
-      break;
-    case "Empty":
-      (query as any)[0].$match["applicantTrackingSystem"] = {$exists: false};
-      break;
-    default:
-      break;
+      case "LinkedIn":
+        (query as any)[0].$match["applicantTrackingSystem"] = "LinkedIn";
+        break;
+      case "Others":
+        (query as any)[0].$match["applicantTrackingSystem"] = { $ne: "LinkedIn" };
+        break;
+      case "Empty":
+        (query as any)[0].$match["applicantTrackingSystem"] = { $exists: false };
+        break;
+      default:
+        break;
     }
   }
 
   if (req.body.id) {
-    (query as any)[0].$match["_id"] = {"$in": req.body.id.split(",")};
-  }if (req.body.ids) {
-    (query as any)[0].$match["_id"] = {"$in": req.body.ids};
+    (query as any)[0].$match["_id"] = { "$in": req.body.id.split(",") };
+  } if (req.body.ids) {
+    (query as any)[0].$match["_id"] = { "$in": req.body.ids };
   }
 
   if (req.body.lang) {
@@ -41,41 +41,41 @@ export const supperFilter = async (req: Request, query: any,db: Db) => {
 
 
   if (req.body.title) {
-    (query as any)[0].$match["title"] = {$regex: req.body.title, $options: "i"};
+    (query as any)[0].$match["title"] = { $regex: req.body.title, $options: "i" };
   }
   if (req.body.companyName) {
-    (query as any)[0].$match["companyDetails.comlinkedinvoyagerdecojobswebsharedWebJobPostingCompany.companyResolutionResult.name"] = {$regex: req.body.companyName, $options: "i"};
+    (query as any)[0].$match["companyDetails.comlinkedinvoyagerdecojobswebsharedWebJobPostingCompany.companyResolutionResult.name"] = { $regex: req.body.companyName, $options: "i" };
   }
 
   if (req.body.formattedLocation) {
-    (query as any)[0].$match["formattedLocation"] = {$regex: req.body.formattedLocation, $options: "i"};
+    (query as any)[0].$match["formattedLocation"] = { $regex: req.body.formattedLocation, $options: "i" };
   }
 
   if (req.body.remote) {
     switch (req.body.remote) {
-    case "H":
+      case "H":
 
 
-      (query as any)[0].$match["workplaceTypes.0"] = "urn:li:fs_workplaceType:3";
-      break;
-    case "R":
+        (query as any)[0].$match["workplaceTypes.0"] = "urn:li:fs_workplaceType:3";
+        break;
+      case "R":
 
 
-      (query as any)[0].$match["workplaceTypes.0"] = "urn:li:fs_workplaceType:2";
-      break;
-    case "O":
+        (query as any)[0].$match["workplaceTypes.0"] = "urn:li:fs_workplaceType:2";
+        break;
+      case "O":
 
 
-      (query as any)[0].$match["workplaceTypes.0"] = "urn:li:fs_workplaceType:1";
-      break;
-    default:
-      break;
+        (query as any)[0].$match["workplaceTypes.0"] = "urn:li:fs_workplaceType:1";
+        break;
+      default:
+        break;
     }
   }
   if (req.body.ignore !== undefined || req.body.applied !== undefined || req.body.wait !== undefined || req.body.nostatus !== undefined) {
     const filterStatus: any = (query as any)[0].$match[(req.body.nostatus) || (req.body.ignore ||
-          req.body.applied ||
-          req.body.wait) ? "$and" : "$or"] = [];
+      req.body.applied ||
+      req.body.wait) ? "$and" : "$or"] = [];
     if (!req.body.ignore) {
       filterStatus.push({
         "ignore": {
@@ -122,8 +122,83 @@ export const supperFilter = async (req: Request, query: any,db: Db) => {
   }
 
   if (req.body.locationGranular && !(query as any)[0].$match["formattedLocation"]) {
-    const locations = await db.collection(config.mongodb.collectionLocalCode).find({codes: req.body.locationGranular}).toArray();
-    (query as any)[0].$match["formattedLocation"] = {"$in": locations.map((x: { _id: any; })=>x._id)};
+    const locations = await db.collection(config.mongodb.collectionLocalCode).find({ codes: req.body.locationGranular }).toArray();
+    (query as any)[0].$match["formattedLocation"] = { "$in": locations.map((x: { _id: any; }) => x._id) };
+  }
+
+  if (req.body.percentualMatch) {
+    query.splice(1, 0,
+      {
+        $lookup: {
+          from: "skils",
+          let: {
+            id: "$_id"
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$$id", "$_id"]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                match: {
+                  $map: {
+                    as: "match",
+                    input: {
+                      $objectToArray:
+                        "$skillMatchStatuses"
+                    },
+                    in: {
+                      $cond: [
+                        "$$match.v.skillOnProfile",
+                        1,
+                        0
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              $project: {
+                perc: {
+                  $divide: [
+                    {
+                      $sum: "$match"
+                    },
+                    {
+                      $size: "$match"
+                    }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "skills"
+        }
+      }
+    );
+    query.splice(2, 0,
+      {
+        $match:
+        /**
+         * query: The query in MQL.
+         */
+        {
+          "skills.0.perc": req.body.percentualMatchGreaterThan !== false ?
+            { $gte: req.body.percentualMatch / 100 } :
+            { $lte: req.body.percentualMatch / 100}
+        }
+      },
+    )
   }
 
   dateQuery(req, query);
@@ -166,7 +241,7 @@ const dateQuery = (req: Request, result: any) => {
   return result;
 };
 
-function transformDate(dateBase:string, dateContral : Date, diff : number) {
+function transformDate(dateBase: string, dateContral: Date, diff: number) {
   let dataFinal;
   if (dateBase.includes("*")) {
     const group = /([\d\-]+)(\w+)/g.exec(dateBase);
@@ -175,24 +250,24 @@ function transformDate(dateBase:string, dateContral : Date, diff : number) {
     const intergerToCalculate = parseInt(group[1]);
     if (intergerToCalculate != 0) {
       switch (group[2]) {
-      case "y":
-        base = 365 * 24 * 60 * 60 * 1000;
-        break;
-      case "M":
-        base = 30 * 24 * 60 * 60 * 1000;
-        break;
-      case "d":
-        base = 24 * 60 * 60 * 1000;
-        break;
-      case "h":
-        base = 60 * 60 * 1000;
-        break;
-      case "m":
-        base = 60 * 1000;
-        break;
-      case "s":
-        base = 1000;
-        break;
+        case "y":
+          base = 365 * 24 * 60 * 60 * 1000;
+          break;
+        case "M":
+          base = 30 * 24 * 60 * 60 * 1000;
+          break;
+        case "d":
+          base = 24 * 60 * 60 * 1000;
+          break;
+        case "h":
+          base = 60 * 60 * 1000;
+          break;
+        case "m":
+          base = 60 * 1000;
+          break;
+        case "s":
+          base = 1000;
+          break;
       }
       dataFinal = new Date(dateContral);
       if (isNaN(dataFinal.getTime())) {
