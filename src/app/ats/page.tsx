@@ -6,26 +6,20 @@ import { useAuth } from "@/components/auth/AuthContext";
 import PersonalInfo from "./components/PersonalInfo";
 import Summary from "./components/Summary";
 import Skills from "./components/Skills";
-import SocialMedia from "./components/SocialMedia";
 import Experience from "./components/Experience";
 import Education from "./components/Education";
 import Languages from "./components/Language";
 import Certificate from "./components/Certificate";
 import {
-  CVPageContainer,
-  CVContainer,
-  CVContent,
-  EducationSection,
-  EducationTitle,
-  EducationGrid,
+  ATSPageContainer,
+  ATSContainer,
+  ATSContent,
   ActionButton,
   LoadingContainer,
   LoadingText,
-  JumpLine,
-  JumpLineControl,
-  JumpLineInput,
-  JumpLineLabel
+  ATSSection
 } from "./page.styled";
+import SocialMedia from "./components/SocialMedia";
 
 interface CVData {
   personalInformation: {
@@ -63,12 +57,11 @@ interface CVData {
   languageCodeOfJobDescription: string;
 }
 
-export default function CVPage() {
-  const cvRef = useRef<HTMLDivElement>(null);
+export default function ATSPage() {
+  const atsRef = useRef<HTMLDivElement>(null);
   const [cvData, setCvData] = useState<CVData | null>(null);
   const [opportunityId, setOpportunityId] = useState<string>("");
-  const [jumpLineCount, setJumpLineCount] = useState<number>(0);
-  const [jumpSocialCount, setJumpSocialCount] = useState<number>(0);
+  const [language, setLanguage] = useState<string>("en");
 
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -79,9 +72,16 @@ export default function CVPage() {
       return;
     }
 
+    const lang = localStorage.getItem("lang");
+    if (lang) {
+      setLanguage(lang);
+    }
     const data = localStorage.getItem("cvData");
     if (data) {
-      setCvData(JSON.parse(data));
+      const dataj = JSON.parse(data);
+      dataj.languageCodeOfJobDescription = dataj.languageCodeOfJobDescription || lang;
+      
+      setCvData(dataj);
     }
 
     const oppId = localStorage.getItem("opportunityId");
@@ -95,38 +95,6 @@ export default function CVPage() {
       changeTitle(opportunityId, cvData);
     }
   }, [cvData, opportunityId]);
-
-
-
-  const handleJumpLineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value === '') {
-      setJumpLineCount(0);
-      return;
-    }
-
-    const num = parseInt(value, 10);
-    if (!isNaN(num) && num >= 0 && num <= 20) {
-      setJumpLineCount(num);
-    }
-  };
-
-
-
-  const handleJumpSourceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value === '') {
-      setJumpSocialCount(0);
-      return;
-    }
-
-    const num = parseInt(value, 10);
-    if (!isNaN(num) && num >= 0 && num <= 20) {
-      setJumpSocialCount(num);
-    }
-  };
-
-
 
   if (authLoading) {
     return (
@@ -145,20 +113,20 @@ export default function CVPage() {
   }
 
   const handleExport = () => {
-    if (cvRef.current && cvData) {
+    if (atsRef.current && cvData) {
       changeTitle(opportunityId, cvData);
       const style = Array
         .from(document.querySelectorAll('style'))
         .map(x => `<style>${x.innerHTML}</style>`)
         .join('');
       const tailcss = `<style>@layer theme {  :root, :host {    --spacing: .25rem;    } } .indent-5 {text-indent: calc(var(--spacing) * 5);} .text-justify {text-align: justify;}</style>`;
-      const htmlCenter = cvRef.current.innerHTML;
+      const htmlCenter = atsRef.current.innerHTML;
       const fixHTML = `<html><head>  <meta charset="UTF-8" />    <meta name="viewport" content="width=device-width, initial-scale=1.0" />${style}${tailcss}</head><body>${htmlCenter}</body></html>`;
       const blob = new Blob([fixHTML], { type: "text/html" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      const filename = `${defineTitle(opportunityId, cvData)}.html`;
+      const filename = `${defineTitle(opportunityId, cvData)}_ATS.html`;
       a.download = filename;
       a.click();
       URL.revokeObjectURL(url);
@@ -166,10 +134,10 @@ export default function CVPage() {
   };
 
   const handlePrint = () => {
-    const cvElement = document.getElementById("cv");
-    if (cvElement && cvData) {
+    const atsElement = document.getElementById("ats");
+    if (atsElement && cvData) {
       const originalContents = document.body.innerHTML;
-      const printContents = cvElement.innerHTML;
+      const printContents = atsElement.innerHTML;
       document.body.innerHTML = printContents;
       changeTitle(opportunityId, cvData);
       window.print();
@@ -178,34 +146,13 @@ export default function CVPage() {
   };
 
   return (
-    <CVPageContainer>
-      <JumpLineControl>
-        <JumpLineLabel htmlFor="jumpSocialInput">Jump Social (0-20):</JumpLineLabel>
-        <JumpLineInput
-          id="jumpSocialInput"
-          type="number"
-          min="0"
-          max="20"
-          value={jumpSocialCount}
-          onChange={handleJumpSourceChange}
-          placeholder="0"
-        />
-        <JumpLineLabel htmlFor="jumpLineInput">Jump Lines (0-20):</JumpLineLabel>
-        <JumpLineInput
-          id="jumpLineInput"
-          type="number"
-          min="0"
-          max="20"
-          value={jumpLineCount}
-          onChange={handleJumpLineChange}
-          placeholder="0"
-        />
-
+    <ATSPageContainer>
+      <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem", alignItems: "center" }}>
         <ActionButton
           variant="green"
           onClick={handlePrint}
         >
-          Print CV
+          Print ATS CV
         </ActionButton>
 
         <ActionButton
@@ -215,55 +162,61 @@ export default function CVPage() {
           Export as HTML
         </ActionButton>
         <div>
-          {cvData && defineTitle(opportunityId, cvData)}
+          {cvData && changeTitle(opportunityId, cvData)}
         </div>
-      </JumpLineControl>
-      <CVContainer id="cv" ref={cvRef}>
+      </div>
+      
+      <ATSContainer id="ats" ref={atsRef}>
         {cvData ? (
-          <>
-            <PersonalInfo />
-            <div>
-              <CVContent>
-                <div>
-                  <Summary data={cvData.summary} lang={cvData.languageCodeOfJobDescription} />
-                </div>
-                <div>
-                  <Skills data={cvData.relevantSkills} />
-                </div>
-              </CVContent>
-            </div>
-            <JumpLine dangerouslySetInnerHTML={{ __html: '<br/>'.repeat(jumpSocialCount) }} />
-            <SocialMedia />
-            <JumpLine dangerouslySetInnerHTML={{ __html: '<br/>'.repeat(jumpLineCount) }} />
-            <Experience data={cvData.experience} lang={cvData.languageCodeOfJobDescription} />
-            <EducationSection>
-              <EducationTitle>{cvData.languageCodeOfJobDescription === "it" ? "Educazione" : "Education"}</EducationTitle>
-              <EducationGrid>
-                <div>
-                  <Education data={cvData.educations} />
-                </div>
-                <div>
-                  <Languages lang={cvData.languageCodeOfJobDescription} />
-                </div>
-              </EducationGrid>
-            </EducationSection>
-            <Certificate data={cvData.certificates} lang={cvData.languageCodeOfJobDescription} />
-          </>
+          <ATSContent>
+            <ATSSection>
+              <PersonalInfo lang={cvData.languageCodeOfJobDescription} />
+            </ATSSection>
+            
+            <ATSSection>
+              <Summary data={cvData.summary} lang={cvData.languageCodeOfJobDescription} />
+            </ATSSection>
+
+            <ATSSection>
+              <SocialMedia />
+            </ATSSection>
+            
+            <ATSSection>
+              <Skills data={cvData.relevantSkills} lang={cvData.languageCodeOfJobDescription} />
+            </ATSSection>
+            
+            <ATSSection>
+              <Experience data={cvData.experience} lang={cvData.languageCodeOfJobDescription} />
+            </ATSSection>
+            
+            <ATSSection>
+              <Education data={cvData.educations} lang={cvData.languageCodeOfJobDescription} />
+            </ATSSection>
+            
+            <ATSSection>
+              <Languages lang={cvData.languageCodeOfJobDescription} />
+            </ATSSection>
+            
+            <ATSSection>
+              <Certificate data={cvData.certificates} lang={cvData.languageCodeOfJobDescription} />
+            </ATSSection>
+          </ATSContent>
         ) : (
           <p>Loading CV data...</p>
         )}
-      </CVContainer>
-    </CVPageContainer>
+      </ATSContainer>
+    </ATSPageContainer>
   );
 }
 
 function changeTitle(opportunityId?: string, cvData?: CVData) {
-  const title = defineTitle(opportunityId, cvData);
+  const title = defineTitle(opportunityId, cvData) + "-ATS_Format";
   document.title = title;
-}
-function defineTitle(opportunityId?: string , cvData?: CVData ) {
-  return opportunityId
-    ? `Mariano_Aloi_${opportunityId}_${cvData?.languageCodeOfJobDescription}`
-    : `Mariano_Aloi_${cvData?.languageCodeOfJobDescription}`
+  return title;
 }
 
+function defineTitle(opportunityId?: string, cvData?: CVData) {
+  return opportunityId
+    ? `Mariano_Aloi_${opportunityId}_${cvData?.languageCodeOfJobDescription}`
+    : `Mariano_Aloi_${cvData?.languageCodeOfJobDescription}`;
+}

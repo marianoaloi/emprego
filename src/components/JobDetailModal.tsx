@@ -94,7 +94,8 @@ export default function JobDetailModal({ job, open, onClose,
       // Store CV data and opportunity ID in local storage to pass to the CV page
       localStorage.setItem("cvData", JSON.stringify(cvData));
       localStorage.setItem("opportunityId", job._id);
-      window.open('/cv', '_blank');
+      localStorage.setItem("lang", job.lang);
+      window.open('/ats', '_blank');
     } catch (error) {
       console.error("Error generating CV:", error);
       alert("Error generating CV. Please try again.");

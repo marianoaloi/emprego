@@ -1,4 +1,4 @@
-import { convertDate } from "../util/componentDate";
+
 import React from 'react';
 import {
   EducationContainer,
@@ -6,6 +6,7 @@ import {
   EducationDegree,
   EducationInfo
 } from './Education.styled';
+import { convertDate } from '@/components/util/componentDate';
 
 interface EducationProps {
   data: {

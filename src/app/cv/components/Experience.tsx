@@ -1,5 +1,4 @@
-import { calculateDateDifference, convertDate } from "../util/componentDate";
-import { identParagraph } from '../util/componentString';
+
 import React from 'react';
 import {
   ExperienceContainer,
@@ -12,6 +11,8 @@ import {
   TechnologiesContainer,
   TechnologyTag
 } from './Experience.styled';
+import { calculateDateDifference, convertDate } from '@/components/util/componentDate';
+import { identParagraph } from '@/components/util/componentString';
 
 interface ExperienceProps {
   data: {

@@ -1,6 +1,7 @@
-import { classIdent, identParagraph } from '../util/componentString';
+
 import React from 'react';
 import { SummaryContainer, SummaryContent, SummaryParagraph } from './Summary.styled';
+import { classIdent, identParagraph } from '@/components/util/componentString';
 
 interface SummaryProps {
   data: string;
