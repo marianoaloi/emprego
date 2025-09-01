@@ -13,6 +13,9 @@ export const ATSPageContainer = styled.main`
   }
 `;
 
+
+export const JumpLine = styled.div``
+
 export const ATSContainer = styled.div`
   max-width: 60rem;
   width: 100%;
@@ -38,64 +41,6 @@ export const ATSSection = styled.section`
   }
 `;
 
-export const ActionButton = styled.button<{ variant: 'indigo' | 'green' | 'blue' | 'gray' }>`
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
-  border-radius: 0.375rem;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  border: none;
-  cursor: pointer;
-  color: white;
-  transition: background-color 0.2s;
-  outline: none;
-
-  ${({ variant }) => {
-    switch (variant) {
-      case 'indigo':
-        return `
-          background-color: #4f46e5;
-          &:hover {
-            background-color: #4338ca;
-          }
-          &:focus {
-            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.5);
-          }
-        `;
-      case 'green':
-        return `
-          background-color: #059669;
-          &:hover {
-            background-color: #047857;
-          }
-          &:focus {
-            box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.5);
-          }
-        `;
-      case 'blue':
-        return `
-          background-color: #2563eb;
-          &:hover {
-            background-color: #1d4ed8;
-          }
-          &:focus {
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.5);
-          }
-        `;
-      case 'gray':
-        return `
-          background-color: #4b5563;
-          &:hover {
-            background-color: #374151;
-          }
-          &:focus {
-            box-shadow: 0 0 0 2px rgba(75, 85, 99, 0.5);
-          }
-        `;
-      default:
-        return '';
-    }
-  }}
-`;
 
 export const LoadingContainer = styled.main`
   display: flex;

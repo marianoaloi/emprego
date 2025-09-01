@@ -2,13 +2,9 @@
 import { JobSearchFilter, DEFAULT_JOB_FILTER } from '@/types/job.filter.types';
 import { JobPosting } from '@/types/job.types';
 import { JobDescriptionResponse, JobDescriptionApiResponse } from '@/types/job-description.types';
-import { fetchRetry } from '../UtilREquest';
+import { API_BASE_URL, fetchRetry } from '../UtilREquest';
 
-const API_BASE_URL = process.env.NODE_ENV === 'production'
-    ? 'https://us-central1-emprego-4bb54.cloudfunctions.net/api'
-    : 'http://localhost:5001/emprego-4bb54/us-central1/api';
 
-console.log('Environment:', process.env.NODE_ENV);
 
 
 export const DataRequest = async (filter?: JobSearchFilter): Promise<JobPosting[]> => {

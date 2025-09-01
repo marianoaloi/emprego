@@ -14,12 +14,13 @@ import {
   ATSPageContainer,
   ATSContainer,
   ATSContent,
-  ActionButton,
   LoadingContainer,
   LoadingText,
-  ATSSection
+  ATSSection,
+  JumpLine
 } from "./page.styled";
 import SocialMedia from "./components/SocialMedia";
+import { ActionButton, JumpLineControl, JumpLineInput, JumpLineLabel } from "../cv/page.styled";
 
 interface CVData {
   personalInformation: {
@@ -63,6 +64,10 @@ export default function ATSPage() {
   const [opportunityId, setOpportunityId] = useState<string>("");
   const [language, setLanguage] = useState<string>("en");
 
+  const [jumpLineCount, setJumpLineCount] = useState<number>(0);
+  const [jumpSocialCount, setJumpSocialCount] = useState<number>(0);
+
+
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 
@@ -80,7 +85,7 @@ export default function ATSPage() {
     if (data) {
       const dataj = JSON.parse(data);
       dataj.languageCodeOfJobDescription = dataj.languageCodeOfJobDescription || lang;
-      
+
       setCvData(dataj);
     }
 
@@ -95,6 +100,37 @@ export default function ATSPage() {
       changeTitle(opportunityId, cvData);
     }
   }, [cvData, opportunityId]);
+
+  
+
+  const handleJumpLineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '') {
+      setJumpLineCount(0);
+      return;
+    }
+
+    const num = parseInt(value, 10);
+    if (!isNaN(num) && num >= 0 && num <= 20) {
+      setJumpLineCount(num);
+    }
+  };
+
+
+
+  const handleJumpSourceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '') {
+      setJumpSocialCount(0);
+      return;
+    }
+
+    const num = parseInt(value, 10);
+    if (!isNaN(num) && num >= 0 && num <= 20) {
+      setJumpSocialCount(num);
+    }
+  };
+
 
   if (authLoading) {
     return (
@@ -147,12 +183,33 @@ export default function ATSPage() {
 
   return (
     <ATSPageContainer>
-      <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem", alignItems: "center" }}>
+<JumpLineControl>
+        <JumpLineLabel htmlFor="jumpSocialInput">Jump Social (0-20):</JumpLineLabel>
+        <JumpLineInput
+          id="jumpSocialInput"
+          type="number"
+          min="0"
+          max="20"
+          value={jumpSocialCount}
+          onChange={handleJumpSourceChange}
+          placeholder="0"
+        />
+        <JumpLineLabel htmlFor="jumpLineInput">Jump Lines (0-20):</JumpLineLabel>
+        <JumpLineInput
+          id="jumpLineInput"
+          type="number"
+          min="0"
+          max="20"
+          value={jumpLineCount}
+          onChange={handleJumpLineChange}
+          placeholder="0"
+        />
+
         <ActionButton
           variant="green"
           onClick={handlePrint}
         >
-          Print ATS CV
+          Print CV
         </ActionButton>
 
         <ActionButton
@@ -162,41 +219,43 @@ export default function ATSPage() {
           Export as HTML
         </ActionButton>
         <div>
-          {cvData && changeTitle(opportunityId, cvData)}
+          {cvData && defineTitle(opportunityId, cvData)}
         </div>
-      </div>
-      
+      </JumpLineControl>
+
       <ATSContainer id="ats" ref={atsRef}>
         {cvData ? (
           <ATSContent>
             <ATSSection>
               <PersonalInfo lang={cvData.languageCodeOfJobDescription} />
             </ATSSection>
-            
+
             <ATSSection>
               <Summary data={cvData.summary} lang={cvData.languageCodeOfJobDescription} />
             </ATSSection>
 
+            <JumpLine dangerouslySetInnerHTML={{ __html: '<br/>'.repeat(jumpSocialCount) }} />
             <ATSSection>
               <SocialMedia />
             </ATSSection>
-            
+
             <ATSSection>
               <Skills data={cvData.relevantSkills} lang={cvData.languageCodeOfJobDescription} />
             </ATSSection>
-            
+            <JumpLine dangerouslySetInnerHTML={{ __html: '<br/>'.repeat(jumpLineCount) }} />
+
             <ATSSection>
               <Experience data={cvData.experience} lang={cvData.languageCodeOfJobDescription} />
             </ATSSection>
-            
+
             <ATSSection>
               <Education data={cvData.educations} lang={cvData.languageCodeOfJobDescription} />
             </ATSSection>
-            
+
             <ATSSection>
               <Languages lang={cvData.languageCodeOfJobDescription} />
             </ATSSection>
-            
+
             <ATSSection>
               <Certificate data={cvData.certificates} lang={cvData.languageCodeOfJobDescription} />
             </ATSSection>

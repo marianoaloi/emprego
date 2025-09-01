@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import JobSearchModal from './JobSearchModal';
 import {
   Nav,
@@ -16,7 +17,7 @@ import { useAuth } from './auth/AuthContext';
 
 export default function TopMenu() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const router = useRouter();
   const { user } = useAuth();
   return (
     <>
@@ -28,6 +29,9 @@ export default function TopMenu() {
             </TitleContainer>
             {user &&
               <ButtonContainer>
+                <FilterButton onClick={() => router.push('/dashboard')}>
+                  Dashboard
+                </FilterButton>
                 <FilterButton onClick={() => setIsModalOpen(true)}>
                   Search Filters
                 </FilterButton>
