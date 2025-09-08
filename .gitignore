@@ -42,6 +42,6 @@ yarn-error.log*
 next-env.d.ts
 .firebase/**
 *.log
-**/cert/**
-**/lib/**
-**/node_modules/**
+functions/cert/**
+functions/lib/**
+functions/node_modules/**

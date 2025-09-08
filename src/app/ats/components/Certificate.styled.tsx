@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const CertificateContainer = styled.div`
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.25rem;
 `;
 
 export const CertificateTitle = styled.h2`
@@ -21,7 +21,7 @@ export const CertificateList = styled.div`
 `;
 
 export const CertificateItem = styled.div`
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   
   &:last-child {
     margin-bottom: 0;

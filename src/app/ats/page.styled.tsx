@@ -33,11 +33,11 @@ export const ATSContent = styled.div`
 `;
 
 export const ATSSection = styled.section`
-  margin-bottom: 1rem;
+  margin-bottom: 0.25rem;
   
   &:not(:last-child) {
     border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 1rem;
+  padding-bottom: 0.25rem;
   }
 `;
 

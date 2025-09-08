@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const SocialMediaContainer = styled.div`
-  margin-bottom: 2rem;
+  margin-bottom: 0.25rem;
 `;
 
 export const SocialMediaTitle = styled.h2`

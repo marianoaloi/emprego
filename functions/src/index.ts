@@ -25,6 +25,7 @@ import dataRouter from "./data";
 import llmRouter from "./llm";
 import skillRouter from "./skill";
 import textRouter from "./text";
+import cookieRooter from "./cookie";
 import { config } from "./util/env";
 const app = express();
 
@@ -90,6 +91,7 @@ async function connectToMongoDB() {
     app.use("/llm", llmRouter(db));
     app.use("/skill", skillRouter(db));
     app.use("/text", textRouter(db));
+    app.use("/cookie", cookieRooter(db));
   } catch (error) {
     logger.error("Failed to connect to MongoDB:", error);
     process.exit(1);;

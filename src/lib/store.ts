@@ -4,6 +4,7 @@ import filterReducer from './features/filter/filterSlice';
 import textJobReducer from './features/textJob/textJobSlice';
 import skillsReducer from './features/skill/skillsSlice';
 import dashboardReducer from './features/dashboard/dashboardSlice';
+import cookieReducer from './features/cookie/cookieSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     textJob: textJobReducer,
     skills: skillsReducer,
     dashboard: dashboardReducer,
+    cookie: cookieReducer,
   },
 });
 
