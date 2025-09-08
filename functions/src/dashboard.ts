@@ -70,7 +70,7 @@ const salary = async (req: Request, res: Response) => {
             "replacement": "",
           },
         },
-        "lang": "$description.lang.lang",
+        "lang": "$description.lang",
         "lastupdate": {"$toDate": "$lastupdate"},
       },
     }, {
@@ -111,7 +111,7 @@ const countries = async (req: Request, res: Response) => {
             new Date().getTime() -
             days * 24 * 60 * 60 * 1000,
         },
-        "description.lang.lang": {
+        "description.lang": {
           $in: ["pt", "it", "en"],
         },
       },
@@ -220,7 +220,7 @@ const countryLocal = async (req: Request, res: Response) => {
             new Date().getTime() -
             days * 24 * 60 * 60 * 1000,
         },
-        "description.lang.lang": {
+        "description.lang": {
           $in: ["pt", "it", "en"],
         },
       },
@@ -293,7 +293,7 @@ const base = async (req: Request, res: Response) => {
             new Date().getTime() -
             days * 24 * 60 * 60 * 1000,
         },
-        "description.lang.lang": {
+        "description.lang": {
           $in: ["pt", "it", "en"],
         },
         "ignore": {
@@ -309,7 +309,7 @@ const base = async (req: Request, res: Response) => {
        */
       {
         _id: {
-          lang: "$description.lang.lang",
+          lang: "$description.lang",
           country: "$country",
         },
         count: {

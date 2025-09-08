@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const EducationContainer = styled.div`
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.25rem;
 `;
 
 export const EducationTitle = styled.h2`
@@ -15,7 +15,7 @@ export const EducationTitle = styled.h2`
 `;
 
 export const EducationItem = styled.div`
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.25rem;
   
   &:last-child {
     margin-bottom: 0;

@@ -10,8 +10,8 @@ export const convertDate = (sysDate: string): React.ReactNode => {
 
 export const calculateDateDifference = (startDate: string, endDate: string, languageCode: string): string => {
     // Normalize dates to first day of month
-    const start = new Date(startDate.substring(0, 8) + '01');
-    const end = endDate ? new Date(endDate.substring(0, 8) + '01') : new Date();
+    const start = startDate.length >  7 ?  new Date(startDate.substring(0, 8) + '01') : new Date(startDate + '-01');
+    const end = endDate.length >  7 ?  endDate ? new Date(endDate.substring(0, 8) + '01') : new Date() : new Date(endDate + '-01');
     
     // Calculate difference in months
     const yearDiff = end.getFullYear() - start.getFullYear();

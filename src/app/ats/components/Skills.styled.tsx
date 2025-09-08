@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const SkillsContainer = styled.div`
-  margin-bottom: 1.5rem;
+  margin-bottom: .25rem;
 `;
 
 export const SkillsTitle = styled.h2`

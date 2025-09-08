@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const SummaryContainer = styled.div`
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.25rem;
 `;
 
 export const SummaryTitle = styled.h2`

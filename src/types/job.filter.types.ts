@@ -3,6 +3,7 @@
 export type RemoteWorkType = 'H' | 'R' | 'O'; // Hybrid, Remote, On-site
 export type SystemRecruiterType = 'LinkedIn' | 'Others' | 'Empty';
 export type LanguageCode = 'pt' | 'it' | 'en' | string;
+export type WorkType = 'Part-time' | 'Other' | 'Full-time' | 'Contract' | 'Temporary' | 'Volunteer' | 'Internship';
 
 // Job search/filter entity
 export interface JobSearchFilter {
@@ -24,6 +25,7 @@ export interface JobSearchFilter {
   systemRecruter?: SystemRecruiterType;
   title?: string;
   wait?: boolean;
+  workTypes?: WorkType[]; // Multiple work type selection
   sort?: {
     lastupdate?: -1 | 0 | 1;
     expireAt?: -1 | 0 | 1;

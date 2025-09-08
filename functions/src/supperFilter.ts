@@ -46,6 +46,9 @@ export const supperFilter = async (req: Request, query: any, db: Db) => {
   if (req.body.companyName) {
     (query as any)[0].$match["companyDetails.comlinkedinvoyagerdecojobswebsharedWebJobPostingCompany.companyResolutionResult.name"] = { $regex: req.body.companyName, $options: "i" };
   }
+  if (req.body.workTypes && req.body.workTypes.length > 0) {
+    (query as any)[0].$match["formattedEmploymentStatus"] = { $in: req.body.workTypes };
+  }
 
   if (req.body.formattedLocation) {
     (query as any)[0].$match["formattedLocation"] = { $regex: req.body.formattedLocation, $options: "i" };
@@ -153,8 +156,7 @@ export const supperFilter = async (req: Request, query: any, db: Db) => {
                   $map: {
                     as: "match",
                     input: {
-                      $objectToArray:
-                        "$skillMatchStatuses"
+                      $objectToArray: "$skillMatchStatuses"
                     },
                     in: {
                       $cond: [
@@ -169,15 +171,27 @@ export const supperFilter = async (req: Request, query: any, db: Db) => {
             },
             {
               $project: {
+                sum: {
+                  $sum: "$match"
+                },
+                size: {
+                  $size: "$match"
+                }
+              }
+            },
+            {
+              $match:
+              {
+                size: {
+                  $gt: 0
+                }
+              }
+            },
+            {
+              $project:
+              {
                 perc: {
-                  $divide: [
-                    {
-                      $sum: "$match"
-                    },
-                    {
-                      $size: "$match"
-                    }
-                  ]
+                  $divide: ["$sum", "$size"]
                 }
               }
             }
@@ -195,7 +209,7 @@ export const supperFilter = async (req: Request, query: any, db: Db) => {
         {
           "skills.0.perc": req.body.percentualMatchGreaterThan !== false ?
             { $gte: req.body.percentualMatch / 100 } :
-            { $lte: req.body.percentualMatch / 100}
+            { $lte: req.body.percentualMatch / 100 }
         }
       },
     )

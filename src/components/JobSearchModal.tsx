@@ -19,7 +19,7 @@ import {
   Autocomplete
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { JobSearchFilter, RemoteWorkType, SystemRecruiterType, LanguageCode, DEFAULT_JOB_FILTER } from '@/types/job.filter.types';
+import { JobSearchFilter, RemoteWorkType, SystemRecruiterType, LanguageCode, WorkType, DEFAULT_JOB_FILTER } from '@/types/job.filter.types';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { setFilter, resetFilters } from '@/lib/features/filter/filterSlice';
 import italianProvinces from './ItalianProvinces.json';
@@ -41,6 +41,9 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
     value: code
   }));
 
+  // Work type options
+  const workTypeOptions: WorkType[] = ['Part-time', 'Other', 'Full-time', 'Contract', 'Temporary', 'Volunteer', 'Internship'];
+
   // Update local state when Redux state changes or modal opens
   useEffect(() => {
     if (isOpen) {
@@ -50,7 +53,7 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
 
   if (!isOpen) return null;
 
-  const handleInputChange = (field: keyof JobSearchFilter, value: string | number | boolean) => {
+  const handleInputChange = (field: keyof JobSearchFilter, value: string | number | boolean | WorkType[]) => {
     setLocalFilters(prev => ({ ...prev, [field]: value }));
   };
 
@@ -269,6 +272,29 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
                     {...params}
                     label="Location Granular"
                     placeholder="Select Italian province"
+                    margin="normal"
+                  />
+                )}
+                sx={{ mt: 2 }}
+              />
+            </Box>
+
+            <Box>
+              <Autocomplete
+                fullWidth
+                multiple
+                options={workTypeOptions}
+                value={localFilters.workTypes || []}
+                onChange={(event, newValue) => {
+                  handleInputChange('workTypes', newValue);
+                }}
+                getOptionLabel={(option) => option}
+                isOptionEqualToValue={(option, value) => option === value}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Work Types"
+                    placeholder="Select work types (multiple)"
                     margin="normal"
                   />
                 )}
