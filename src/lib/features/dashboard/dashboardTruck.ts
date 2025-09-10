@@ -20,6 +20,7 @@ export interface SalaryDashboardItem {
   payPeriod: string;
   currencyCode: string;
   compensationType: string;
+  closed: boolean;
 }
 
 // Language and country dashboard data - likely contains language/country statistics

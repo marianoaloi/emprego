@@ -7,6 +7,7 @@ import { IconButton, Tooltip, } from '@mui/material';
 import {
   ContentCopy as ContentCopyIcon
 } from '@mui/icons-material';
+import { LinkInCurriculum } from '@/app/ats/page';
 
 export default function CVLoadPage() {
   const [formData, setFormData] = useState<CVData>({
@@ -553,6 +554,7 @@ export default function CVLoadPage() {
             
           />
         </section>
+                <LinkInCurriculum/>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { httpsCallable } from "firebase/functions";
 import { Button, Typography, Tooltip, IconButton, Box, CircularProgress } from '@mui/material';
@@ -12,12 +12,13 @@ import {
   ThumbUp as ThumbUpIcon,
   Lock as LockIcon,
   ContentCopy as ContentCopyIcon,
-  ArrowForward as ArrowForwardIcon
+  ArrowForward as ArrowForwardIcon,
+  JoinFull
 } from '@mui/icons-material';
 import { JobPosting } from '@/types/job.types';
 import JobDescription from './JobDescription';
 import SkillsGrid from './SkillsGrid';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import {
   StyledDialog,
   StyledDialogTitle,
@@ -36,6 +37,7 @@ import {
 } from './JobDetailModal.styled';
 import { useAuth } from './auth/AuthContext';
 import { functions } from './auth/firebaseConfig';
+import { getPostJob } from '@/lib/features/data/dataTruck';
 
 interface JobDetailModalProps {
   job: JobPosting | null;
@@ -59,12 +61,32 @@ export default function JobDetailModal({ job, open, onClose,
   const { user, getAuthToken } = useAuth();
   const [loading, setLoading] = useState(false);
 
+  const dispatch = useAppDispatch();
+
   // Get job description from Redux store
   const jobDescription = useAppSelector(state => state.textJob.descriptions);
   const skillsJob = useAppSelector(state => state.skills.skills);
 
-
   if (!job) return null;
+
+  const fetchJobDetails = async () => {
+
+    if (job._id && user)
+    //   console.log(cookies);
+
+    {
+      getAuthToken().then(token => {
+          if (token)
+            dispatch(
+              getPostJob({ jobId: job._id, token }))
+        }
+      )
+        ;
+    }
+
+  };
+
+
 
   const handleCopyDescription = async () => {
     try {
@@ -286,6 +308,14 @@ export default function JobDetailModal({ job, open, onClose,
     <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
       <CircularProgress />
       BUILDING CURRICULUM VITAE
+      <Tooltip title="Open Job">
+        <IconButton
+          className="go-action"
+          onClick={() => handleGoAction(job)}
+        >
+          <OpenInNewIcon />
+        </IconButton>
+      </Tooltip>
     </Box>
   )
 
@@ -357,6 +387,14 @@ export default function JobDetailModal({ job, open, onClose,
               <OpenInNewIcon />
             </IconButton>
           </Tooltip>
+          <Tooltip title="Update Job">
+            <IconButton
+              className="go-action"
+              onClick={fetchJobDetails}
+            >
+              <JoinFull />
+            </IconButton>
+          </Tooltip>
           {user &&
             <>
               <Tooltip title="Open CV">
@@ -415,12 +453,13 @@ export default function JobDetailModal({ job, open, onClose,
   )
   return (
     <StyledDialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <StyledDialogTitle    
-            appliedbyme={job.appliedbyme}
-            ignore={job.ignore}
-            wait={job.wait}
-            close={job.closed?"true":undefined}>
+      <StyledDialogTitle
+        appliedbyme={job.appliedbyme}
+        ignore={job.ignore}
+        wait={job.wait}
+        close={job.closed ? "true" : undefined}>
         <Typography >{job.formattedLocation.split(',')[0]} &gt; <span title={`title = ${job.title}`}>{job.title}</span> | <span title={`workplaceTypes = ${job.workplaceTypes}`}>{job.workplaceTypes}</span> | <span title={`country = ${job.country}`}>{job.country}</span> | <span title={`formattedEmploymentStatus = ${job.formattedEmploymentStatus}`}>{job.formattedEmploymentStatus}</span> | <span title={`applies = ${job.applies}`}>{job.applies}</span></Typography>
+
         <CloseButton onClick={onClose}>
           <CloseIcon />
         </CloseButton>

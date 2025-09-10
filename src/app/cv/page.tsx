@@ -27,6 +27,7 @@ import {
   JumpLineLabel
 } from "./page.styled";
 import CVData from "../../components/util/CVData";
+import { LinkInCurriculum } from "../ats/page";
 
 
 export default function CVPage() {
@@ -183,6 +184,8 @@ export default function CVPage() {
         <div>
           {cvData && defineTitle(opportunityId, cvData)}
         </div>
+        
+                <LinkInCurriculum/>
       </JumpLineControl>
       <CVContainer id="cv" ref={cvRef}>
         {cvData ? (

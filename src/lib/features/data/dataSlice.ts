@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { fetchData, fetchDataCount, appliedbyme, closeJob, ignoreJob, waitJob } from './dataTruck';
+import { fetchData, fetchDataCount, appliedbyme, closeJob, ignoreJob, waitJob, getPostJob } from './dataTruck';
 import { JobPosting } from '@/types/job.types';
 import { JobActionResponse } from './dataService';
+import { stat } from 'fs';
 
 export interface DataItem {
   id: number;
@@ -50,6 +51,10 @@ const dataSlice = createSlice({
     setJobPostings: (state, action: PayloadAction<JobPosting[]>) => {
       state.jobPostings = action.payload;
     },
+    cleanJobPostings: (state) => {
+      state.jobPostings = [];
+      state.items = [];
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -91,6 +96,24 @@ const dataSlice = createSlice({
         }
       })
       .addCase(appliedbyme.rejected, (state, action) => {
+        state.actionLoading = false;
+        state.actionError = action.error.message || 'Failed to mark job as applied';
+      })
+      // Get Post Job 
+      .addCase(getPostJob.pending, (state) => {
+        state.actionLoading = true;
+        state.actionError = null;
+      })
+      .addCase(getPostJob.fulfilled, (state, action: PayloadAction<JobPosting>) => {
+        state.actionLoading = false;
+        state.actionError = null;
+        const job = state.jobPostings.find(job => job._id === action.payload._id);
+        if (job) {
+          Object.assign(job, action.payload);
+        }
+        
+      })
+      .addCase(getPostJob.rejected, (state, action) => {
         state.actionLoading = false;
         state.actionError = action.error.message || 'Failed to mark job as applied';
       })

@@ -11,7 +11,7 @@ import {
   Lock as LockIcon
 } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { fetchData, fetchDataCount, appliedbyme, closeJob, ignoreJob, waitJob } from '@/lib/features/data/dataTruck';
+import { fetchData, fetchDataCount, appliedbyme, closeJob, ignoreJob, waitJob, getPostJob } from '@/lib/features/data/dataTruck';
 import {
   LoadingContainer,
   Spinner,
@@ -34,6 +34,8 @@ import JobDetailModal from './JobDetailModal';
 import { useAuth } from './auth/AuthContext';
 import { fetchSkills } from '@/lib/features/skill/skillsTruck';
 import { fetchJobText } from '@/lib/features/textJob/textJobTruck';
+import { fetchCookies } from '@/lib/features/cookie/cookieTruck';
+import { clearAllJobDescriptions } from '@/lib/features/textJob/textJobSlice';
 
 export default function DataTable() {
   const dispatch = useAppDispatch();
@@ -50,6 +52,8 @@ export default function DataTable() {
   useEffect(() => {
     dispatch(fetchData(filters));
     dispatch(fetchDataCount(filters));
+
+    getAuthToken().then(token => { if (token) dispatch(fetchCookies(token)) })
   }, [dispatch, filters]);
 
   if (loading) {
@@ -91,6 +95,10 @@ export default function DataTable() {
     );
   }
 
+  function updateCookie(event: React.MouseEvent<HTMLSpanElement>): void {
+    event.preventDefault();
+    getAuthToken().then(token => { if (token) dispatch(fetchCookies(token)) })
+  }
   // Action handlers
   const handleGoAction = (job: JobPosting) => {
     if (job._id) {
@@ -136,11 +144,14 @@ export default function DataTable() {
       dispatch(fetchJobText(jobId));
     }
     setIsModalOpen(true);
+
+
   };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
     setSelectedJob(null);
+    dispatch(clearAllJobDescriptions());
   };
 
   // Render individual job card
@@ -151,7 +162,7 @@ export default function DataTable() {
         appliedbyme={job.appliedbyme}
         ignore={job.ignore}
         wait={job.wait}
-        close={job.closed?"true":undefined}
+        close={job.closed ? "true" : undefined}
         foto={
           !job.appliedbyme &&
             !job.ignore &&
@@ -260,6 +271,7 @@ export default function DataTable() {
     );
   };
 
+
   return (
     <div>
       {isJobData ? (
@@ -275,6 +287,9 @@ export default function DataTable() {
           <JobsGridContainer>
             {(dataToDisplay as JobPosting[]).map((job) => renderJobCard(job))}
           </JobsGridContainer>
+          <FooterInfo>
+            <span onClick={updateCookie} style={{ cursor: 'pointer' }}>Update Cookie</span>
+          </FooterInfo>
         </>
       ) : (
         <NoDataContainer>

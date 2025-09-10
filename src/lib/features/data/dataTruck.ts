@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { DataRequest, DataCountRequest, appliedbymeRequest, CloseRequest, IgnoreRequest, WaitRequest } from "./dataService";
+import { DataRequest, DataCountRequest, appliedbymeRequest, CloseRequest, IgnoreRequest, WaitRequest, getPostJobRequest } from "./dataService";
 import { JobSearchFilter } from "@/types/job.filter.types";
 
 export const fetchData = createAsyncThunk(
@@ -18,7 +18,7 @@ export const fetchDataCount = createAsyncThunk(
 
 export const appliedbyme = createAsyncThunk(
   'data/appliedbyme',
-  async ({ jobId, undo, token }: { jobId: string; undo: boolean | undefined, token : string | null }) => {
+  async ({ jobId, undo, token }: { jobId: string; undo: boolean | undefined, token: string | null }) => {
     const response = await appliedbymeRequest(jobId, undo, token);
     return { ...response, jobId, undo, token };
   }
@@ -26,7 +26,7 @@ export const appliedbyme = createAsyncThunk(
 
 export const closeJob = createAsyncThunk(
   'data/closeJob',
-  async ({ jobId, undo, token }: { jobId: string; undo: boolean | undefined, token : string | null }) => {
+  async ({ jobId, undo, token }: { jobId: string; undo: boolean | undefined, token: string | null }) => {
     const response = await CloseRequest(jobId, undo, token);
     return { ...response, jobId, undo, token };
   }
@@ -34,7 +34,7 @@ export const closeJob = createAsyncThunk(
 
 export const ignoreJob = createAsyncThunk(
   'data/ignoreJob',
-  async ({ jobId, undo, token }: { jobId: string; undo: boolean | undefined, token : string | null }) => {
+  async ({ jobId, undo, token }: { jobId: string; undo: boolean | undefined, token: string | null }) => {
     const response = await IgnoreRequest(jobId, undo, token);
     return { ...response, jobId, undo, token };
   }
@@ -42,9 +42,15 @@ export const ignoreJob = createAsyncThunk(
 
 export const waitJob = createAsyncThunk(
   'data/waitJob',
-  async ({ jobId, undo, token }: { jobId: string; undo: boolean | undefined, token : string | null }) => {
+  async ({ jobId, undo, token }: { jobId: string; undo: boolean | undefined, token: string | null }) => {
     const response = await WaitRequest(jobId, undo, token);
     return { ...response, jobId, undo, token };
   }
 );
 
+export const getPostJob = createAsyncThunk(
+  'data/getPostJob',
+  async ({ jobId, token }: { jobId: string, token: string | null}) => {
+    return await getPostJobRequest(jobId, token);
+  }
+);

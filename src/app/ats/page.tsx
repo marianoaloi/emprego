@@ -17,7 +17,9 @@ import {
   LoadingContainer,
   LoadingText,
   ATSSection,
-  JumpLine
+  JumpLine,
+  LinkControl,
+  LinkCv
 } from "./page.styled";
 import SocialMedia from "./components/SocialMedia";
 import { ActionButton, JumpLineControl, JumpLineInput, JumpLineLabel } from "../cv/page.styled";
@@ -32,7 +34,7 @@ export default function ATSPage() {
 
   const [jumpLineCount, setJumpLineCount] = useState<number>(0);
   const [jumpSocialCount, setJumpSocialCount] = useState<number>(0);
-
+  const [jumpSkillCount, setJumpSkillCount] = useState<number>(0);
 
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -67,7 +69,7 @@ export default function ATSPage() {
     }
   }, [cvData, opportunityId]);
 
-  
+
 
   const handleJumpLineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -96,6 +98,20 @@ export default function ATSPage() {
       setJumpSocialCount(num);
     }
   };
+
+  const handleJumpSkillChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '') {
+      setJumpSkillCount(0);
+      return;
+    }
+
+    const num = parseInt(value, 10);
+    if (!isNaN(num) && num >= 0 && num <= 20) {
+      setJumpSkillCount(num);
+    }
+  };
+
 
 
   if (authLoading) {
@@ -147,9 +163,10 @@ export default function ATSPage() {
     }
   };
 
+
   return (
     <ATSPageContainer>
-<JumpLineControl>
+      <JumpLineControl>
         <JumpLineLabel htmlFor="jumpSocialInput">Jump Social (0-20):</JumpLineLabel>
         <JumpLineInput
           id="jumpSocialInput"
@@ -158,6 +175,16 @@ export default function ATSPage() {
           max="20"
           value={jumpSocialCount}
           onChange={handleJumpSourceChange}
+          placeholder="0"
+        />
+        <JumpLineLabel htmlFor="jumpSkillInput">Jump Skills (0-20):</JumpLineLabel>
+        <JumpLineInput
+          id="jumpSkillInput"
+          type="number"
+          min="0"
+          max="20"
+          value={jumpSkillCount}
+          onChange={handleJumpSkillChange}
           placeholder="0"
         />
         <JumpLineLabel htmlFor="jumpLineInput">Jump Lines (0-20):</JumpLineLabel>
@@ -187,6 +214,7 @@ export default function ATSPage() {
         <div>
           {cvData && defineTitle(opportunityId, cvData)}
         </div>
+        <LinkInCurriculum/>
       </JumpLineControl>
 
       <ATSContainer id="ats" ref={atsRef}>
@@ -205,6 +233,7 @@ export default function ATSPage() {
               <SocialMedia />
             </ATSSection>
 
+            <JumpLine dangerouslySetInnerHTML={{ __html: '<br/>'.repeat(jumpSkillCount) }} />
             <ATSSection>
               <Skills data={cvData.relevantSkills} lang={cvData.languageCodeOfJobDescription} />
             </ATSSection>
@@ -245,3 +274,14 @@ function defineTitle(opportunityId?: string, cvData?: CVData) {
     ? `Mariano_Aloi_${opportunityId}_${cvData?.languageCodeOfJobDescription}`
     : `Mariano_Aloi_${cvData?.languageCodeOfJobDescription}`;
 }
+
+export const LinkInCurriculum = () => {
+  return (
+    
+        <LinkControl>
+          <LinkCv onClick={() => window.open('/cv','_blank')}>CV</LinkCv>
+          <LinkCv onClick={() => window.open('/ats','_blank')}>ATS</LinkCv>
+          <LinkCv onClick={() => window.open('/cv/load','_blank')}>LOAD</LinkCv>
+        </LinkControl>
+  );
+};

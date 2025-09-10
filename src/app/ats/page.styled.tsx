@@ -16,6 +16,19 @@ export const ATSPageContainer = styled.main`
 
 export const JumpLine = styled.div``
 
+export const LinkControl = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+`;
+export const LinkCv = styled.span`
+  cursor: pointer;  
+  color: blue;
+  text-decoration: underline;
+  margin-left: 1rem;
+`;
+
 export const ATSContainer = styled.div`
   max-width: 60rem;
   width: 100%;

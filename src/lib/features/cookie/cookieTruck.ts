@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { getCookie, updateOpportunities } from "./CookieService";
+import { getCookie, updateOpportunities } from "./cookieService";
 import { JobPosting } from "@/types/job.types";
 
 export const fetchCookies = createAsyncThunk(

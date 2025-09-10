@@ -2,7 +2,6 @@
 import { Cookie } from '@/types/cookies.types';
 import { API_BASE_URL, fetchRetry } from '../UtilREquest';
 import { JobPosting } from '@/types/job.types';
-import { headers } from 'next/headers';
 
 export const getCookie = async (token: string): Promise<Cookie[] | null> => {
     const response = await fetchRetry(`${API_BASE_URL}/cookie`, 10_000, 5, {

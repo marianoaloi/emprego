@@ -139,7 +139,10 @@ export default function DashboardPage() {
 
   // Column definitions for each table
   const salaryColumns = [
-    { key: '_id', label: 'ID' },
+    { key: '_id', label: 'ID' , render: (value: string, row: any) => {
+      const url = `https://www.linkedin.com/jobs/view/${value}`;
+      return <a href={url} target="_blank"  style={{ background : row["closed"] ? "pink" : "lightgreen" , padding: "3px 5px"}} rel="noopener noreferrer">{value}</a>;
+    }},
     { key: 'title', label: 'Job Title' },
     { key: 'standardizedTitle', label: 'Standardized Title' },
     { key: 'employmentStatus', label: 'Employment Status' },
