@@ -1,11 +1,6 @@
 export default
     interface CVData {
-    personalInformation: {
-        name: string;
-        email: string;
-        phone: string;
-        linkedin: string;
-    };
+
     summary: string;
     relevantSkills: Array<{
         skillName: string;
@@ -30,7 +25,7 @@ export default
         institute: string;
         credential: string;
         issued: string;
-        url: string;
+        url?: string;
     }>;
     languageCodeOfJobDescription: string;
 }

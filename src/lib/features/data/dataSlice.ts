@@ -2,7 +2,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { fetchData, fetchDataCount, appliedbyme, closeJob, ignoreJob, waitJob, getPostJob } from './dataTruck';
 import { JobPosting } from '@/types/job.types';
 import { JobActionResponse } from './dataService';
-import { stat } from 'fs';
 
 export interface DataItem {
   id: number;

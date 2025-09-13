@@ -24,13 +24,14 @@ import {
 import SocialMedia from "./components/SocialMedia";
 import { ActionButton, JumpLineControl, JumpLineInput, JumpLineLabel } from "../cv/page.styled";
 import CVData from "../../components/util/CVData";
+import { LinkInCurriculum } from "@/components/util/linkCV";
 
 
 export default function ATSPage() {
   const atsRef = useRef<HTMLDivElement>(null);
   const [cvData, setCvData] = useState<CVData | null>(null);
   const [opportunityId, setOpportunityId] = useState<string>("");
-  const [language, setLanguage] = useState<string>("en");
+  const [, setLanguage] = useState<string>("en");
 
   const [jumpLineCount, setJumpLineCount] = useState<number>(0);
   const [jumpSocialCount, setJumpSocialCount] = useState<number>(0);
@@ -214,7 +215,7 @@ export default function ATSPage() {
         <div>
           {cvData && defineTitle(opportunityId, cvData)}
         </div>
-        <LinkInCurriculum/>
+        <LinkInCurriculum />
       </JumpLineControl>
 
       <ATSContainer id="ats" ref={atsRef}>
@@ -275,13 +276,3 @@ function defineTitle(opportunityId?: string, cvData?: CVData) {
     : `Mariano_Aloi_${cvData?.languageCodeOfJobDescription}`;
 }
 
-export const LinkInCurriculum = () => {
-  return (
-    
-        <LinkControl>
-          <LinkCv onClick={() => window.open('/cv','_blank')}>CV</LinkCv>
-          <LinkCv onClick={() => window.open('/ats','_blank')}>ATS</LinkCv>
-          <LinkCv onClick={() => window.open('/cv/load','_blank')}>LOAD</LinkCv>
-        </LinkControl>
-  );
-};

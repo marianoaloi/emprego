@@ -3,7 +3,7 @@
 import React from 'react';
 import { Box, Chip, Typography, CircularProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useAppSelector } from '@/lib/hooks';
 
 const SkillsContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -95,7 +95,7 @@ export default function SkillsGrid() {
 
   return (
     <SkillsContainer>
-      <SectionTitle>Required Skills {skills.match.filter(skill => skill.skillOnProfile).length}</SectionTitle>
+      <SectionTitle>Required Skills {skills.match.filter(skill => skill.skillOnProfile).length}/{skills.match.length}({skills.match.length ? Math.round(skills.match.filter(skill => skill.skillOnProfile).length / skills.match.length * 100) : 0}%)</SectionTitle>
       <SkillsFlow>
         {skills.match.map((skill, index) => {
           const hasLink = Boolean(skill.skillMatchActionButton);

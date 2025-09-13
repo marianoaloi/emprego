@@ -55,7 +55,7 @@ const cookieSlice = createSlice({
         state.updateLoading = true;
         state.updateError = null;
       })
-      .addCase(updateOpportunity.fulfilled, (state, action) => {
+      .addCase(updateOpportunity.fulfilled, (state) => {
         state.updateLoading = false;
       })
       .addCase(updateOpportunity.rejected, (state, action) => {

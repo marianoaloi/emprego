@@ -11,7 +11,7 @@ import {
   Lock as LockIcon
 } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { fetchData, fetchDataCount, appliedbyme, closeJob, ignoreJob, waitJob, getPostJob } from '@/lib/features/data/dataTruck';
+import { fetchData, fetchDataCount, appliedbyme, closeJob, ignoreJob, waitJob } from '@/lib/features/data/dataTruck';
 import {
   LoadingContainer,
   Spinner,
@@ -54,7 +54,7 @@ export default function DataTable() {
     dispatch(fetchDataCount(filters));
 
     getAuthToken().then(token => { if (token) dispatch(fetchCookies(token)) })
-  }, [dispatch, filters]);
+  }, [dispatch, filters, getAuthToken]);
 
   if (loading) {
     return (

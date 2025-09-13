@@ -5,18 +5,46 @@ import { useState } from 'react';
 import CVData from '@/components/util/CVData';
 import { IconButton, Tooltip, } from '@mui/material';
 import {
-  ContentCopy as ContentCopyIcon
+  ContentCopy as ContentCopyIcon,
+  ContentPaste as ContentPasteIcon,
+  Refresh as RefreshIcon,
+  Save as SaveIcon
 } from '@mui/icons-material';
-import { LinkInCurriculum } from '@/app/ats/page';
+import { LinkInCurriculum } from '@/components/util/linkCV';
+
+
 
 export default function CVLoadPage() {
+
+
+  const saveResume =() => {
+    const dataStr = JSON.stringify(formData, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `cv_data_${new Date().getTime()}.resume.json`;
+    link.click();
+  }
+
+  const loadResume =(event: any) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const result = e.target?.result as string;
+          setFormData(JSON.parse(result));
+        } catch (error) {
+          console.error('Error loading resume:', error);
+        }
+      };
+      reader.readAsText(file);
+    }
+  }
+
   const [formData, setFormData] = useState<CVData>({
-    personalInformation: {
-      name: '',
-      email: '',
-      phone: '',
-      linkedin: '',
-    },
+
     summary: '',
     relevantSkills: [{ skillName: '', skillLevel: 1 }],
     experience: [{
@@ -43,12 +71,7 @@ export default function CVLoadPage() {
     languageCodeOfJobDescription: '',
   });
 
-  const handlePersonalInfoChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      personalInformation: { ...prev.personalInformation, [field]: value }
-    }));
-  };
+
 
   const handleSkillChange = (index: number, field: string, value: string | number) => {
     const updatedSkills = [...formData.relevantSkills];
@@ -170,7 +193,7 @@ export default function CVLoadPage() {
     window.open('/ats', '_blank');
   };
 
-  const [copySuccess, setCopySuccess] = useState(false);
+  const [, setCopySuccess] = useState(false);
   const handleCopyDescription = async () => {
     try {
       // Get the job description text from the Redux store or fallback to job.description
@@ -183,49 +206,42 @@ export default function CVLoadPage() {
     }
   };
 
+  const handlePasteDescription = async () => {
+    try {
+      const clipboardText = await navigator.clipboard.readText();
+      const parsed = JSON.parse(clipboardText);
+      setFormData(parsed);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000); // Show success message for 2 seconds
+    } catch (err) {
+      console.error('Failed to paste or parse JSON: ', err);
+      // Could add user-facing error feedback here if needed
+    }
+  };
+
+  const handleLoadDescription = () => {
+    try {
+      const storedData = localStorage.getItem("cvData");
+      if (storedData) {
+        const parsed = JSON.parse(storedData);
+        setFormData(parsed);
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 2000); // Show success message for 2 seconds
+      } else {
+        console.warn('No CV data found in localStorage');
+      }
+    } catch (err) {
+      console.error('Failed to load or parse CV data from localStorage: ', err);
+      // Could add user-facing error feedback here if needed
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">CV Data Form</h1>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Personal Information */}
-        <section className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-2xl font-semibold mb-4">Personal Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="Name"
-              value={formData.personalInformation.name}
-              onChange={(e) => handlePersonalInfoChange('name', e.target.value)}
-              className="border p-3 rounded"
-              required
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              value={formData.personalInformation.email}
-              onChange={(e) => handlePersonalInfoChange('email', e.target.value)}
-              className="border p-3 rounded"
-              required
-            />
-            <input
-              type="tel"
-              placeholder="Phone"
-              value={formData.personalInformation.phone}
-              onChange={(e) => handlePersonalInfoChange('phone', e.target.value)}
-              className="border p-3 rounded"
-              required
-            />
-            <input
-              type="url"
-              placeholder="LinkedIn"
-              value={formData.personalInformation.linkedin}
-              onChange={(e) => handlePersonalInfoChange('linkedin', e.target.value)}
-              className="border p-3 rounded"
-              required
-            />
-          </div>
-        </section>
+        
 
         {/* Summary */}
         <section className="bg-white p-6 rounded-lg shadow">
@@ -256,7 +272,7 @@ export default function CVLoadPage() {
                 type="number"
                 placeholder="Level (1-10)"
                 min="1"
-                max="10"
+                max="100"
                 value={skill.skillLevel}
                 onChange={(e) => handleSkillChange(index, 'skillLevel', parseInt(e.target.value))}
                 className="border p-3 rounded w-24"
@@ -305,7 +321,7 @@ export default function CVLoadPage() {
                 <input
                   type="date"
                   placeholder="Start date"
-                  value={exp.start}
+                  value={exp.start.length > 6 ? `${exp.start.substring(0, 7)}-01` : exp.start}
                   onChange={(e) => handleExperienceChange(expIndex, 'start', e.target.value)}
                   className="border p-3 rounded"
                   required
@@ -313,7 +329,7 @@ export default function CVLoadPage() {
                 <input
                   type="date"
                   placeholder="End date"
-                  value={exp.end}
+                  value={exp.end.length > 6 ? `${exp.end.substring(0, 7)}-01` : exp.end}
                   onChange={(e) => handleExperienceChange(expIndex, 'end', e.target.value)}
                   className="border p-3 rounded"
                   required
@@ -400,7 +416,7 @@ export default function CVLoadPage() {
                 <input
                   type="date"
                   placeholder="Start date"
-                  value={edu.start}
+                  value={edu.start.length > 6 ? `${edu.start.substring(0, 7)}-01` : edu.start}
                   onChange={(e) => handleEducationChange(index, 'start', e.target.value)}
                   className="border p-3 rounded"
                   required
@@ -408,7 +424,7 @@ export default function CVLoadPage() {
                 <input
                   type="date"
                   placeholder="End date"
-                  value={edu.end}
+                  value={edu.end.length > 6 ? `${edu.end.substring(0, 7)}-01` : edu.end}
                   onChange={(e) => handleEducationChange(index, 'end', e.target.value)}
                   className="border p-3 rounded"
                   required
@@ -460,12 +476,12 @@ export default function CVLoadPage() {
                   value={cert.credential}
                   onChange={(e) => handleCertificateChange(index, 'credential', e.target.value)}
                   className="border p-3 rounded"
-                  required
+                  
                 />
                 <input
                   type="date"
                   placeholder="Issued date"
-                  value={cert.issued}
+                  value={cert.issued.length > 6 ? `${cert.issued.substring(0, 7)}-01` : cert.issued}
                   onChange={(e) => handleCertificateChange(index, 'issued', e.target.value)}
                   className="border p-3 rounded"
                   required
@@ -476,7 +492,6 @@ export default function CVLoadPage() {
                   value={cert.url}
                   onChange={(e) => handleCertificateChange(index, 'url', e.target.value)}
                   className="border p-3 rounded col-span-2"
-                  required
                 />
               </div>
               <button
@@ -507,11 +522,9 @@ export default function CVLoadPage() {
             required
           >
             <option value="">Select language</option>
+            <option value="it">Italian</option>
             <option value="en">English</option>
-            <option value="es">Spanish</option>
             <option value="pt">Portuguese</option>
-            <option value="fr">French</option>
-            <option value="de">German</option>
           </select>
         </section>
 
@@ -522,39 +535,77 @@ export default function CVLoadPage() {
           Save CV Data
         </button>
       </form>
-      <Tooltip title="Copy job description">
-        <IconButton
-          onClick={handleCopyDescription}
-          size="small"
-          sx={{
-            color: '#6b7280',
-            '&:hover': { color: '#374151' }
+      {/* Object */}
+      <section className="bg-white p-6 rounded-lg shadow">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-semibold">Object</h2>
+          <div className="flex gap-2">
+            <Tooltip title="Copy CV data">
+              <IconButton
+                onClick={handleCopyDescription}
+                size="small"
+                sx={{
+                  color: '#6b7280',
+                  '&:hover': { color: '#374151' }
+                }}
+              >
+                <ContentCopyIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Paste CV data from clipboard">
+              <IconButton
+                onClick={handlePasteDescription}
+                size="small"
+                sx={{
+                  color: '#6b7280',
+                  '&:hover': { color: '#374151' }
+                }}
+              >
+                <ContentPasteIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Save CV data as file">
+              <IconButton
+                onClick={saveResume}
+                size="small"
+                sx={{
+                  color: '#6b7280',
+                  '&:hover': { color: '#374151' }
+                }}
+              >
+                <SaveIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Load CV data from localStorage">
+              <IconButton
+                onClick={handleLoadDescription}
+                size="small"
+                sx={{
+                  color: '#6b7280',
+                  '&:hover': { color: '#374151' }
+                }}
+              >
+                <RefreshIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </div>
+        </div>
+        <textarea
+          placeholder="All CV data in JSON format"
+          value={JSON.stringify(formData, null, 2)}
+          onChange={(e) => {
+            try {
+              const parsed = JSON.parse(e.target.value);
+              setFormData(parsed);
+            } catch (err) {
+              console.error('Invalid JSON format:', err, e.target.value);
+            }
           }}
-        >
-          <ContentCopyIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
+          className="border p-3 rounded w-full h-32"
 
-      
-        {/* Object */}
-        <section className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-2xl font-semibold mb-4">Object</h2>
-          <textarea
-            placeholder="All CV data in JSON format"
-            value={JSON.stringify(formData, null, 2)}
-            onChange={(e) => {
-              try {
-                const parsed = JSON.parse(e.target.value);
-                setFormData(parsed);
-              } catch (err) {
-                console.error('Invalid JSON format:', err , e.target.value);
-              }
-            }}
-            className="border p-3 rounded w-full h-32"
-            
-          />
-        </section>
-                <LinkInCurriculum/>
+        />
+      </section>
+      <LinkInCurriculum />
     </div>
   );
 }

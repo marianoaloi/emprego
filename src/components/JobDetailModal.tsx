@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { httpsCallable } from "firebase/functions";
 import { Button, Typography, Tooltip, IconButton, Box, CircularProgress } from '@mui/material';
