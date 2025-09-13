@@ -11,6 +11,7 @@ import {
   Save as SaveIcon
 } from '@mui/icons-material';
 import { LinkInCurriculum } from '@/components/util/linkCV';
+import Editor from 'react-simple-wysiwyg';
 
 
 
@@ -27,9 +28,23 @@ export default function CVLoadPage() {
     link.click();
   }
 
+  const saveResumeToOriginalLocation = () => {
+    if (!loadedFileName) return;
+    
+    const dataStr = JSON.stringify(formData, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = loadedFileName;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   const loadResume =(event: any) => {
     const file = event.target.files[0];
     if (file) {
+      setLoadedFileName(file.name);
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
@@ -71,6 +86,7 @@ export default function CVLoadPage() {
     languageCodeOfJobDescription: '',
   });
 
+  const [loadedFileName, setLoadedFileName] = useState<string | null>(null);
 
 
   const handleSkillChange = (index: number, field: string, value: string | number) => {
@@ -246,13 +262,18 @@ export default function CVLoadPage() {
         {/* Summary */}
         <section className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-2xl font-semibold mb-4">Summary</h2>
-          <textarea
-            placeholder="Professional summary"
-            value={formData.summary}
-            onChange={(e) => setFormData(prev => ({ ...prev, summary: e.target.value }))}
-            className="border p-3 rounded w-full h-32"
-            required
-          />
+          <div className="border rounded">
+            <Editor
+              value={formData.summary}
+              onChange={(e) => setFormData(prev => ({ ...prev, summary: e.target.value }))}
+              containerProps={{
+                style: {
+                  height: '400px',
+                  border: 'none'
+                }
+              }}
+            />
+          </div>
         </section>
 
         {/* Skills */}
@@ -335,13 +356,18 @@ export default function CVLoadPage() {
                   required
                 />
               </div>
-              <textarea
-                placeholder="Job description"
-                value={exp.description}
-                onChange={(e) => handleExperienceChange(expIndex, 'description', e.target.value)}
-                className="border p-3 rounded w-full h-24 mb-4"
-                required
-              />
+              <div className="border rounded mb-4">
+                <Editor
+                  value={exp.description}
+                  onChange={(e) => handleExperienceChange(expIndex, 'description', e.target.value)}
+                  containerProps={{
+                    style: {
+                      height: '300px',
+                      border: 'none'
+                    }
+                  }}
+                />
+              </div>
 
               <div className="mb-4">
                 <h4 className="font-semibold mb-2">Technologies:</h4>
@@ -604,6 +630,34 @@ export default function CVLoadPage() {
           className="border p-3 rounded w-full h-32"
 
         />
+        <div className="mt-4">
+          <label htmlFor="jsonFileInput" className="block text-sm font-medium text-gray-700 mb-2">
+            Or load CV data from file:
+          </label>
+          <div className="flex items-center gap-2">
+            <input
+              id="jsonFileInput"
+              type="file"
+              accept=".json"
+              onChange={loadResume}
+              className="flex-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            />
+            {loadedFileName && (
+              <Tooltip title="Save to original file location">
+                <IconButton
+                  onClick={() => saveResumeToOriginalLocation()}
+                  size="small"
+                  sx={{
+                    color: '#6b7280',
+                    '&:hover': { color: '#374151' }
+                  }}
+                >
+                  <SaveIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
+          </div>
+        </div>
       </section>
       <LinkInCurriculum />
     </div>
