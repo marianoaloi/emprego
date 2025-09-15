@@ -235,6 +235,12 @@ export const ActionButtonsGroup = styled(Box)`
     border-radius: 8px;
     transition: all 0.2s ease;
     
+    &.special-action {
+      color: #0008ff;
+      background-color: rgba(5, 7, 255, 0.1);
+      &:hover { background-color: rgba(5, 7, 255, 0.2); }
+    }
+    
     &.go-action {
       color: #059669;
       background-color: rgba(5, 150, 105, 0.1);

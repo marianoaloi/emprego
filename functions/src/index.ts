@@ -125,3 +125,5 @@ try {
 
 startServer().catch(logger.error);
 exports.generateCv = generateCv
+import { generateLetteraPresentacione } from "./cv/generateLetteraPresentacione";
+exports.generateLetteraPresentacione = generateLetteraPresentacione

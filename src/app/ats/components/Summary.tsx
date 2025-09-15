@@ -1,5 +1,6 @@
 import React from 'react';
 import { SummaryContainer, SummaryTitle, SummaryContent } from './Summary.styled';
+import { identParagraph } from '@/components/util/componentString';
 
 interface SummaryProps {
   data: string;
@@ -14,7 +15,7 @@ const Summary: React.FC<SummaryProps> = ({ data, lang }) => {
       <SummaryTitle>
         {lang === "it" ? "RIASSUNTO PROFESSIONALE" : "PROFESSIONAL SUMMARY"}
       </SummaryTitle>
-      <SummaryContent dangerouslySetInnerHTML={{ __html: data }} />
+      <SummaryContent dangerouslySetInnerHTML={{ __html: identParagraph(data) }} />
       <SummaryContent>
         {lang === "it" ?
           "Grazie ai progressi nella capacità dell'IA Generativa di creare e gestire codice, sono costantemente aggiornato su Claude Code e Gemini CLI per guidare il team nella creazione di codice affidabile. Con Cursor e Copilot integrati nelle API, ci sono innumerevoli opportunità per lo sviluppo di soluzioni. La creazione di server MCP aiuta significativamente i componenti di sviluppo del codice a mantenere informazioni aggiornate."

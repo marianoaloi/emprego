@@ -175,13 +175,13 @@ export const generateCv = functions
           }
 
           res.status(200).json({ data: jsonDoc });
-        } catch (e) {
+        } catch (e : any) {
           functions.logger.error("Error parsing JSON from Gemini API:", text);
           res.status(500).json({
             error: 'internal',
-            message: 'Failed to parse CV data from AI service.'
+            message: 'Failed to parse CV data from AI service. '+e.toString()
           });
-          functions.logger.error('Failed to parse CV data from AI service.')
+          functions.logger.error('Failed to parse CV data from AI service. '+e.toString())
         }
       } catch (error) {
         functions.logger.error("Unexpected error in generateCv:", error);

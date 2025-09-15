@@ -54,6 +54,10 @@ const dataSlice = createSlice({
       state.jobPostings = [];
       state.items = [];
     },
+    setJobPostByID: (state, action: PayloadAction<{ jobId: string; updates: Partial<JobPosting> }>) => {
+      const { jobId, updates } = action.payload;
+      updateJobPosting(state, jobId, updates);
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -187,6 +191,6 @@ const dataSlice = createSlice({
   },
 });
 
-export const { setJobPostings } = dataSlice.actions;
+export const { setJobPostings , setJobPostByID, cleanJobPostings } = dataSlice.actions;
 
 export default dataSlice.reducer;

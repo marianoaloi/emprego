@@ -29,9 +29,9 @@ export default function TopMenu() {
             </TitleContainer>
             {user &&
               <ButtonContainer>
-                <FilterButton onClick={() => router.push('/dashboard')}>
+                {/* <FilterButton onClick={() => router.push('/dashboard')}>
                   Dashboard
-                </FilterButton>
+                </FilterButton> */}
                 <FilterButton onClick={() => setIsModalOpen(true)}>
                   Search Filters
                 </FilterButton>

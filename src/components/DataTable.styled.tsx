@@ -133,6 +133,12 @@ interface JobCardProps {
 }
 
 export const JobCard = styled(Card)<JobCardProps>`
+
+  @media (max-width: 640px) {
+    width: 100%;
+  }
+  
+
   && {
     border-radius: 12px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -183,8 +189,12 @@ export const JobCard = styled(Card)<JobCardProps>`
 `;
 
 export const JobCardHeader = styled(CardHeader)`
+
+  
+
   && {
     padding: 1rem 1.5rem 0.5rem 1.5rem;
+
     
     .MuiCardHeader-title {
       font-size: 1.125rem;

@@ -53,4 +53,8 @@ export interface JobPosting {
   workplaceTypes: string;
   workRemoteAllowed: boolean;
   foto:string;
+  presentationLetter?:{
+    coverLetter: string;
+    linkedin_top: string;
+  }
 }
