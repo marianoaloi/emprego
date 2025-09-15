@@ -2,10 +2,7 @@ import React from 'react';
 import {
   LanguageContainer,
   LanguageTitle,
-  LanguageList,
-  LanguageItem,
-  LanguageName,
-  LanguageLevel
+  LanguageItem
 } from './Language.styled';
 import { SkillItem, SkillLevel, SkillName, SkillsList } from './Skills.styled';
 

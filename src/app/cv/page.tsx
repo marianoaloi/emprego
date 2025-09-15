@@ -27,6 +27,8 @@ import {
   JumpLineLabel
 } from "./page.styled";
 import CVData from "../../components/util/CVData";
+import { LinkControl, LinkCv } from "../ats/page.styled";
+import { LinkInCurriculum } from "@/components/util/linkCV";
 
 
 export default function CVPage() {
@@ -183,6 +185,8 @@ export default function CVPage() {
         <div>
           {cvData && defineTitle(opportunityId, cvData)}
         </div>
+
+        <LinkInCurriculum />
       </JumpLineControl>
       <CVContainer id="cv" ref={cvRef}>
         {cvData ? (
@@ -227,9 +231,11 @@ function changeTitle(opportunityId?: string, cvData?: CVData) {
   const title = defineTitle(opportunityId, cvData);
   document.title = title;
 }
-function defineTitle(opportunityId?: string , cvData?: CVData ) {
+function defineTitle(opportunityId?: string, cvData?: CVData) {
   return opportunityId
     ? `Mariano_Aloi_${opportunityId}_${cvData?.languageCodeOfJobDescription}`
     : `Mariano_Aloi_${cvData?.languageCodeOfJobDescription}`
 }
+
+
 

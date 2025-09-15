@@ -5,32 +5,7 @@ import { Db } from "mongodb";
 import { config } from "./util/env";
 import { logger } from "firebase-functions";
 
-
-export default (db: Db) => {
-
-  const router = Router();
-
-  // GET /data endpoint - returns paginated job data
-  router.post("/", async (req: Request, res: Response) => {
-    try {
-      const limit = parseInt(String(req.body.limit || "50"));
-      const offset = parseInt(String(req.query.offset || "0"));
-      const sort = req.body.sort && Object.keys(req.body.sort) ? req.body.sort : { lastupdate: -1 };
-
-      const query = [
-        {
-          "$match": {
-          },
-        }, {
-          "$sort": sort,
-        }, {
-          "$limit": limit,
-        }, {
-          "$skip": offset,
-       },
-        {
-          "$project":
-          {
+export const projectData = {
             description: "$description.text",
             lang: "$description.lang",
             skills:1,
@@ -129,7 +104,33 @@ export default (db: Db) => {
                 default: "NW",
               },
             },
+          };
+
+export default (db: Db) => {
+
+  const router = Router();
+
+  // GET /data endpoint - returns paginated job data
+  router.post("/", async (req: Request, res: Response) => {
+    try {
+      const limit = parseInt(String(req.body.limit || "50"));
+      const offset = parseInt(String(req.query.offset || "0"));
+      const sort = req.body.sort && Object.keys(req.body.sort) ? req.body.sort : { lastupdate: -1 };
+
+      const query = [
+        {
+          "$match": {
           },
+        }, {
+          "$sort": sort,
+        }, {
+          "$limit": limit,
+        }, {
+          "$skip": offset,
+       },
+        {
+          "$project":
+          projectData,
         },
       ];
 

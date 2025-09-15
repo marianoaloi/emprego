@@ -72,6 +72,7 @@ const salary = async (req: Request, res: Response) => {
         },
         "lang": "$description.lang",
         "lastupdate": {"$toDate": "$lastupdate"},
+        "closed": "$applyingInfo.closed",
       },
     }, {
       "$unwind": {
@@ -88,6 +89,7 @@ const salary = async (req: Request, res: Response) => {
         "companyId": 1,
         "lang": 1,
         "lastupdate": 1,
+        "closed": 1,
         "minSalary": "$path.v.minSalary",
         "maxSalary": "$path.v.maxSalary",
         "payPeriod": "$path.v.payPeriod",

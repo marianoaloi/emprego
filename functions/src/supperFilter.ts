@@ -207,7 +207,7 @@ export const supperFilter = async (req: Request, query: any, db: Db) => {
          * query: The query in MQL.
          */
         {
-          "skills.0.perc": req.body.percentualMatchGreaterThan !== false ?
+          "skills.0.perc": req.body.percentualMatchGreaterThan  ?
             { $gte: req.body.percentualMatch / 100 } :
             { $lte: req.body.percentualMatch / 100 }
         }

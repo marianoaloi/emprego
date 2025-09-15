@@ -150,3 +150,19 @@ export const DataCountRequest = async (filter?: JobSearchFilter): Promise<number
     return data.count || 0;
 };
 
+export const getPostJobRequest = async (id: string, token: string | null): Promise<JobPosting> => {
+    const result: JobPosting = await fetchRetry(
+        `${API_BASE_URL}/cookie/update?id=${id}`
+        , 10_000, 5, {
+        method: 'GET',
+        headers: {
+            'authorization': `Bearer ${token}`,
+        }
+    }).then(response => response.json())
+
+        .catch(error => {
+            console.error('Error fetching cookies:', error);
+        });
+    result._id = id;
+    return result;
+}

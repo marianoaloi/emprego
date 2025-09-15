@@ -7,18 +7,14 @@ interface SummaryProps {
 }
 
 const Summary: React.FC<SummaryProps> = ({ data, lang }) => {
-  const formatSummaryText = (text: string) => {
-    return text.replace(/<[^>]*>/g, '').trim();
-  };
+
 
   return (
     <SummaryContainer>
       <SummaryTitle>
         {lang === "it" ? "RIASSUNTO PROFESSIONALE" : "PROFESSIONAL SUMMARY"}
       </SummaryTitle>
-      <SummaryContent>
-        {formatSummaryText(data)}
-      </SummaryContent>
+      <SummaryContent dangerouslySetInnerHTML={{ __html: data }} />
       <SummaryContent>
         {lang === "it" ?
           "Grazie ai progressi nella capacità dell'IA Generativa di creare e gestire codice, sono costantemente aggiornato su Claude Code e Gemini CLI per guidare il team nella creazione di codice affidabile. Con Cursor e Copilot integrati nelle API, ci sono innumerevoli opportunità per lo sviluppo di soluzioni. La creazione di server MCP aiuta significativamente i componenti di sviluppo del codice a mantenere informazioni aggiornate."
