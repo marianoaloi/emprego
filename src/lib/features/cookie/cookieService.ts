@@ -17,14 +17,14 @@ export const getCookie = async (token: string): Promise<Cookie[] | null> => {
     return response.json();
 };
 
-export const updateOpportunities = async (oportunitie: JobPosting,token: string) => {
+export const updateOpportunities = async (opportunity: JobPosting,token: string) => {
     const response = await fetchRetry(`${API_BASE_URL}/cookie`, 10_000, 5, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(oportunitie),
+        body: JSON.stringify(opportunity),
     }); 
     if (!response.ok) {
         throw new Error(`Failed to update opportunities: ${response.status} ${response.statusText}`);

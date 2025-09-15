@@ -3,6 +3,7 @@ import { Db } from "mongodb";
 import authenticate from "./util/firebaseAuth";
 import { config } from "./util/env";
 import { projectData } from "./data";
+import { logger } from "firebase-functions/v2";
 
 
 
@@ -73,7 +74,7 @@ export default (db: Db) => {
             "method": "GET"
         }).then(response => response.json())
             .catch(error => {
-                console.error('Error fetching cookies:', error);
+                logger.error('Error fetching cookies:', error);
             });
 
 
