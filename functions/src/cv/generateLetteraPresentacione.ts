@@ -3,15 +3,14 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { configDotenv } from "dotenv";
-import * as fs from "fs";
 
 import cors from "cors";
 
-import { google } from "googleapis";
 import prompt from "./promptPres";
 import { config } from "../util/env";
 import clientPromise from "../util/mongo";
 import { Collection } from "mongodb";
+import { drive } from "../util/gdrive";
 
 configDotenv();
 
@@ -19,19 +18,7 @@ configDotenv();
 if (admin.apps.length === 0) {
     admin.initializeApp({ projectId: process.env.PROJECT_ID });
 }
-// const cred = require('./cert/curriculum-29102-9e559bc27c95.json')
-const cred = JSON.parse(fs.readFileSync('./cert/curriculum-29102-30136a87238b.json', 'utf8'));
 
-
-const authDrive = new google.auth.GoogleAuth({
-    credentials: cred,
-    scopes: ['https://www.googleapis.com/auth/drive.readonly']
-});
-
-const drive = google.drive({ version: 'v3', auth: authDrive });
-
-// import { defineSecret } from "firebase-functions/params";
-// logger.log(defineSecret("GEMINI_API").value())
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API || "ERROR+API");
 
