@@ -26,6 +26,7 @@ export const projectData = {
             wait: 1,
             salaryInsights: 1,
             applicantTrackingSystem: 1,
+            presentationLetter: 1,
             foto: {
               $concat: [
                 "$companyDetails.comlinkedinvoyagerdecojobswebsharedWebJobPostingCompany.companyResolutionResult.logo.image.comlinkedincommonVectorImage.rootUrl",

@@ -13,7 +13,8 @@ import {
   Lock as LockIcon,
   ContentCopy as ContentCopyIcon,
   ArrowForward as ArrowForwardIcon,
-  JoinFull
+  JoinFull,
+  Face6TwoTone
 } from '@mui/icons-material';
 import { JobPosting } from '@/types/job.types';
 import JobDescription from './JobDescription';
@@ -38,6 +39,8 @@ import {
 import { useAuth } from './auth/AuthContext';
 import { functions } from './auth/firebaseConfig';
 import { getPostJob } from '@/lib/features/data/dataTruck';
+import { setJobPostByID } from '@/lib/features/data/dataSlice';
+import { FormattedContent } from './JobDescription.styled';
 
 interface JobDetailModalProps {
   job: JobPosting | null;
@@ -76,10 +79,10 @@ export default function JobDetailModal({ job, open, onClose,
 
     {
       getAuthToken().then(token => {
-          if (token)
-            dispatch(
-              getPostJob({ jobId: job._id, token }))
-        }
+        if (token)
+          dispatch(
+            getPostJob({ jobId: job._id, token }))
+      }
       )
         ;
     }
@@ -100,18 +103,40 @@ export default function JobDetailModal({ job, open, onClose,
     }
   };
 
+  const getDataObj = async () => {
+    const token = await getAuthToken();
+    return {
+      jobDescription: job.description,
+      authToken: token,
+      lang: job.lang,
+      skills: skillsJob ? skillsJob.match.map(skill => skill.localizedSkillDisplayName) : [],
+      id: job._id,
+    }
+  }
+
+  const handlePresentation = async () => {
+    setLoading(true);
+    const generateLetteraPresentacione = httpsCallable(functions, "generateLetteraPresentacione");
+    try {
+      const result = await generateLetteraPresentacione(await getDataObj());
+      const cvData = result.data;
+      if (cvData) {
+        dispatch(setJobPostByID({ jobId: job._id, updates: { presentationLetter: cvData as any } }));
+      }
+    } catch (error) {
+      console.error("Error generating CV:", error);
+      alert("Error generating CV. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const handleOpenCV = async () => {
     setLoading(true);
     const generateCv = httpsCallable(functions, "generateCv");
     try {
-      const token = await getAuthToken();
-      const result = await generateCv({
-        jobDescription: job.description,
-        authToken: token,
-        lang: job.lang,
-        skills: skillsJob ? skillsJob.match.map(skill => skill.localizedSkillDisplayName) : [],
-      });
+      const result = await generateCv(await getDataObj());
       const cvData = result.data;
       // Store CV data and opportunity ID in local storage to pass to the CV page
       localStorage.setItem("cvData", JSON.stringify(cvData));
@@ -355,6 +380,16 @@ export default function JobDetailModal({ job, open, onClose,
 
         {JobDescriptionTag}
 
+        {job.presentationLetter && job.presentationLetter.coverLetter && (
+          <ContentSection>
+            <SectionTitle>Cover Letter (AI Generated)</SectionTitle>
+            <FormattedContent dangerouslySetInnerHTML={{ __html: job.presentationLetter.coverLetter.replaceAll('\n', '<br/>') }} />
+            <hr />
+            <SectionTitle>Linkedin Top (AI Generated)</SectionTitle>
+            <FormattedContent dangerouslySetInnerHTML={{ __html: job.presentationLetter.linkedin_top.replaceAll('\n', '<br/>') }} />
+          </ContentSection>
+        )}
+
         <ContentSection>
           <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
             <SectionTitle>Job Status</SectionTitle>
@@ -377,22 +412,20 @@ export default function JobDetailModal({ job, open, onClose,
         </Button>
 
         <ActionButtonsGroup>
-
-
-          <Tooltip title="Open Job">
-            <IconButton
-              className="go-action"
-              onClick={() => handleGoAction(job)}
-            >
-              <OpenInNewIcon />
-            </IconButton>
-          </Tooltip>
           <Tooltip title="Update Job">
             <IconButton
-              className="go-action"
+              className="special-action"
               onClick={fetchJobDetails}
             >
               <JoinFull />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Cover Job">
+            <IconButton
+              className="special-action"
+              onClick={handlePresentation}
+            >
+              <Face6TwoTone />
             </IconButton>
           </Tooltip>
           {user &&
@@ -409,6 +442,14 @@ export default function JobDetailModal({ job, open, onClose,
                   }}
                 >
                   <ArrowForwardIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Open Job">
+                <IconButton
+                  className="go-action"
+                  onClick={() => handleGoAction(job)}
+                >
+                  <OpenInNewIcon />
                 </IconButton>
               </Tooltip>
               <Tooltip title={job.ignore ? "Undo Ignore" : "Ignore Job"}>
@@ -468,3 +509,5 @@ export default function JobDetailModal({ job, open, onClose,
     </StyledDialog>
   );
 }
+
+
