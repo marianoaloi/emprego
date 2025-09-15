@@ -89,9 +89,7 @@ const Experience: React.FC<ExperienceProps> = ({ data, lang }) => {
             {convertDate(item.start)} - {item.end ? convertDate(item.end) : (lang === 'it' ? 'Presente' : 'Present')} 
             ({calculateDateDifference(item.start, item.end, lang)})
           </Duration>
-          <JobDescription>
-            {formatDescription(item.description)}
-          </JobDescription>
+          <JobDescription dangerouslySetInnerHTML={{ __html: item.description }}/>
           <TechnologiesList>
             <strong>Technologies:</strong> {item.technologies.sort((a, b) => a.localeCompare(b)).join(', ')}
           </TechnologiesList>

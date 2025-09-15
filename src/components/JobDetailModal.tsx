@@ -458,7 +458,7 @@ export default function JobDetailModal({ job, open, onClose,
         ignore={job.ignore}
         wait={job.wait}
         close={job.closed ? "true" : undefined}>
-        <Typography >{job.formattedLocation.split(',')[0]} &gt; <span title={`title = ${job.title}`}>{job.title}</span> | <span title={`workplaceTypes = ${job.workplaceTypes}`}>{job.workplaceTypes}</span> | <span title={`country = ${job.country}`}>{job.country}</span> | <span title={`formattedEmploymentStatus = ${job.formattedEmploymentStatus}`}>{job.formattedEmploymentStatus}</span> | <span title={`applies = ${job.applies}`}>{job.applies}</span></Typography>
+        <Typography >{job.formattedLocation.split(',')[0]} &gt; <span title={`title = ${job.title}`}>{job.title}</span> | <span title={`workplaceTypes = ${job.workplaceTypes}`}>{job.workplaceTypes}</span> | <span title={`country = ${job.country}`}>{job.country}</span> = <span title={`lang = ${job.lang}`}>{job.lang}</span> | <span title={`applies = ${job.applies}`}>{job.applies}</span></Typography>
 
         <CloseButton onClick={onClose}>
           <CloseIcon />

@@ -18,30 +18,33 @@ import Editor from 'react-simple-wysiwyg';
 export default function CVLoadPage() {
 
 
-  const saveResume =() => {
+  const saveResume = () => {
     const dataStr = JSON.stringify(formData, null, 2);
-    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `cv_data_${new Date().getTime()}.resume.json`;
+    link.download = `cv_data_${opportunityId ? opportunityId : new Date().getTime()}.resume.json`;
     link.click();
   }
 
   const saveResumeToOriginalLocation = () => {
-    if (!loadedFileName) return;
-    
+    if (!loadedFileName) {
+      saveResume();
+      return;
+    }
+
     const dataStr = JSON.stringify(formData, null, 2);
-    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = loadedFileName;
+    // link.download = loadedFileName;
     link.click();
     URL.revokeObjectURL(url);
   }
 
-  const loadResume =(event: any) => {
+  const loadResume = (event: any) => {
     const file = event.target.files[0];
     if (file) {
       setLoadedFileName(file.name);
@@ -58,6 +61,8 @@ export default function CVLoadPage() {
     }
   }
 
+  const [opportunityId, setOpportunityId] = useState<string | null>(null);
+  // State to hold the form data
   const [formData, setFormData] = useState<CVData>({
 
     summary: '',
@@ -246,18 +251,25 @@ export default function CVLoadPage() {
       } else {
         console.warn('No CV data found in localStorage');
       }
+      const idProj = localStorage.getItem("opportunityId");
+      if (idProj) {
+        setOpportunityId(idProj);
+      } else {
+        console.warn('No opportunityId found in localStorage');
+      }
     } catch (err) {
       console.error('Failed to load or parse CV data from localStorage: ', err);
       // Could add user-facing error feedback here if needed
     }
   };
 
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">CV Data Form</h1>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        
+
 
         {/* Summary */}
         <section className="bg-white p-6 rounded-lg shadow">
@@ -353,7 +365,6 @@ export default function CVLoadPage() {
                   value={exp.end.length > 6 ? `${exp.end.substring(0, 7)}-01` : exp.end}
                   onChange={(e) => handleExperienceChange(expIndex, 'end', e.target.value)}
                   className="border p-3 rounded"
-                  required
                 />
               </div>
               <div className="border rounded mb-4">
@@ -502,7 +513,7 @@ export default function CVLoadPage() {
                   value={cert.credential}
                   onChange={(e) => handleCertificateChange(index, 'credential', e.target.value)}
                   className="border p-3 rounded"
-                  
+
                 />
                 <input
                   type="date"

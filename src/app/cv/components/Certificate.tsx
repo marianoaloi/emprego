@@ -13,9 +13,9 @@ interface CertificateProps {
  data: {
     name: string;
     institute: string;
-    credential: string;
+    credential?: string;
     issued: string;
-    url: string;
+    url?: string;
   }[];
   lang:string;
 }
