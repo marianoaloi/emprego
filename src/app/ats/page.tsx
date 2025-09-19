@@ -17,10 +17,7 @@ import {
   LoadingContainer,
   LoadingText,
   ATSSection,
-  JumpLine,
-  LinkControl,
-  LinkCv
-} from "./page.styled";
+  JumpLine} from "./page.styled";
 import SocialMedia from "./components/SocialMedia";
 import { ActionButton, JumpLineControl, JumpLineInput, JumpLineLabel } from "../cv/page.styled";
 import CVData from "../../components/util/CVData";

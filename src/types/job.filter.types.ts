@@ -26,6 +26,7 @@ export interface JobSearchFilter {
   title?: string;
   wait?: boolean;
   workTypes?: WorkType[]; // Multiple work type selection
+  workRemoteAllowed?: boolean; // Filter for jobs that allow remote work
   sort?: {
     lastupdate?: -1 | 0 | 1;
     expireAt?: -1 | 0 | 1;

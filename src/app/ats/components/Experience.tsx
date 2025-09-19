@@ -87,8 +87,9 @@ const Experience: React.FC<ExperienceProps> = ({ data, lang }) => {
             {item.company}
           </CompanyInfo>
           <Duration>
-            {convertDate(item.start)} - {item.end ? convertDate(item.end) : (lang === 'it' ? 'Presente' : 'Present')} 
-            ({calculateDateDifference(item.start, item.end, lang)})
+            {lang === 'it' ? 'Inizio' : 'Start'}:{convertDate(item.start)} &nbsp;
+            {lang === 'it' ? 'Fine' : 'End'}:{item.end ? convertDate(item.end) : (lang === 'it' ? 'Presente' : 'Present')}  &nbsp;
+            {lang === 'it' ? 'Durata' : 'Duration'}:{calculateDateDifference(item.start, item.end, lang)}
           </Duration>
           <JobDescription dangerouslySetInnerHTML={{ __html: identParagraph(item.description) }}/>
           <TechnologiesList>

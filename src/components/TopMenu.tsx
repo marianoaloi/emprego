@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
-import { MoreVert as MoreVertIcon, Home, Dashboard, Description, Work } from '@mui/icons-material';
+import { MoreVert as MoreVertIcon, Home, Dashboard, Description, Work, RestartAlt } from '@mui/icons-material';
 import JobSearchModal from './JobSearchModal';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { fetchData, fetchDataCount } from '@/lib/features/data/dataTruck';
 import {
   Nav,
   NavContainer,
@@ -22,6 +24,8 @@ export default function TopMenu() {
   const [navMenuAnchor, setNavMenuAnchor] = useState<null | HTMLElement>(null);
   const router = useRouter();
   const { user } = useAuth();
+  const dispatch = useAppDispatch();
+  const { filters } = useAppSelector((state) => state.filter);
 
   const handleNavMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setNavMenuAnchor(event.currentTarget);
@@ -34,6 +38,11 @@ export default function TopMenu() {
   const handleNavigation = (path: string) => {
     router.push(path);
     handleNavMenuClose();
+  };
+
+  const handleRestart = () => {
+    dispatch(fetchData(filters));
+    dispatch(fetchDataCount(filters));
   };
 
   const navigationItems = [
@@ -99,6 +108,11 @@ export default function TopMenu() {
                 <FilterButton onClick={() => setIsModalOpen(true)}>
                   Search Filters
                 </FilterButton>
+                <Tooltip title="Restart - Refresh data with current filters">
+                  <FilterButton onClick={handleRestart}>
+                    <RestartAlt sx={{ fontSize: '1.2rem' }} />
+                  </FilterButton>
+                </Tooltip>
               </ButtonContainer>
             }
             <AuthProvider />

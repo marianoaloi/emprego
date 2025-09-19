@@ -13,6 +13,10 @@ export const supperFilter = async (req: Request, query: any, db: Db) => {
     (query as any)[0].$match["country"] = `urn:li:fs_country:${req.body.country}`;
   }
 
+  if (req.body.workRemoteAllowed) {
+    (query as any)[0].$match["workRemoteAllowed"] = req.body.workRemoteAllowed;
+  }
+
   if (req.body.systemRecruter) {
     switch (req.body.systemRecruter) {
       case "LinkedIn":

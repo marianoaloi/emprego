@@ -66,7 +66,7 @@ export default function CVLoadPage() {
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
-    // link.download = loadedFileName;
+    link.download = loadedFileName;
     link.click();
     URL.revokeObjectURL(url);
   }
