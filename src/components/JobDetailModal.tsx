@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 
 import { httpsCallable } from "firebase/functions";
-import { Button, Typography, Tooltip, IconButton, Box, CircularProgress } from '@mui/material';
+import { Button, Typography, Tooltip, IconButton, Box, CircularProgress, Menu, MenuItem, useMediaQuery, useTheme } from '@mui/material';
 import {
   Close as CloseIcon,
   OpenInNew as OpenInNewIcon,
@@ -14,7 +14,8 @@ import {
   ContentCopy as ContentCopyIcon,
   ArrowForward as ArrowForwardIcon,
   JoinFull,
-  Face6TwoTone
+  Face6TwoTone,
+  MoreVert as MoreVertIcon
 } from '@mui/icons-material';
 import { JobPosting } from '@/types/job.types';
 import JobDescription from './JobDescription';
@@ -63,6 +64,9 @@ export default function JobDetailModal({ job, open, onClose,
   const [copySuccess, setCopySuccess] = useState(false);
   const { user, getAuthToken } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const dispatch = useAppDispatch();
 
@@ -149,6 +153,19 @@ export default function JobDetailModal({ job, open, onClose,
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleMenuAction = (action: () => void) => {
+    action();
+    handleMenuClose();
   };
 
   // Get status chips
@@ -412,38 +429,9 @@ export default function JobDetailModal({ job, open, onClose,
         </Button>
 
         <ActionButtonsGroup>
-          <Tooltip title="Update Job">
-            <IconButton
-              className="special-action"
-              onClick={fetchJobDetails}
-            >
-              <JoinFull />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Cover Job">
-            <IconButton
-              className="special-action"
-              onClick={handlePresentation}
-            >
-              <Face6TwoTone />
-            </IconButton>
-          </Tooltip>
-          {user &&
+          {isMobile ? (
+            // Mobile: Show only essential buttons and menu
             <>
-              <Tooltip title="Open CV">
-                <IconButton
-                  onClick={handleOpenCV}
-                  sx={{
-                    color: '#10b981',
-                    '&:hover': {
-                      color: '#059669',
-                      backgroundColor: 'rgba(16, 185, 129, 0.1)'
-                    }
-                  }}
-                >
-                  <ArrowForwardIcon />
-                </IconButton>
-              </Tooltip>
               <Tooltip title="Open Job">
                 <IconButton
                   className="go-action"
@@ -452,42 +440,139 @@ export default function JobDetailModal({ job, open, onClose,
                   <OpenInNewIcon />
                 </IconButton>
               </Tooltip>
-              <Tooltip title={job.ignore ? "Undo Ignore" : "Ignore Job"}>
-                <IconButton
-                  className="reject-action"
-                  onClick={() => handleRejectAction(job)}
-                >
-                  <ThumbDownIcon />
+              <Tooltip title="More Actions">
+                <IconButton onClick={handleMenuClick}>
+                  <MoreVertIcon />
                 </IconButton>
               </Tooltip>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+              >
+                <MenuItem onClick={() => handleMenuAction(fetchJobDetails)}>
+                  <JoinFull sx={{ mr: 1 }} />
+                  Update Job
+                </MenuItem>
+                <MenuItem onClick={() => handleMenuAction(handlePresentation)}>
+                  <Face6TwoTone sx={{ mr: 1 }} />
+                  Cover Job
+                </MenuItem>
+                {user && (
+                  <>
+                    <MenuItem onClick={() => handleMenuAction(handleOpenCV)}>
+                      <ArrowForwardIcon sx={{ mr: 1, color: '#10b981' }} />
+                      Open CV
+                    </MenuItem>
+                    <MenuItem onClick={() => handleMenuAction(() => handleRejectAction(job))}>
+                      <ThumbDownIcon sx={{ mr: 1 }} />
+                      {job.ignore ? "Undo Ignore" : "Ignore Job"}
+                    </MenuItem>
+                    <MenuItem onClick={() => handleMenuAction(() => handleWaitAction(job))}>
+                      <HourglassEmptyIcon sx={{ mr: 1 }} />
+                      {job.wait ? "Undo Wait" : "Mark as Waiting"}
+                    </MenuItem>
+                    <MenuItem onClick={() => handleMenuAction(() => handleAcceptAction(job))}>
+                      <ThumbUpIcon sx={{ mr: 1 }} />
+                      {job.appliedbyme ? "Undo Applied" : "Mark as Applied"}
+                    </MenuItem>
+                    <MenuItem onClick={() => handleMenuAction(() => handleLockAction(job))}>
+                      <LockIcon sx={{ mr: 1 }} />
+                      {job.closed ? "Reopen Job" : "Close Job"}
+                    </MenuItem>
+                  </>
+                )}
+              </Menu>
+            </>
+          ) : (
+            // Desktop: Show all buttons
+            <>
+              <Tooltip title="Open Job">
+                <IconButton
+                  className="go-action"
+                  onClick={() => handleGoAction(job)}
+                >
+                  <OpenInNewIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Update Job">
+                <IconButton
+                  className="special-action"
+                  onClick={fetchJobDetails}
+                >
+                  <JoinFull />
+                </IconButton>
+              </Tooltip>
+              {user &&
+                <>
+                  <Tooltip title="Cover Job">
+                    <IconButton
+                      className="special-action"
+                      onClick={handlePresentation}
+                    >
+                      <Face6TwoTone />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Open CV">
+                    <IconButton
+                      onClick={handleOpenCV}
+                      sx={{
+                        color: '#10b981',
+                        '&:hover': {
+                          color: '#059669',
+                          backgroundColor: 'rgba(16, 185, 129, 0.1)'
+                        }
+                      }}
+                    >
+                      <ArrowForwardIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title={job.ignore ? "Undo Ignore" : "Ignore Job"}>
+                    <IconButton
+                      className="reject-action"
+                      onClick={() => handleRejectAction(job)}
+                    >
+                      <ThumbDownIcon />
+                    </IconButton>
+                  </Tooltip>
 
-              <Tooltip title={job.wait ? "Undo Wait" : "Mark as Waiting"}>
-                <IconButton
-                  className="wait-action"
-                  onClick={() => handleWaitAction(job)}
-                >
-                  <HourglassEmptyIcon />
-                </IconButton>
-              </Tooltip>
+                  <Tooltip title={job.wait ? "Undo Wait" : "Mark as Waiting"}>
+                    <IconButton
+                      className="wait-action"
+                      onClick={() => handleWaitAction(job)}
+                    >
+                      <HourglassEmptyIcon />
+                    </IconButton>
+                  </Tooltip>
 
-              <Tooltip title={job.appliedbyme ? "Undo Applied" : "Mark as Applied"}>
-                <IconButton
-                  className="accept-action"
-                  onClick={() => handleAcceptAction(job)}
-                >
-                  <ThumbUpIcon />
-                </IconButton>
-              </Tooltip>
+                  <Tooltip title={job.appliedbyme ? "Undo Applied" : "Mark as Applied"}>
+                    <IconButton
+                      className="accept-action"
+                      onClick={() => handleAcceptAction(job)}
+                    >
+                      <ThumbUpIcon />
+                    </IconButton>
+                  </Tooltip>
 
-              <Tooltip title={job.closed ? "Reopen Job" : "Close Job"}>
-                <IconButton
-                  className="lock-action"
-                  onClick={() => handleLockAction(job)}
-                >
-                  <LockIcon />
-                </IconButton>
-              </Tooltip>
-            </>}
+                  <Tooltip title={job.closed ? "Reopen Job" : "Close Job"}>
+                    <IconButton
+                      className="lock-action"
+                      onClick={() => handleLockAction(job)}
+                    >
+                      <LockIcon />
+                    </IconButton>
+                  </Tooltip>
+                </>}
+            </>
+          )}
         </ActionButtonsGroup>
       </StyledDialogActions>
     </>
@@ -499,7 +584,12 @@ export default function JobDetailModal({ job, open, onClose,
         ignore={job.ignore}
         wait={job.wait}
         close={job.closed ? "true" : undefined}>
-        <Typography >{job.formattedLocation.split(',')[0]} &gt; <span title={`title = ${job.title}`}>{job.title}</span> | <span title={`workplaceTypes = ${job.workplaceTypes}`}>{job.workplaceTypes}</span> | <span title={`country = ${job.country}`}>{job.country}</span> = <span title={`lang = ${job.lang}`}>{job.lang}</span> | <span title={`applies = ${job.applies}`}>{job.applies}</span></Typography>
+        <Typography >{!isMobile && (<span title={`formattedLocation = ${job.formattedLocation}`}>{job.formattedLocation.split(',')[0]} &gt;</span>)}
+          <span title={`title = ${job.title}`}>{job.title}</span>
+          {!isMobile && (<span title={`workplaceTypes = ${job.workplaceTypes}`}>| {job.workplaceTypes} |</span>)}
+          {!isMobile && (<span title={`country = ${job.country}`}>{job.country}</span>)}
+          {!isMobile && (<span title={`lang = ${job.lang}`}> = {job.lang} </span>)}
+          &nbsp; <span title={`applies = ${job.applies}`}>{job.applies}</span></Typography>
 
         <CloseButton onClick={onClose}>
           <CloseIcon />

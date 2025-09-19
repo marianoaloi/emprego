@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import CVData from '@/components/util/CVData';
-import { IconButton, Tooltip, } from '@mui/material';
+import { Tooltip, IconButton } from '@mui/material';
 import {
   ContentCopy as ContentCopyIcon,
   ContentPaste as ContentPasteIcon,
@@ -12,6 +12,33 @@ import {
 } from '@mui/icons-material';
 import { LinkInCurriculum } from '@/components/util/linkCV';
 import Editor from 'react-simple-wysiwyg';
+import {
+  CVLoadPageContainer,
+  PageTitle,
+  CVForm,
+  Section,
+  SectionTitle,
+  EditorContainer,
+  SkillRow,
+  FormInput,
+  FormSelect,
+  FormTextarea,
+  Button,
+  SmallButton,
+  ExperienceCard,
+  GridContainer,
+  TechnologyRow,
+  TechnologyInput,
+  SectionHeader,
+  IconButtonGroup,
+  StyledIconButton,
+  FileInputContainer,
+  FileInput,
+  FileInputLabel,
+  TechnologiesSubSection,
+  URLInput
+} from './page.styled';
+import { JumpLineControl } from '../page.styled';
 
 
 
@@ -39,7 +66,7 @@ export default function CVLoadPage() {
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
-    // link.download = loadedFileName;
+    link.download = loadedFileName;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -265,16 +292,83 @@ export default function CVLoadPage() {
 
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">CV Data Form</h1>
+    <CVLoadPageContainer>
+      <PageTitle>CV Data Form</PageTitle>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <JumpLineControl>
+
+        <div className="mt-4">
+          <label htmlFor="jsonFileInput" className="block text-sm font-medium text-gray-700 mb-2">
+            Or load CV data from file:
+          </label>
+          <div className="flex items-center gap-2">
+            <FormInput
+              id="jsonFileInput"
+              type="file"
+              accept=".json"
+              onChange={loadResume}
+              className="flex-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            />
+            {loadedFileName && (
+              <Tooltip title="Save to original file location">
+                <IconButton
+                  onClick={() => saveResumeToOriginalLocation()}
+                  size="small"
+                  sx={{
+                    color: '#6b7280',
+                    '&:hover': { color: '#374151' }
+                  }}
+                >
+                  <SaveIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
+          </div>
+        </div>
+        <div>
+          <IconButtonGroup>
+            <Tooltip title="Copy CV data">
+              <StyledIconButton
+                onClick={handleCopyDescription}
+                size="small"
+              >
+                <ContentCopyIcon fontSize="small" />
+              </StyledIconButton>
+            </Tooltip>
+            <Tooltip title="Paste CV data from clipboard">
+              <StyledIconButton
+                onClick={handlePasteDescription}
+                size="small"
+              >
+                <ContentPasteIcon fontSize="small" />
+              </StyledIconButton>
+            </Tooltip>
+            <Tooltip title="Save CV data as file">
+              <StyledIconButton
+                onClick={saveResume}
+                size="small"
+              >
+                <SaveIcon fontSize="small" />
+              </StyledIconButton>
+            </Tooltip>
+            <Tooltip title="Load CV data from localStorage">
+              <StyledIconButton
+                onClick={handleLoadDescription}
+                size="small"
+              >
+                <RefreshIcon fontSize="small" />
+              </StyledIconButton>
+            </Tooltip>
+          </IconButtonGroup>
+        </div>
+      </JumpLineControl>
+      <CVForm onSubmit={handleSubmit}>
 
 
         {/* Summary */}
-        <section className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-2xl font-semibold mb-4">Summary</h2>
-          <div className="border rounded">
+        <Section>
+          <SectionTitle>Summary</SectionTitle>
+          <EditorContainer>
             <Editor
               value={formData.summary}
               onChange={(e) => setFormData(prev => ({ ...prev, summary: e.target.value }))}
@@ -285,89 +379,84 @@ export default function CVLoadPage() {
                 }
               }}
             />
-          </div>
-        </section>
+          </EditorContainer>
+        </Section>
 
         {/* Skills */}
-        <section className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-2xl font-semibold mb-4">Skills</h2>
+        <Section>
+          <SectionTitle>Skills</SectionTitle>
           {formData.relevantSkills.map((skill, index) => (
-            <div key={index} className="flex gap-4 mb-4">
-              <input
+            <SkillRow key={index}>
+              <FormInput
                 type="text"
                 placeholder="Skill name"
                 value={skill.skillName}
                 onChange={(e) => handleSkillChange(index, 'skillName', e.target.value)}
-                className="border p-3 rounded flex-1"
                 required
               />
-              <input
+              <FormInput
                 type="number"
                 placeholder="Level (1-10)"
                 min="1"
                 max="100"
                 value={skill.skillLevel}
                 onChange={(e) => handleSkillChange(index, 'skillLevel', parseInt(e.target.value))}
-                className="border p-3 rounded w-24"
+                className="skill-level"
                 required
               />
-              <button
+              <Button
                 type="button"
                 onClick={() => removeSkill(index)}
-                className="bg-red-500 text-white px-4 py-2 rounded"
+                variant="danger"
               >
                 Remove
-              </button>
-            </div>
+              </Button>
+            </SkillRow>
           ))}
-          <button
+          <Button
             type="button"
             onClick={addSkill}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            variant="primary"
           >
             Add Skill
-          </button>
-        </section>
+          </Button>
+        </Section>
 
         {/* Experience */}
-        <section className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-2xl font-semibold mb-4">Experience</h2>
+        <Section>
+          <SectionTitle>Experience</SectionTitle>
           {formData.experience.map((exp, expIndex) => (
-            <div key={expIndex} className="border p-4 rounded mb-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <input
+            <ExperienceCard key={expIndex}>
+              <GridContainer>
+                <FormInput
                   type="text"
                   placeholder="Job title"
                   value={exp.title}
                   onChange={(e) => handleExperienceChange(expIndex, 'title', e.target.value)}
-                  className="border p-3 rounded"
                   required
                 />
-                <input
+                <FormInput
                   type="text"
                   placeholder="Company"
                   value={exp.company}
                   onChange={(e) => handleExperienceChange(expIndex, 'company', e.target.value)}
-                  className="border p-3 rounded"
                   required
                 />
-                <input
+                <FormInput
                   type="date"
                   placeholder="Start date"
                   value={exp.start.length > 6 ? `${exp.start.substring(0, 7)}-01` : exp.start}
                   onChange={(e) => handleExperienceChange(expIndex, 'start', e.target.value)}
-                  className="border p-3 rounded"
                   required
                 />
-                <input
+                <FormInput
                   type="date"
                   placeholder="End date"
                   value={exp.end.length > 6 ? `${exp.end.substring(0, 7)}-01` : exp.end}
                   onChange={(e) => handleExperienceChange(expIndex, 'end', e.target.value)}
-                  className="border p-3 rounded"
                 />
-              </div>
-              <div className="border rounded mb-4">
+              </GridContainer>
+              <EditorContainer>
                 <Editor
                   value={exp.description}
                   onChange={(e) => handleExperienceChange(expIndex, 'description', e.target.value)}
@@ -378,55 +467,54 @@ export default function CVLoadPage() {
                     }
                   }}
                 />
-              </div>
+              </EditorContainer>
 
-              <div className="mb-4">
-                <h4 className="font-semibold mb-2">Technologies:</h4>
+              <TechnologiesSubSection>
+                <h4>Technologies:</h4>
                 {exp.technologies.map((tech, techIndex) => (
-                  <div key={techIndex} className="flex gap-2 mb-2">
-                    <input
+                  <TechnologyRow key={techIndex}>
+                    <TechnologyInput
                       type="text"
                       placeholder="Technology"
                       value={tech}
                       onChange={(e) => handleTechnologyChange(expIndex, techIndex, e.target.value)}
-                      className="border p-2 rounded flex-1"
                       required
                     />
-                    <button
+                    <SmallButton
                       type="button"
                       onClick={() => removeTechnology(expIndex, techIndex)}
-                      className="bg-red-500 text-white px-3 py-2 rounded text-sm"
+                      variant="danger"
                     >
                       Remove
-                    </button>
-                  </div>
+                    </SmallButton>
+                  </TechnologyRow>
                 ))}
-                <button
+                <SmallButton
                   type="button"
                   onClick={() => addTechnology(expIndex)}
-                  className="bg-green-500 text-white px-3 py-2 rounded text-sm"
+                  variant="success"
                 >
                   Add Technology
-                </button>
-              </div>
+                </SmallButton>
+              </TechnologiesSubSection>
 
-              <button
+              <Button
                 type="button"
                 onClick={() => removeExperience(expIndex)}
-                className="bg-red-500 text-white px-4 py-2 rounded"
+                variant="danger"
               >
                 Remove Experience
-              </button>
-            </div>
+              </Button>
+            </ExperienceCard>
           ))}
-          <button
+          <Button
             type="button"
             onClick={addExperience}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            variant="primary"
           >
             Add Experience
-          </button>
-        </section>
+          </Button>
+        </Section>
 
         {/* Education */}
         <section className="bg-white p-6 rounded-lg shadow">
@@ -434,37 +522,33 @@ export default function CVLoadPage() {
           {formData.educations.map((edu, index) => (
             <div key={index} className="border p-4 rounded mb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
+                <FormInput
                   type="text"
                   placeholder="Degree"
                   value={edu.degree}
                   onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
-                  className="border p-3 rounded"
-                  required
+                                    required
                 />
-                <input
+                <FormInput
                   type="text"
                   placeholder="School"
                   value={edu.school}
                   onChange={(e) => handleEducationChange(index, 'school', e.target.value)}
-                  className="border p-3 rounded"
-                  required
+                                    required
                 />
-                <input
+                <FormInput
                   type="date"
                   placeholder="Start date"
                   value={edu.start.length > 6 ? `${edu.start.substring(0, 7)}-01` : edu.start}
                   onChange={(e) => handleEducationChange(index, 'start', e.target.value)}
-                  className="border p-3 rounded"
-                  required
+                                    required
                 />
-                <input
+                <FormInput
                   type="date"
                   placeholder="End date"
                   value={edu.end.length > 6 ? `${edu.end.substring(0, 7)}-01` : edu.end}
                   onChange={(e) => handleEducationChange(index, 'end', e.target.value)}
-                  className="border p-3 rounded"
-                  required
+                                    required
                 />
               </div>
               <button
@@ -491,39 +575,35 @@ export default function CVLoadPage() {
           {formData.certificates.map((cert, index) => (
             <div key={index} className="border p-4 rounded mb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
+                <FormInput
                   type="text"
                   placeholder="Certificate name"
                   value={cert.name}
                   onChange={(e) => handleCertificateChange(index, 'name', e.target.value)}
-                  className="border p-3 rounded"
-                  required
+                                    required
                 />
-                <input
+                <FormInput
                   type="text"
                   placeholder="Institute"
                   value={cert.institute}
                   onChange={(e) => handleCertificateChange(index, 'institute', e.target.value)}
-                  className="border p-3 rounded"
-                  required
+                                    required
                 />
-                <input
+                <FormInput
                   type="text"
                   placeholder="Credential"
                   value={cert.credential}
                   onChange={(e) => handleCertificateChange(index, 'credential', e.target.value)}
-                  className="border p-3 rounded"
-
+                  
                 />
-                <input
+                <FormInput
                   type="date"
                   placeholder="Issued date"
                   value={cert.issued.length > 6 ? `${cert.issued.substring(0, 7)}-01` : cert.issued}
                   onChange={(e) => handleCertificateChange(index, 'issued', e.target.value)}
-                  className="border p-3 rounded"
-                  required
+                                    required
                 />
-                <input
+                <FormInput
                   type="url"
                   placeholder="Certificate URL"
                   value={cert.url}
@@ -565,69 +645,20 @@ export default function CVLoadPage() {
           </select>
         </section>
 
-        <button
+        <Button
           type="submit"
-          className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold w-full"
+          variant="green"
         >
           Save CV Data
-        </button>
-      </form>
+        </Button>
+      </CVForm>
       {/* Object */}
-      <section className="bg-white p-6 rounded-lg shadow">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold">Object</h2>
-          <div className="flex gap-2">
-            <Tooltip title="Copy CV data">
-              <IconButton
-                onClick={handleCopyDescription}
-                size="small"
-                sx={{
-                  color: '#6b7280',
-                  '&:hover': { color: '#374151' }
-                }}
-              >
-                <ContentCopyIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Paste CV data from clipboard">
-              <IconButton
-                onClick={handlePasteDescription}
-                size="small"
-                sx={{
-                  color: '#6b7280',
-                  '&:hover': { color: '#374151' }
-                }}
-              >
-                <ContentPasteIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Save CV data as file">
-              <IconButton
-                onClick={saveResume}
-                size="small"
-                sx={{
-                  color: '#6b7280',
-                  '&:hover': { color: '#374151' }
-                }}
-              >
-                <SaveIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Load CV data from localStorage">
-              <IconButton
-                onClick={handleLoadDescription}
-                size="small"
-                sx={{
-                  color: '#6b7280',
-                  '&:hover': { color: '#374151' }
-                }}
-              >
-                <RefreshIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </div>
-        </div>
-        <textarea
+      <Section>
+        <SectionHeader>
+          <SectionTitle>Object</SectionTitle>
+          
+        </SectionHeader>
+        <FormTextarea
           placeholder="All CV data in JSON format"
           value={JSON.stringify(formData, null, 2)}
           onChange={(e) => {
@@ -638,39 +669,9 @@ export default function CVLoadPage() {
               console.error('Invalid JSON format:', err, e.target.value);
             }
           }}
-          className="border p-3 rounded w-full h-32"
-
         />
-        <div className="mt-4">
-          <label htmlFor="jsonFileInput" className="block text-sm font-medium text-gray-700 mb-2">
-            Or load CV data from file:
-          </label>
-          <div className="flex items-center gap-2">
-            <input
-              id="jsonFileInput"
-              type="file"
-              accept=".json"
-              onChange={loadResume}
-              className="flex-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-            />
-            {loadedFileName && (
-              <Tooltip title="Save to original file location">
-                <IconButton
-                  onClick={() => saveResumeToOriginalLocation()}
-                  size="small"
-                  sx={{
-                    color: '#6b7280',
-                    '&:hover': { color: '#374151' }
-                  }}
-                >
-                  <SaveIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            )}
-          </div>
-        </div>
-      </section>
+      </Section>
       <LinkInCurriculum />
-    </div>
+    </CVLoadPageContainer>
   );
 }
