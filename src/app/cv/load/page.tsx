@@ -235,7 +235,8 @@ export default function CVLoadPage() {
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    if (e)
+      e.preventDefault();
     localStorage.setItem('cvData', JSON.stringify(formData));
 
     window.open('/ats', '_blank');
@@ -360,6 +361,12 @@ export default function CVLoadPage() {
               </StyledIconButton>
             </Tooltip>
           </IconButtonGroup>
+          <Button
+            onClick={handleSubmit}
+            variant="green"
+          >
+            Save CV Data
+          </Button>
         </div>
       </JumpLineControl>
       <CVForm onSubmit={handleSubmit}>
@@ -527,28 +534,28 @@ export default function CVLoadPage() {
                   placeholder="Degree"
                   value={edu.degree}
                   onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
-                                    required
+                  required
                 />
                 <FormInput
                   type="text"
                   placeholder="School"
                   value={edu.school}
                   onChange={(e) => handleEducationChange(index, 'school', e.target.value)}
-                                    required
+                  required
                 />
                 <FormInput
                   type="date"
                   placeholder="Start date"
                   value={edu.start.length > 6 ? `${edu.start.substring(0, 7)}-01` : edu.start}
                   onChange={(e) => handleEducationChange(index, 'start', e.target.value)}
-                                    required
+                  required
                 />
                 <FormInput
                   type="date"
                   placeholder="End date"
                   value={edu.end.length > 6 ? `${edu.end.substring(0, 7)}-01` : edu.end}
                   onChange={(e) => handleEducationChange(index, 'end', e.target.value)}
-                                    required
+                  required
                 />
               </div>
               <button
@@ -580,28 +587,28 @@ export default function CVLoadPage() {
                   placeholder="Certificate name"
                   value={cert.name}
                   onChange={(e) => handleCertificateChange(index, 'name', e.target.value)}
-                                    required
+                  required
                 />
                 <FormInput
                   type="text"
                   placeholder="Institute"
                   value={cert.institute}
                   onChange={(e) => handleCertificateChange(index, 'institute', e.target.value)}
-                                    required
+                  required
                 />
                 <FormInput
                   type="text"
                   placeholder="Credential"
                   value={cert.credential}
                   onChange={(e) => handleCertificateChange(index, 'credential', e.target.value)}
-                  
+
                 />
                 <FormInput
                   type="date"
                   placeholder="Issued date"
                   value={cert.issued.length > 6 ? `${cert.issued.substring(0, 7)}-01` : cert.issued}
                   onChange={(e) => handleCertificateChange(index, 'issued', e.target.value)}
-                                    required
+                  required
                 />
                 <FormInput
                   type="url"
@@ -656,7 +663,7 @@ export default function CVLoadPage() {
       <Section>
         <SectionHeader>
           <SectionTitle>Object</SectionTitle>
-          
+
         </SectionHeader>
         <FormTextarea
           placeholder="All CV data in JSON format"

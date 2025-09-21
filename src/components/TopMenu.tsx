@@ -35,8 +35,9 @@ export default function TopMenu() {
     setNavMenuAnchor(null);
   };
 
-  const handleNavigation = (path: string) => {
-    router.push(path);
+  const handleNavigation = (path: string, openSternal: boolean = true) => {
+    if (openSternal) { window.open(path, '_blank'); }
+    else { router.push(path); }
     handleNavMenuClose();
   };
 
@@ -46,12 +47,12 @@ export default function TopMenu() {
   };
 
   const navigationItems = [
-    { label: 'Home', path: '/', icon: <Home /> },
-    { label: 'Dashboard', path: '/dashboard', icon: <Dashboard /> },
-    { label: 'Generate CV', path: '/ats/load', icon: <Work /> },
-    { label: 'Edit CV', path: '/cv/load', icon: <Description /> },
-    { label: 'ATS format', path: '/ats', icon: <Work /> },
-    { label: 'CV format', path: '/cv', icon: <Description /> },
+    { label: 'Home', path: '/', openSternal: false, icon: <Home /> },
+    { label: 'Dashboard', path: '/dashboard', openSternal: true, icon: <Dashboard /> },
+    { label: 'Generate CV', path: '/ats/load', openSternal: true, icon: <Work /> },
+    { label: 'Edit CV', path: '/cv/load', openSternal: true, icon: <Description /> },
+    { label: 'ATS format', path: '/ats', openSternal: true, icon: <Work /> },
+    { label: 'CV format', path: '/cv', openSternal: true, icon: <Description /> },
   ];
   return (
     <>
@@ -86,7 +87,7 @@ export default function TopMenu() {
                 {navigationItems.map((item) => (
                   <MenuItem
                     key={item.path}
-                    onClick={() => handleNavigation(item.path)}
+                    onClick={() => handleNavigation(item.path, item.openSternal)}
                     sx={{ minWidth: '150px' }}
                   >
                     <span style={{ marginRight: '8px', display: 'flex', alignItems: 'center' }}>
