@@ -148,10 +148,11 @@ export default function DataTable() {
 
   };
 
-  const handleModalClose = () => {
+  const handleModalClose = (reopen:boolean=false) => {
     setIsModalOpen(false);
     setSelectedJob(null);
     dispatch(clearAllJobDescriptions());
+    if(reopen && selectedJob) handleTitleClick(selectedJob)
   };
 
   // Render individual job card

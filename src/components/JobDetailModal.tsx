@@ -46,7 +46,7 @@ import { FormattedContent } from './JobDescription.styled';
 interface JobDetailModalProps {
   job: JobPosting | null;
   open: boolean;
-  onClose: () => void;
+  onClose: (reopen:boolean) => void;
   handleGoAction: any;
   handleRejectAction: any;
   handleWaitAction: any;
@@ -82,10 +82,14 @@ export default function JobDetailModal({ job, open, onClose,
     //   console.log(cookies);
 
     {
-      getAuthToken().then(token => {
-        if (token)
-          dispatch(
+      getAuthToken().then(async token => {
+        if (token){
+          await dispatch(
             getPostJob({ jobId: job._id, token }))
+            await setTimeout(() => {
+              onClose(true)
+            }, 1500);
+          }
       }
       )
         ;
@@ -107,6 +111,20 @@ export default function JobDetailModal({ job, open, onClose,
     }
   };
 
+  const handleCopyFormattedContent = async () => {
+    try {
+      // Get the job description text from the Redux store or fallback to job.description 
+      const textToCopy = job.presentationLetter?.coverLetter || 'No Presentation Letter available';
+      await navigator.clipboard.writeText(textToCopy);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000); // Hide success message after 2 seconds
+    } catch (err) {
+      console.error('Failed to copy Presentation Letter: ', err);
+    }
+  };
+
+
+
   const getDataObj = async () => {
     const token = await getAuthToken();
     return {
@@ -124,6 +142,7 @@ export default function JobDetailModal({ job, open, onClose,
     try {
       const result = await generateLetteraPresentacione(await getDataObj());
       const cvData = result.data;
+      fetchJobDetails();
       if (cvData) {
         dispatch(setJobPostByID({ jobId: job._id, updates: { presentationLetter: cvData as any } }));
       }
@@ -132,6 +151,7 @@ export default function JobDetailModal({ job, open, onClose,
       alert("Error generating CV. Please try again.");
     } finally {
       setLoading(false);
+      onClose(true)
     }
   };
 
@@ -172,13 +192,13 @@ export default function JobDetailModal({ job, open, onClose,
   const getStatusChips = () => {
     const chips = [];
     if (job.appliedbyme) {
-      chips.push(<StatusChip key="applied" status="applied" label="Applied" size="small" />);
+      chips.push(<StatusChip key="applied" status="applied" label={`Applied ${new Date(job.appliedbyme).toLocaleDateString()}`} title={new Date(job.appliedbyme).toString()} size="small" />);
     }
     if (job.ignore) {
-      chips.push(<StatusChip key="ignored" status="ignored" label="Ignored" size="small" />);
+      chips.push(<StatusChip key="ignored" status="ignored" label={`Ignored ${new Date(job.ignore).toLocaleDateString()}`} title={new Date(job.ignore).toString()} size="small" />);
     }
     if (job.wait) {
-      chips.push(<StatusChip key="waiting" status="waiting" label="Waiting" size="small" />);
+      chips.push(<StatusChip key="waiting" status="waiting" label={`Waiting ${new Date(job.wait).toLocaleDateString()}`} title={new Date(job.wait).toString()} size="small" />);
     }
     if (job.closed) {
       chips.push(<StatusChip key="closed" status="closed" label="Closed" size="small" />);
@@ -361,6 +381,45 @@ export default function JobDetailModal({ job, open, onClose,
     </Box>
   )
 
+  const JobPresentationInPart =     
+     ( job.presentationLetter && job.presentationLetter.coverLetter &&
+          <ContentSection>
+            <Box display="flex" alignItems="center" gap={1} mb={2}>
+              <SectionTitle>Cover Letter (AI Generated)</SectionTitle>
+              <Tooltip title="Copy job Formatted Content">
+                <IconButton
+                  onClick={handleCopyFormattedContent}
+                  size="small"
+                  sx={{
+                    color: '#6b7280',
+                    '&:hover': { color: '#374151' }
+                  }}
+                >
+                  <ContentCopyIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+
+
+              {copySuccess && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: '#10b981',
+                    fontWeight: 500,
+                    ml: 1
+                  }}
+                >
+                  Copied!
+                </Typography>
+              )}
+            </Box>
+            <FormattedContent dangerouslySetInnerHTML={{ __html: job.presentationLetter.coverLetter.replaceAll('\n', '<br/>') }} />
+            <hr />
+            <SectionTitle>Linkedin Top (AI Generated)</SectionTitle>
+            <FormattedContent dangerouslySetInnerHTML={{ __html: job.presentationLetter.linkedin_top.replaceAll('\n', '<br/>') }} />
+          </ContentSection>
+        )
+
   const contentBody = (
     <>
 
@@ -371,6 +430,8 @@ export default function JobDetailModal({ job, open, onClose,
 
           <LogoAzienda size={70} alt={job.companyName} src={job.foto} />
         </CompanyHeader>
+
+        {job.presentationLetter?.coverLetter && JobPresentationInPart}
 
         {skillsJob &&
           <ContentSection>
@@ -397,15 +458,6 @@ export default function JobDetailModal({ job, open, onClose,
 
         {JobDescriptionTag}
 
-        {job.presentationLetter && job.presentationLetter.coverLetter && (
-          <ContentSection>
-            <SectionTitle>Cover Letter (AI Generated)</SectionTitle>
-            <FormattedContent dangerouslySetInnerHTML={{ __html: job.presentationLetter.coverLetter.replaceAll('\n', '<br/>') }} />
-            <hr />
-            <SectionTitle>Linkedin Top (AI Generated)</SectionTitle>
-            <FormattedContent dangerouslySetInnerHTML={{ __html: job.presentationLetter.linkedin_top.replaceAll('\n', '<br/>') }} />
-          </ContentSection>
-        )}
 
         <ContentSection>
           <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
@@ -422,7 +474,7 @@ export default function JobDetailModal({ job, open, onClose,
       <StyledDialogActions>
         <Button
           variant="outlined"
-          onClick={onClose}
+          onClick={() => onClose(false)}
           size="large"
         >
           Close
@@ -458,19 +510,11 @@ export default function JobDetailModal({ job, open, onClose,
                   horizontal: 'right',
                 }}
               >
-                <MenuItem onClick={() => handleMenuAction(fetchJobDetails)}>
-                  <JoinFull sx={{ mr: 1 }} />
-                  Update Job
-                </MenuItem>
-                <MenuItem onClick={() => handleMenuAction(handlePresentation)}>
-                  <Face6TwoTone sx={{ mr: 1 }} />
-                  Cover Job
-                </MenuItem>
                 {user && (
                   <>
-                    <MenuItem onClick={() => handleMenuAction(handleOpenCV)}>
-                      <ArrowForwardIcon sx={{ mr: 1, color: '#10b981' }} />
-                      Open CV
+                    <MenuItem onClick={() => handleMenuAction(fetchJobDetails)}>
+                      <JoinFull sx={{ mr: 1 }} />
+                      Update Job
                     </MenuItem>
                     <MenuItem onClick={() => handleMenuAction(() => handleRejectAction(job))}>
                       <ThumbDownIcon sx={{ mr: 1 }} />
@@ -484,9 +528,17 @@ export default function JobDetailModal({ job, open, onClose,
                       <ThumbUpIcon sx={{ mr: 1 }} />
                       {job.appliedbyme ? "Undo Applied" : "Mark as Applied"}
                     </MenuItem>
+                    <MenuItem onClick={() => handleMenuAction(handlePresentation)}>
+                      <Face6TwoTone sx={{ mr: 1 }} />
+                      Cover Job
+                    </MenuItem>
                     <MenuItem onClick={() => handleMenuAction(() => handleLockAction(job))}>
                       <LockIcon sx={{ mr: 1 }} />
                       {job.closed ? "Reopen Job" : "Close Job"}
+                    </MenuItem>
+                    <MenuItem onClick={() => handleMenuAction(handleOpenCV)}>
+                      <ArrowForwardIcon sx={{ mr: 1, color: '#10b981' }} />
+                      Open CV
                     </MenuItem>
                   </>
                 )}
@@ -503,36 +555,14 @@ export default function JobDetailModal({ job, open, onClose,
                   <OpenInNewIcon />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Update Job">
-                <IconButton
-                  className="special-action"
-                  onClick={fetchJobDetails}
-                >
-                  <JoinFull />
-                </IconButton>
-              </Tooltip>
               {user &&
                 <>
-                  <Tooltip title="Cover Job">
+                  <Tooltip title="Update Job">
                     <IconButton
                       className="special-action"
-                      onClick={handlePresentation}
+                      onClick={fetchJobDetails}
                     >
-                      <Face6TwoTone />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Open CV">
-                    <IconButton
-                      onClick={handleOpenCV}
-                      sx={{
-                        color: '#10b981',
-                        '&:hover': {
-                          color: '#059669',
-                          backgroundColor: 'rgba(16, 185, 129, 0.1)'
-                        }
-                      }}
-                    >
-                      <ArrowForwardIcon />
+                      <JoinFull />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title={job.ignore ? "Undo Ignore" : "Ignore Job"}>
@@ -562,12 +592,34 @@ export default function JobDetailModal({ job, open, onClose,
                     </IconButton>
                   </Tooltip>
 
+                  <Tooltip title="Cover Job">
+                    <IconButton
+                      className="special-action"
+                      onClick={handlePresentation}
+                    >
+                      <Face6TwoTone />
+                    </IconButton>
+                  </Tooltip>
                   <Tooltip title={job.closed ? "Reopen Job" : "Close Job"}>
                     <IconButton
                       className="lock-action"
                       onClick={() => handleLockAction(job)}
                     >
                       <LockIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Open CV">
+                    <IconButton
+                      onClick={handleOpenCV}
+                      sx={{
+                        color: '#10b981',
+                        '&:hover': {
+                          color: '#059669',
+                          backgroundColor: 'rgba(16, 185, 129, 0.1)'
+                        }
+                      }}
+                    >
+                      <ArrowForwardIcon />
                     </IconButton>
                   </Tooltip>
                 </>}
@@ -578,7 +630,7 @@ export default function JobDetailModal({ job, open, onClose,
     </>
   )
   return (
-    <StyledDialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <StyledDialog open={open} onClose={() => onClose(false)} maxWidth="md" fullWidth>
       <StyledDialogTitle
         appliedbyme={job.appliedbyme}
         ignore={job.ignore}
@@ -591,7 +643,7 @@ export default function JobDetailModal({ job, open, onClose,
           {!isMobile && (<span title={`lang = ${job.lang}`}> = {job.lang} </span>)}
           &nbsp; <span title={`applies = ${job.applies}`}>{job.applies}</span></Typography>
 
-        <CloseButton onClick={onClose}>
+        <CloseButton onClick={() => onClose(false)}>
           <CloseIcon />
         </CloseButton>
       </StyledDialogTitle>
@@ -599,5 +651,3 @@ export default function JobDetailModal({ job, open, onClose,
     </StyledDialog>
   );
 }
-
-
