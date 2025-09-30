@@ -5,10 +5,17 @@ import {
   SocialMediaGrid,
   SocialMediaItem,
   SocialMediaIcon,
-  SocialMediaLink
+  SocialMediaLink,
+  SocialHidden
 } from './SocialMedia.styled';
 
-const SocialMedia = () => {
+interface SocialMediaProps {
+  hidden: boolean;
+}
+
+
+const SocialMedia : React.FC<SocialMediaProps> = ({ hidden = false }) => {
+    
     const size = '24'
     const data = [
         { "name": "linkedin/maloi", "icon": `<svg fill="#000000" width="${size}px" height="${size}px" viewBox="-0 -0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" class="jam jam-linkedin-circle"><path d='M15 11.13v3.697h-2.143v-3.45c0-.866-.31-1.457-1.086-1.457-.592 0-.945.398-1.1.784-.056.138-.071.33-.071.522v3.601H8.456s.029-5.842 0-6.447H10.6v.913l-.014.021h.014v-.02c.285-.44.793-1.066 1.932-1.066 1.41 0 2.468.922 2.468 2.902zM6.213 5.271C5.48 5.271 5 5.753 5 6.385c0 .62.466 1.115 1.185 1.115h.014c.748 0 1.213-.496 1.213-1.115-.014-.632-.465-1.114-1.199-1.114zm-1.086 9.556h2.144V8.38H5.127v6.447z'/><path d='M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0 2C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10z'/></svg>`, "url": "https://www.linkedin.com/in/maloi" },
@@ -24,7 +31,8 @@ const SocialMedia = () => {
         <SocialMediaContainer>
             <SocialMediaTitle>Social Media</SocialMediaTitle>
             <SocialMediaGrid>
-                {data.map((sm, index) => (
+                { !hidden &&
+                    data.map((sm, index) => (
                     <SocialMediaItem key={index}>
                         <SocialMediaIcon dangerouslySetInnerHTML={{ __html: sm.icon }} />
                         <SocialMediaLink href={sm.url}>
@@ -32,6 +40,10 @@ const SocialMedia = () => {
                         </SocialMediaLink>
                     </SocialMediaItem>
                 ))}
+                
+            { hidden &&
+                    data.map((sm, index) => (<SocialHidden 
+            key={index}  >{sm.url}</SocialHidden>))}
             </SocialMediaGrid>
         </SocialMediaContainer>
     )

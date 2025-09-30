@@ -21,6 +21,13 @@ export const SocialMediaGrid = styled.div`
   justify-content: center;
 `;
 
+export const SocialHidden = styled.div(
+  {
+    color: 'lightgray',
+    // fontSize: '1px'
+  }
+)
+
 export const SocialMediaItem = styled.div`
   display: flex;
   align-items: center;

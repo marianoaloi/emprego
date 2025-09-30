@@ -97,6 +97,33 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
             gap={2}
           >
 
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={localFilters.workRemoteAllowed || false}
+                  onChange={(e) => handleInputChange('workRemoteAllowed', e.target.checked)}
+                />
+              }
+              label="Permite Work Remote"
+              sx={{ mt: 1 }}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={localFilters.percentualMatchGreaterThan || false}
+                  onChange={(e) => handleInputChange('percentualMatchGreaterThan', e.target.checked)}
+                />
+              }
+              label="Greater than (unchecked = less than)"
+              sx={{ mt: 1 }}
+            />
+          </Box>
+          <Box
+            display="grid"
+            gridTemplateColumns={{ xs: '1fr', sm: 'repeat(4, 1fr)' }}
+            gap={2}
+          >
+
 
             <Box>
               <FormControl fullWidth margin="normal">
@@ -145,16 +172,7 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
                 </Select>
               </FormControl>
 
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={localFilters.workRemoteAllowed || false}
-                    onChange={(e) => handleInputChange('workRemoteAllowed', e.target.checked)}
-                  />
-                }
-                label="Permite Work Remote"
-                sx={{ mt: 1 }}
-              />
+
             </Box>
 
             <Box>
@@ -167,16 +185,6 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
                 placeholder="Enter percentage (0-100)"
                 margin="normal"
                 inputProps={{ min: 0, max: 100 }}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={localFilters.percentualMatchGreaterThan || false}
-                    onChange={(e) => handleInputChange('percentualMatchGreaterThan', e.target.checked)}
-                  />
-                }
-                label="Greater than (unchecked = less than)"
-                sx={{ mt: 1 }}
               />
 
             </Box>
@@ -194,17 +202,17 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
               />
             </Box>
 
-          <Box>
-            <TextField
-              fullWidth
-              label="Location"
-              value={localFilters.formattedLocation || ''}
-              onChange={(e) => handleInputChange('formattedLocation', e.target.value)}
-              placeholder="Enter location"
-              margin="normal"
-              sx={{ mt: 2 }}
-            />
-          </Box>
+            <Box>
+              <TextField
+                fullWidth
+                label="Location"
+                value={localFilters.formattedLocation || ''}
+                onChange={(e) => handleInputChange('formattedLocation', e.target.value)}
+                placeholder="Enter location"
+                margin="normal"
+                sx={{ mt: 2 }}
+              />
+            </Box>
 
 
             <Box>
@@ -230,99 +238,99 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
               />
             </Box>
 
-          <Box>
-            <Autocomplete
-              fullWidth
-              options={provinceOptions}
-              value={provinceOptions.find(option => option.value === localFilters.locationGranular) || null}
-              onChange={(event, newValue) => {
-                handleInputChange('locationGranular', newValue?.value || '');
-              }}
-              getOptionLabel={(option) => option.label}
-              isOptionEqualToValue={(option, value) => option.value === value.value}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Location Granular"
-                  placeholder="Select Italian province"
-                  margin="normal"
-                />
-              )}
-              sx={{ mt: 2 }}
-            />
-          </Box>
+            <Box>
+              <Autocomplete
+                fullWidth
+                options={provinceOptions}
+                value={provinceOptions.find(option => option.value === localFilters.locationGranular) || null}
+                onChange={(event, newValue) => {
+                  handleInputChange('locationGranular', newValue?.value || '');
+                }}
+                getOptionLabel={(option) => option.label}
+                isOptionEqualToValue={(option, value) => option.value === value.value}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Location Granular"
+                    placeholder="Select Italian province"
+                    margin="normal"
+                  />
+                )}
+                sx={{ mt: 2 }}
+              />
+            </Box>
 
-          <Box>
-            <TextField
-              fullWidth
-              label="Job IDs"
-              value={localFilters.id || ''}
-              onChange={(e) => handleInputChange('id', e.target.value)}
-              placeholder="Comma-separated IDs"
-              margin="normal"
-              sx={{ mt: 2 }}
-            />
-          </Box>
+            <Box>
+              <TextField
+                fullWidth
+                label="Job IDs"
+                value={localFilters.id || ''}
+                onChange={(e) => handleInputChange('id', e.target.value)}
+                placeholder="Comma-separated IDs"
+                margin="normal"
+                sx={{ mt: 2 }}
+              />
+            </Box>
 
-          <Box>
-            <TextField
-              fullWidth
-              label="Job Title"
-              value={localFilters.title || ''}
-              onChange={(e) => handleInputChange('title', e.target.value)}
-              placeholder="Enter job title"
-              margin="normal"
-              sx={{ mt: 2 }}
-            />
-          </Box>
+            <Box>
+              <TextField
+                fullWidth
+                label="Job Title"
+                value={localFilters.title || ''}
+                onChange={(e) => handleInputChange('title', e.target.value)}
+                placeholder="Enter job title"
+                margin="normal"
+                sx={{ mt: 2 }}
+              />
+            </Box>
 
-          <Box>
-            <TextField
-              fullWidth
-              label="Company Name"
-              value={localFilters.companyName || ''}
-              onChange={(e) => handleInputChange('companyName', e.target.value)}
-              placeholder="Enter company name"
-              margin="normal"
-              sx={{ mt: 2 }}
-            />
-          </Box>
+            <Box>
+              <TextField
+                fullWidth
+                label="Company Name"
+                value={localFilters.companyName || ''}
+                onChange={(e) => handleInputChange('companyName', e.target.value)}
+                placeholder="Enter company name"
+                margin="normal"
+                sx={{ mt: 2 }}
+              />
+            </Box>
 
-          <Box>
-            <TextField
-              fullWidth
-              label="Country"
-              value={localFilters.country || ''}
-              onChange={(e) => handleInputChange('country', e.target.value)}
-              placeholder="Enter country"
-              margin="normal"
-              sx={{ mt: 2 }}
-            />
-          </Box>
+            <Box>
+              <TextField
+                fullWidth
+                label="Country"
+                value={localFilters.country || ''}
+                onChange={(e) => handleInputChange('country', e.target.value)}
+                placeholder="Enter country"
+                margin="normal"
+                sx={{ mt: 2 }}
+              />
+            </Box>
 
-          <Box>
-            <TextField
-              fullWidth
-              label="Start Date Filter"
-              value={localFilters.datai || ''}
-              onChange={(e) => handleInputChange('datai', e.target.value)}
-              placeholder="e.g., 2025-08-01, *-1M"
-              margin="normal"
-              sx={{ mt: 2 }}
-            />
-          </Box>
+            <Box>
+              <TextField
+                fullWidth
+                label="Start Date Filter"
+                value={localFilters.datai || ''}
+                onChange={(e) => handleInputChange('datai', e.target.value)}
+                placeholder="e.g., 2025-08-01, *-1M"
+                margin="normal"
+                sx={{ mt: 2 }}
+              />
+            </Box>
 
-          <Box>
-            <TextField
-              fullWidth
-              label="End Date Filter"
-              value={localFilters.dataf || ''}
-              onChange={(e) => handleInputChange('dataf', e.target.value)}
-              placeholder="e.g., 2025-08-01, *-1M"
-              margin="normal"
-              sx={{ mt: 2 }}
-            />
-          </Box>
+            <Box>
+              <TextField
+                fullWidth
+                label="End Date Filter"
+                value={localFilters.dataf || ''}
+                onChange={(e) => handleInputChange('dataf', e.target.value)}
+                placeholder="e.g., 2025-08-01, *-1M"
+                margin="normal"
+                sx={{ mt: 2 }}
+              />
+            </Box>
 
           </Box>
           <Box
