@@ -53,7 +53,7 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
 
   if (!isOpen) return null;
 
-  const handleInputChange = (field: keyof JobSearchFilter, value: string | number | boolean | WorkType[]) => {
+  const handleInputChange = (field: keyof JobSearchFilter, value: string | number | boolean | WorkType[] | string[]) => {
     setLocalFilters(prev => ({ ...prev, [field]: value }));
   };
 
@@ -304,6 +304,40 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
                 onChange={(e) => handleInputChange('country', e.target.value)}
                 placeholder="Enter country"
                 margin="normal"
+                sx={{ mt: 2 }}
+              />
+            </Box>
+
+            <Box>
+              <TextField
+                fullWidth
+                label="Regex Filter"
+                value={localFilters.regexFilter || ''}
+                onChange={(e) => handleInputChange('regexFilter', e.target.value)}
+                placeholder="Enter regex pattern to filter job content"
+                margin="normal"
+                sx={{ mt: 2 }}
+              />
+            </Box>
+
+            <Box>
+              <Autocomplete
+                fullWidth
+                multiple
+                freeSolo
+                options={[]}
+                value={localFilters.skillsFilter || []}
+                onChange={(event, newValue) => {
+                  handleInputChange('skillsFilter', newValue);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Skills Filter"
+                    placeholder="Type skills and press Enter (multiple)"
+                    margin="normal"
+                  />
+                )}
                 sx={{ mt: 2 }}
               />
             </Box>
