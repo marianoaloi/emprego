@@ -195,3 +195,20 @@ export const PrimaryButton = styled.button`
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
   }
 `;
+
+export const BoxMultiItens = styled.div`
+  display: flex;
+  flex-direction: row;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+    align-items: center;
+
+    div {
+        width: 80%;
+    }
+    label {
+        width: 20%;
+        display: flex;
+        flex-direction: column;
+    }
+`;

@@ -152,7 +152,7 @@ export default function DataTable() {
     setIsModalOpen(false);
     setSelectedJob(null);
     dispatch(clearAllJobDescriptions());
-    if(reopen && selectedJob) handleTitleClick(selectedJob)
+    // if(reopen && selectedJob) handleTitleClick(selectedJob)
   };
 
   // Render individual job card
@@ -305,7 +305,7 @@ export default function DataTable() {
 
       {/* Job Detail Modal */}
       <JobDetailModal
-        job={selectedJob}
+        jobId={selectedJob?._id}
         open={isModalOpen}
         onClose={handleModalClose}
         handleGoAction={handleGoAction}

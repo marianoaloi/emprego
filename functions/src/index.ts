@@ -74,9 +74,7 @@ async function connectToMongoDB() {
     logger.log("Connected to MongoDB successfully");
 
     // Test the connection
-    const db = client.db(config.mongodb.database);
-    await db.admin().ping();
-    logger.log("Database ping successful");
+    const db = (await getCollections()).db;
 
 
     app.get("/", (req: Request, res: Response) => {
@@ -84,14 +82,16 @@ async function connectToMongoDB() {
       res.send("Hello World!");
     });
 
+    const llmDb = client.db(config.mongodb.databaseRAG)
 
     app.use("/actions", actionsRouter(db));
     app.use("/dashboard", dashboardRouter(db));
     app.use("/data", dataRouter(db));
-    app.use("/llm", llmRouter(db));
+    app.use("/llm", llmRouter(llmDb));
     app.use("/skill", skillRouter(db));
     app.use("/text", textRouter(db));
     app.use("/cookie", cookieRooter(db));
+    app.use("/llmcv", llmRouter(llmDb));
   } catch (error) {
     logger.error("Failed to connect to MongoDB:", error);
     process.exit(1);;
@@ -111,7 +111,7 @@ async function startServer() {
 
 
   app.listen(PORT, () => {
-    logger.log(`Server is running on port ${PORT}`);
+    logger.log(`Server of Maloi is running on port ${PORT}`);
 
   });
 }
@@ -126,4 +126,5 @@ try {
 startServer().catch(logger.error);
 exports.generateCv = generateCv
 import { generateLetteraPresentacione } from "./cv/generateLetteraPresentacione";
+import getCollections from "./util/getCollections";
 exports.generateLetteraPresentacione = generateLetteraPresentacione

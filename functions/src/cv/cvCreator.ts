@@ -6,7 +6,7 @@ import { configDotenv } from "dotenv";
 import cors from "cors";
 
 import prompt from "./prompt";
-import { drive } from "../util/gdrive";
+import getJsonCurriculum, { getSearchChuck } from "../util/getJsonCurriculum";
 
 configDotenv();
 
@@ -96,12 +96,9 @@ export const generateCv = functions
           return;
         }
 
-        const resp = await drive.files.get({
-          fileId: process.env.FILE_ID || "ERROR+API",
-          alt: 'media'
-        })
+  
 
-        const rdata = typeof (resp.data) === 'string' ? JSON.parse(resp.data) : resp.data;
+        const rdata = await getJsonCurriculum();
 
         if (!rdata) {
           res.status(500).json({
@@ -122,7 +119,7 @@ export const generateCv = functions
           }
         });
 
-        const result = await model.generateContent(prompt(rdata, data.data));
+        const result = await model.generateContent(prompt(await getSearchChuck(data.data.jobDescription), data.data));
         const response = result.response;
         const text = response.text()
           .replace("```json", "")

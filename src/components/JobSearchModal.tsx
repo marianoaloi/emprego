@@ -23,6 +23,7 @@ import { JobSearchFilter, RemoteWorkType, SystemRecruiterType, LanguageCode, Wor
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { setFilter, resetFilters } from '@/lib/features/filter/filterSlice';
 import italianProvinces from './ItalianProvinces.json';
+import { BoxMultiItens } from './JobSearchModal.styled';
 
 interface JobSearchModalProps {
   isOpen: boolean;
@@ -107,16 +108,6 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
               label="Permite Work Remote"
               sx={{ mt: 1 }}
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={localFilters.percentualMatchGreaterThan || false}
-                  onChange={(e) => handleInputChange('percentualMatchGreaterThan', e.target.checked)}
-                />
-              }
-              label="Greater than (unchecked = less than)"
-              sx={{ mt: 1 }}
-            />
           </Box>
           <Box
             display="grid"
@@ -176,17 +167,30 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
             </Box>
 
             <Box>
-              <TextField
-                fullWidth
-                type="number"
-                label="Percentual Match"
-                value={localFilters.percentualMatch || ''}
-                onChange={(e) => handleInputChange('percentualMatch', parseInt(e.target.value) || 0)}
-                placeholder="Enter percentage (0-100)"
-                margin="normal"
-                inputProps={{ min: 0, max: 100 }}
-              />
+              <BoxMultiItens>
+                <TextField
+                  fullWidth
+                  type="number"
+                  label="Percentual Match"
+                  value={localFilters.percentualMatch || ''}
+                  onChange={(e) => handleInputChange('percentualMatch', parseInt(e.target.value) || 0)}
+                  placeholder="Enter percentage (0-100)"
+                  margin="normal"
+                  inputProps={{ min: 0, max: 100 }}
+                />
 
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={localFilters.percentualMatchGreaterThan || false}
+                      onChange={(e) => handleInputChange('percentualMatchGreaterThan', e.target.checked)}
+                    />
+                  }
+                  label="GT"
+                  title="Greater than (unchecked = less than)"
+                  sx={{ mt: 1 }}
+                />
+              </BoxMultiItens>
             </Box>
 
             <Box>

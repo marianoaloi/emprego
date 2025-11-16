@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { httpsCallable } from "firebase/functions";
 import { Button, Typography, Tooltip, IconButton, Box, CircularProgress, Menu, MenuItem, useMediaQuery, useTheme } from '@mui/material';
@@ -44,7 +44,7 @@ import { setJobPostByID } from '@/lib/features/data/dataSlice';
 import { FormattedContent } from './JobDescription.styled';
 
 interface JobDetailModalProps {
-  job: JobPosting | null;
+  jobId: string | undefined;
   open: boolean;
   onClose: (reopen:boolean) => void;
   handleGoAction: any;
@@ -54,7 +54,7 @@ interface JobDetailModalProps {
   handleLockAction: any;
 }
 
-export default function JobDetailModal({ job, open, onClose,
+export default function JobDetailModal({ jobId, open, onClose,
   handleGoAction,
   handleRejectAction,
   handleWaitAction,
@@ -73,8 +73,12 @@ export default function JobDetailModal({ job, open, onClose,
   // Get job description from Redux store
   const jobDescription = useAppSelector(state => state.textJob.descriptions);
   const skillsJob = useAppSelector(state => state.skills.skills);
+        const job = useAppSelector(state => state.data.jobPostings.find(j => j._id === jobId));
 
   if (!job) return null;
+
+ 
+    
 
   const fetchJobDetails = async () => {
 
@@ -120,6 +124,21 @@ export default function JobDetailModal({ job, open, onClose,
       setTimeout(() => setCopySuccess(false), 2000); // Hide success message after 2 seconds
     } catch (err) {
       console.error('Failed to copy Presentation Letter: ', err);
+    }
+  };
+
+  const handleTXTFormattedContent = async () => {
+    try {
+      // Get the job description text from the Redux store or fallback to job.description
+      const textToCopy = job.presentationLetter?.coverLetter || 'No Presentation Letter available';
+      const element = document.createElement("a");
+      const file = new Blob([textToCopy], { type: 'text/plain' });
+      element.href = URL.createObjectURL(file);
+      element.download = `Cover_Letter_${job.companyName}_${job.title}.txt`;
+      element.click();
+      URL.revokeObjectURL(element.href);
+    } catch (err) {
+      console.error('Failed to download Presentation Letter: ', err);
     }
   };
 
@@ -398,6 +417,19 @@ export default function JobDetailModal({ job, open, onClose,
                   <ContentCopyIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
+              <Tooltip title="Download as .TXT">
+                <IconButton
+                  onClick={handleTXTFormattedContent}
+                  size="small"
+                  sx={{
+                    color: '#6b7280',
+                    '&:hover': { color: '#374151' }
+                  }}
+                >
+                  <ArrowForwardIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              
 
 
               {copySuccess && (

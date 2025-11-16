@@ -17,7 +17,8 @@ export const skillFilter = async (req: Request, query: any) => {
                                     $eq: ["$$id", "$_id"]
                                 }
                             ]
-                        }
+                        },
+                        skillMatchStatuses:{$exists:true}
                     }
                 },
                 {
@@ -84,7 +85,7 @@ export const skillFilter = async (req: Request, query: any) => {
         }
     };
 
-    if (req.body.skillsFilter.length !== 0) {
+    if (req.body.skillsFilter && req.body.skillsFilter.length !== 0) {
         subLookUp.$lookup.pipeline[3].$match["skills"] = { "$in": req.body.skillsFilter };
     }
 

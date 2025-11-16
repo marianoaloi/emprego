@@ -6,6 +6,8 @@
     "build:watch": "tsc --watch",
     "serveBuild": "npm run build && firebase emulators:start --only functions",
     "serve": "nodemon -e ts --exec npm run serveBuild",
+    "serveBuildSimple": "npm run build && node ./lib/index.js ",
+    "serveSimple": "nodemon -e ts --exec ts-node ./src/index.ts",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
@@ -17,7 +19,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
+    "@google/genai": "^1.29.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
