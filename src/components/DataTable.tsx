@@ -152,7 +152,7 @@ export default function DataTable() {
     setIsModalOpen(false);
     setSelectedJob(null);
     dispatch(clearAllJobDescriptions());
-    // if(reopen && selectedJob) handleTitleClick(selectedJob)
+    if(reopen && selectedJob) handleTitleClick(selectedJob)
   };
 
   // Render individual job card
@@ -273,6 +273,11 @@ export default function DataTable() {
   };
 
 
+  function handleRestart(event: React.MouseEvent<HTMLSpanElement>): void {
+    dispatch(fetchData(filters));
+    dispatch(fetchDataCount(filters));
+  }
+
   return (
     <div>
       {isJobData ? (
@@ -290,6 +295,12 @@ export default function DataTable() {
           </JobsGridContainer>
           <FooterInfo>
             <span onClick={updateCookie} style={{ cursor: 'pointer' }}>Update Cookie</span>
+            &nbsp;
+            &nbsp;
+            <span onClick={handleRestart} style={{ cursor: 'pointer' }}>Restart filter</span>
+            &nbsp;
+            &nbsp;
+            <span>Total available: {totalCount.toLocaleString()}</span>
           </FooterInfo>
         </>
       ) : (

@@ -91,6 +91,10 @@ export async function getSearchChuck(query : string)  {
       const formatProjects = (prjs: Record<string, any>) => !prjs ? null : Object.entries(prjs).map(prj => prj[1])
       const formatCompanies = (comp: Record<string, any>) => Object.entries(comp).map(obj => ({ ...(obj[1] as Record<string, any>), "projects": formatProjects(obj[1].projects) }))
       const data = {
+        "name": cv["name"],
+        "telephone": cv["telephone"],
+        "location": cv["location"],
+        "email": cv["email"],
         "presentation": cv["presentation"].replace(/<[^>]*>/g, ''),
         "historicals": formatCompanies(historicals)
       };

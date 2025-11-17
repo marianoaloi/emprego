@@ -196,6 +196,26 @@ export const PrimaryButton = styled.button`
   }
 `;
 
+export const PrefilterButton = styled.span`
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+  color: white;
+  background-color: #2563eb; /* bg-blue-600 */
+  border: none;
+  border-radius: 0.375rem; /* rounded-md */
+  
+  &:hover {
+    background-color: #1d4ed8; /* hover:bg-blue-700 */
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  }
+`;
+
+
 export const BoxMultiItens = styled.div`
   display: flex;
   flex-direction: row;
