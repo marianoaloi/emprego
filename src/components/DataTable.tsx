@@ -28,6 +28,7 @@ import {
   SubheaderContainer,
   CompanyNameSpan,
   LastUpdateSpan,
+  TitleJob,
 } from './DataTable.styled';
 import { JobPosting } from '@/types/job.types';
 import JobDetailModal from './JobDetailModal';
@@ -138,11 +139,6 @@ export default function DataTable() {
 
   const handleTitleClick = (job: JobPosting) => {
     setSelectedJob(job);
-    const jobId = job._id;
-    if (jobId) {
-      dispatch(fetchSkills(jobId));
-      dispatch(fetchJobText(jobId));
-    }
     setIsModalOpen(true);
 
 
@@ -151,7 +147,7 @@ export default function DataTable() {
   const handleModalClose = (reopen:boolean=false) => {
     setIsModalOpen(false);
     setSelectedJob(null);
-    dispatch(clearAllJobDescriptions());
+    
     if(reopen && selectedJob) handleTitleClick(selectedJob)
   };
 
@@ -175,10 +171,10 @@ export default function DataTable() {
       >
         <JobCardHeader
           title={
-            <div onClick={() => handleTitleClick(job)}>
+            <TitleJob onClick={() => handleTitleClick(job)}>
               {job.title}
 
-            </div>
+            </TitleJob>
           }
           subheader={
             <SubheaderContainer>

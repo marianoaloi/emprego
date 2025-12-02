@@ -90,10 +90,11 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
   }
 
   
-    const friuli : JobSearchFilter = {"limit":20,"sort":{"lastupdate":-1},"formattedLocation":"friuli","nostatus":true,"wait":true,"percentualMatch":0,"percentualMatchGreaterThan":true,"workRemoteAllowed":false,"skillsFilter":[]};
-    const remoteJava : JobSearchFilter = {"limit":20,"sort":{"lastupdate":-1},"formattedLocation":"","nostatus":true,"wait":true,"percentualMatch":70,"systemRecruter":"LinkedIn","percentualMatchGreaterThan":true,"workRemoteAllowed":true,"skillsFilter":["Java"]}
-    const remoto70 : JobSearchFilter = {"limit":20,"sort":{"lastupdate":-1},"formattedLocation":"","nostatus":true,"wait":true,"percentualMatch":70,"systemRecruter":"LinkedIn","percentualMatchGreaterThan":true,"workRemoteAllowed":true,"skillsFilter":["Java"]};
-    const hibridoJava : JobSearchFilter = {"limit":20,"sort":{"lastupdate":-1},"formattedLocation":"","nostatus":true,"wait":true,"percentualMatch":70,"systemRecruter":"LinkedIn","percentualMatchGreaterThan":true,"workRemoteAllowed":true,"skillsFilter":["Java"]}
+    const friuli : JobSearchFilter = {"limit":20,"sort":{"lastupdate":-1},"formattedLocation":"friuli","nostatus":true,"wait":true,"percentualMatch":0,"percentualMatchGreaterThan":true,"workRemoteAllowed":false,"skillsFilter":[],"workTypes":[]};
+    const remoteJavaLinkedIn : JobSearchFilter = {"limit":20,"sort":{"lastupdate":1},"formattedLocation":"","nostatus":true,"wait":true,"percentualMatch":70,"systemRecruter":"LinkedIn","percentualMatchGreaterThan":true,"workRemoteAllowed":true,"skillsFilter":["Java"],"workTypes":["Part-time","Full-time"]};
+    const remoteJavaAll : JobSearchFilter = {"limit":20,"sort":{"lastupdate":-1},"formattedLocation":"","nostatus":true,"wait":true,"percentualMatch":70,"systemRecruter":undefined,"percentualMatchGreaterThan":true,"workRemoteAllowed":true,"skillsFilter":["Java"],"workTypes":["Part-time","Full-time"]};
+    const remoto70 : JobSearchFilter = {"limit":20,"sort":{"lastupdate":-1},"formattedLocation":"","nostatus":true,"wait":true,"percentualMatch":70,"systemRecruter":"LinkedIn","percentualMatchGreaterThan":true,"workRemoteAllowed":true,"skillsFilter":["Java"],"workTypes":["Part-time","Full-time"]};
+    const hibridoJava : JobSearchFilter = {"limit":20,"sort":{"lastupdate":-1},"formattedLocation":"","nostatus":true,"wait":true,"percentualMatch":70,"systemRecruter":"LinkedIn","percentualMatchGreaterThan":true,"workRemoteAllowed":true,"skillsFilter":["Java"],"workTypes":["Part-time","Full-time"]};
 
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="md" fullWidth>
@@ -541,7 +542,9 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
         <Box>
           <PrefilterButton onClick={() => changeFilterPre(friuli)} style={{ cursor: 'pointer' }}>Friuli</PrefilterButton>
           &nbsp;
-          <PrefilterButton onClick={() => changeFilterPre(remoteJava)} style={{ cursor: 'pointer' }}>Remote Java</PrefilterButton>
+          <PrefilterButton onClick={() => changeFilterPre(remoteJavaLinkedIn)} style={{ cursor: 'pointer' }}>Remote Java Link</PrefilterButton>
+          &nbsp;
+          <PrefilterButton onClick={() => changeFilterPre(remoteJavaAll)} style={{ cursor: 'pointer' }}>Remote Java</PrefilterButton>
           &nbsp;
           <PrefilterButton onClick={() => changeFilterPre(remoto70)} style={{ cursor: 'pointer' }}>Remoto 70</PrefilterButton>
           &nbsp;

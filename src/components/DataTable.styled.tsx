@@ -299,6 +299,13 @@ export const SubheaderContainer = styled.div`
   gap: 8px;
 `;
 
+export const TitleJob = styled.div`
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: break-spaces;
+    width: 235px;
+    cursor: pointer;
+    `
 
 
 

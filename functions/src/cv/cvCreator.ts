@@ -118,8 +118,8 @@ export const generateCv = functions
             maxOutputTokens: 30_000,
           }
         });
-
-        const result = await model.generateContent(prompt(await getSearchChuck(data.data.jobDescription), data.data));
+        const prompts = prompt(await getSearchChuck(data.data.jobDescription), data.data);
+        const result = await model.generateContent(prompts);
         const response = result.response;
         const text = response.text()
           .replace("```json", "")
