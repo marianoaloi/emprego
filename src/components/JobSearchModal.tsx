@@ -23,7 +23,7 @@ import { JobSearchFilter, RemoteWorkType, SystemRecruiterType, LanguageCode, Wor
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { setFilter, resetFilters } from '@/lib/features/filter/filterSlice';
 import italianProvinces from './ItalianProvinces.json';
-import { BoxMultiItens, PrefilterButton } from './JobSearchModal.styled';
+import { BoxMultiItens } from './JobSearchModal.styled';
 
 interface JobSearchModalProps {
   isOpen: boolean;
@@ -79,22 +79,6 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
     setLocalFilters(DEFAULT_JOB_FILTER);
     dispatch(resetFilters());
   };
-
-  function changeFilterPre(preFilter: JobSearchFilter = DEFAULT_JOB_FILTER): void {
-    
-    // setLocalFilters({...DEFAULT_JOB_FILTER, ...preFilter});
-    preFilter = { ...DEFAULT_JOB_FILTER, ...preFilter}
-    setLocalFilters(preFilter);
-    dispatch(setFilter(preFilter));
-    onClose();
-  }
-
-  
-    const friuli : JobSearchFilter = {"limit":20,"sort":{"lastupdate":-1},"formattedLocation":"friuli","nostatus":true,"wait":true,"percentualMatch":0,"percentualMatchGreaterThan":true,"workRemoteAllowed":false,"skillsFilter":[],"workTypes":[]};
-    const remoteJavaLinkedIn : JobSearchFilter = {"limit":20,"sort":{"lastupdate":1},"formattedLocation":"","nostatus":true,"wait":true,"percentualMatch":70,"systemRecruter":"LinkedIn","percentualMatchGreaterThan":true,"workRemoteAllowed":true,"skillsFilter":["Java"],"workTypes":["Part-time","Full-time"]};
-    const remoteJavaAll : JobSearchFilter = {"limit":20,"sort":{"lastupdate":-1},"formattedLocation":"","nostatus":true,"wait":true,"percentualMatch":70,"systemRecruter":undefined,"percentualMatchGreaterThan":true,"workRemoteAllowed":true,"skillsFilter":["Java"],"workTypes":["Part-time","Full-time"]};
-    const remoto70 : JobSearchFilter = {"limit":20,"sort":{"lastupdate":-1},"formattedLocation":"","nostatus":true,"wait":true,"percentualMatch":70,"systemRecruter":"LinkedIn","percentualMatchGreaterThan":true,"workRemoteAllowed":true,"skillsFilter":["Java"],"workTypes":["Part-time","Full-time"]};
-    const hibridoJava : JobSearchFilter = {"limit":20,"sort":{"lastupdate":-1},"formattedLocation":"","nostatus":true,"wait":true,"percentualMatch":70,"systemRecruter":"LinkedIn","percentualMatchGreaterThan":true,"workRemoteAllowed":true,"skillsFilter":["Java"],"workTypes":["Part-time","Full-time"]};
 
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="md" fullWidth>
@@ -538,19 +522,6 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
               Apply Filters
             </Button>
           </Box>
-        </Box>
-        <Box>
-          <PrefilterButton onClick={() => changeFilterPre(friuli)} style={{ cursor: 'pointer' }}>Friuli</PrefilterButton>
-          &nbsp;
-          <PrefilterButton onClick={() => changeFilterPre(remoteJavaLinkedIn)} style={{ cursor: 'pointer' }}>Remote Java Link</PrefilterButton>
-          &nbsp;
-          <PrefilterButton onClick={() => changeFilterPre(remoteJavaAll)} style={{ cursor: 'pointer' }}>Remote Java</PrefilterButton>
-          &nbsp;
-          <PrefilterButton onClick={() => changeFilterPre(remoto70)} style={{ cursor: 'pointer' }}>Remoto 70</PrefilterButton>
-          &nbsp;
-          <PrefilterButton onClick={() => changeFilterPre(hibridoJava)} style={{ cursor: 'pointer' }}>Hibrido Java</PrefilterButton>
-
-                          
         </Box>
       </DialogContent>
     </Dialog>

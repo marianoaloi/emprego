@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
 import { MoreVert as MoreVertIcon, Home, Dashboard, Description, Work, RestartAlt } from '@mui/icons-material';
 import JobSearchModal from './JobSearchModal';
+import PreFilterMenu from './PreFilterMenu';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { fetchData, fetchDataCount } from '@/lib/features/data/dataTruck';
 import {
@@ -106,6 +107,7 @@ export default function TopMenu() {
                 {/* <FilterButton onClick={() => router.push('/dashboard')}>
                   Dashboard
                 </FilterButton> */}
+                <PreFilterMenu />
                 <FilterButton onClick={() => setIsModalOpen(true)}>
                   Search Filters
                 </FilterButton>
