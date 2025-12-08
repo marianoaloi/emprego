@@ -9,7 +9,12 @@ import { DEFAULT_JOB_FILTER } from '@/types/job.filter.types';
 import { PRESET_FILTERS, PresetFilter } from '@/constants/prefilters';
 import { PreFilterButton } from './PreFilterMenu.styled';
 
-export default function PreFilterMenu() {
+
+  interface PresetFilterProps {
+    setTitleFilter: (title: string) => void;
+  }
+
+export default function PreFilterMenu({setTitleFilter} : PresetFilterProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const dispatch = useAppDispatch();
   const isOpen = Boolean(anchorEl);
@@ -22,7 +27,10 @@ export default function PreFilterMenu() {
     setAnchorEl(null);
   };
 
+
+
   const handlePresetSelect = (preset: PresetFilter) => {
+    setTitleFilter(preset.label)
     const mergedFilter = { ...DEFAULT_JOB_FILTER, ...preset.filter };
     dispatch(setFilter(mergedFilter));
     handleClose();
@@ -67,3 +75,4 @@ export default function PreFilterMenu() {
     </>
   );
 }
+

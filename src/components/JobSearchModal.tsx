@@ -28,9 +28,10 @@ import { BoxMultiItens } from './JobSearchModal.styled';
 interface JobSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
+        cleanTitle: () => void;
 }
 
-export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps) {
+export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearchModalProps) {
   const dispatch = useAppDispatch();
   const { filters: reduxFilters } = useAppSelector((state) => state.filter);
   const [localFilters, setLocalFilters] = useState<JobSearchFilter>(reduxFilters);
@@ -72,11 +73,13 @@ export default function JobSearchModal({ isOpen, onClose }: JobSearchModalProps)
     e.preventDefault();
     // Update Redux state with local form values
     dispatch(setFilter(localFilters));
+    cleanTitle();
     onClose();
   };
 
   const handleReset = () => {
     setLocalFilters(DEFAULT_JOB_FILTER);
+    cleanTitle();
     dispatch(resetFilters());
   };
 
