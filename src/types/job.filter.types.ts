@@ -27,6 +27,8 @@ export interface JobSearchFilter {
   wait?: boolean;
   workTypes?: WorkType[]; // Multiple work type selection
   workRemoteAllowed?: boolean; // Filter for jobs that allow remote work
+  regexFilter?: string; // Regex pattern to filter job content
+  skillsFilter?: string[]; // Array of skills to filter by
   sort?: {
     lastupdate?: -1 | 0 | 1;
     expireAt?: -1 | 0 | 1;
@@ -41,4 +43,25 @@ export const DEFAULT_JOB_FILTER: JobSearchFilter = {
   sort: {
     lastupdate: -1,
   },
+  applied: undefined,
+  companyName: undefined,
+  country: undefined,
+  dataf: undefined,
+  datai: undefined,
+  formattedLocation: undefined,
+  id: undefined,
+  ignore: undefined,
+  lang: undefined,
+  locationGranular: undefined,
+  nostatus: undefined,
+  percentualMatch: 0,
+  percentualMatchGreaterThan: undefined,
+  remote: undefined,
+  systemRecruter: undefined,
+  title: "",
+  wait: undefined,
+  workTypes: ["Full-time", "Part-time"],
+  workRemoteAllowed: undefined,
+  regexFilter: undefined,
+  skillsFilter: undefined,
 };

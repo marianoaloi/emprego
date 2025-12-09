@@ -3,7 +3,7 @@ import { google } from "googleapis";
 import * as fs from "fs";
 
 // const cred = require('./cert/curriculum-29102-9e559bc27c95.json')
-const cred = JSON.parse(fs.readFileSync('./cert/curriculum-29102-30136a87238b.json', 'utf8'));
+const cred = JSON.parse(fs.readFileSync('./cert/emprego-4bb54-12880986f0da.json', 'utf8'));
 
 
 const authDrive = new google.auth.GoogleAuth({

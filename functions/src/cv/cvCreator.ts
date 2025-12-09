@@ -6,7 +6,7 @@ import { configDotenv } from "dotenv";
 import cors from "cors";
 
 import prompt from "./prompt";
-import { drive } from "../util/gdrive";
+import getJsonCurriculum, { getSearchChuck } from "../util/getJsonCurriculum";
 
 configDotenv();
 
@@ -96,12 +96,9 @@ export const generateCv = functions
           return;
         }
 
-        const resp = await drive.files.get({
-          fileId: process.env.FILE_ID || "ERROR+API",
-          alt: 'media'
-        })
+  
 
-        const rdata = typeof (resp.data) === 'string' ? JSON.parse(resp.data) : resp.data;
+        const rdata : any = await getJsonCurriculum();
 
         if (!rdata) {
           res.status(500).json({
@@ -121,8 +118,8 @@ export const generateCv = functions
             maxOutputTokens: 30_000,
           }
         });
-
-        const result = await model.generateContent(prompt(rdata, data.data));
+        const prompts = prompt(await getSearchChuck(data.data.jobDescription), data.data);
+        const result = await model.generateContent(prompts);
         const response = result.response;
         const text = response.text()
           .replace("```json", "")
@@ -130,7 +127,7 @@ export const generateCv = functions
           .replaceAll(/\*\*([^*]+)\*\*/gi, "<b>$1</b>");
 
         try {
-          const jsonDoc = await JSON.parse(text);
+          const jsonDoc : any = await JSON.parse(text);
 
           // // Convert markdown to HTML in text fields
           // if (jsonDoc.summary) {

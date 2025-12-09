@@ -1,11 +1,13 @@
 {
   "name": "functions",
   "scripts": {
-    "lint": "eslint --ext .js,.ts .",
+    "lint": "eslint .",
     "build": "tsc && copyfiles -u 2 ./src/util/X509-cert-2864290664025085959.pem ./lib/util/",
     "build:watch": "tsc --watch",
     "serveBuild": "npm run build && firebase emulators:start --only functions",
     "serve": "nodemon -e ts --exec npm run serveBuild",
+    "serveBuildSimple": "npm run build && node ./lib/index.js ",
+    "serveSimple": "nodemon -e ts --exec ts-node ./src/index.ts",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
@@ -17,8 +19,9 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
+    "@google/genai": "^1.29.1",
     "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "firebase-admin": "^12.6.0",
@@ -28,6 +31,7 @@
     "mongodb": "^6.15.0"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.12.0",
     "copyfiles": "^2.4.1",

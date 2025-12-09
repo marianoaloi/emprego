@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
 import { MoreVert as MoreVertIcon, Home, Dashboard, Description, Work, RestartAlt } from '@mui/icons-material';
 import JobSearchModal from './JobSearchModal';
+import PreFilterMenu from './PreFilterMenu';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { fetchData, fetchDataCount } from '@/lib/features/data/dataTruck';
 import {
@@ -22,6 +23,7 @@ import { useAuth } from './auth/AuthContext';
 export default function TopMenu() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [navMenuAnchor, setNavMenuAnchor] = useState<null | HTMLElement>(null);
+  const [title,setTitle] = useState<string>('Emprego');
   const router = useRouter();
   const { user } = useAuth();
   const dispatch = useAppDispatch();
@@ -30,6 +32,9 @@ export default function TopMenu() {
   const handleNavMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setNavMenuAnchor(event.currentTarget);
   };
+
+
+
 
   const handleNavMenuClose = () => {
     setNavMenuAnchor(null);
@@ -45,6 +50,15 @@ export default function TopMenu() {
     dispatch(fetchData(filters));
     dispatch(fetchDataCount(filters));
   };
+
+  const cleanTitle = () => {
+    setTitle('Emprego')
+  }
+
+  const setTitleFilter = (title:string) => {
+    setTitle(`Emprego - ${title}`)
+  }
+
 
   const navigationItems = [
     { label: 'Home', path: '/', openSternal: false, icon: <Home /> },
@@ -98,7 +112,7 @@ export default function TopMenu() {
                 ))}
               </Menu>
               <TitleContainer>
-                <Title>Emprego</Title>
+                <Title>{title}</Title>
               </TitleContainer>
             </div>
             {user &&
@@ -106,7 +120,8 @@ export default function TopMenu() {
                 {/* <FilterButton onClick={() => router.push('/dashboard')}>
                   Dashboard
                 </FilterButton> */}
-                <FilterButton onClick={() => setIsModalOpen(true)}>
+                <PreFilterMenu setTitleFilter={setTitleFilter} />
+                <FilterButton  onClick={() => setIsModalOpen(true)} >
                   Search Filters
                 </FilterButton>
                 <Tooltip title="Restart - Refresh data with current filters">
@@ -124,6 +139,7 @@ export default function TopMenu() {
       <JobSearchModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        cleanTitle={cleanTitle}
       />
     </>
   );

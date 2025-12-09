@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { httpsCallable } from "firebase/functions";
 import { Button, Typography, Tooltip, IconButton, Box, CircularProgress, Menu, MenuItem, useMediaQuery, useTheme } from '@mui/material';
@@ -17,7 +17,6 @@ import {
   Face6TwoTone,
   MoreVert as MoreVertIcon
 } from '@mui/icons-material';
-import { JobPosting } from '@/types/job.types';
 import JobDescription from './JobDescription';
 import SkillsGrid from './SkillsGrid';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
@@ -42,11 +41,100 @@ import { functions } from './auth/firebaseConfig';
 import { getPostJob } from '@/lib/features/data/dataTruck';
 import { setJobPostByID } from '@/lib/features/data/dataSlice';
 import { FormattedContent } from './JobDescription.styled';
+import { fetchSkills } from '@/lib/features/skill/skillsTruck';
+import { fetchJobText } from '@/lib/features/textJob/textJobTruck';
+import { clearAllJobDescriptions } from '@/lib/features/textJob/textJobSlice';
+
+// Constant Tooltip Button Components
+const OpenJobButton = (onClick: () => void) => (
+  <Tooltip title="Open Job">
+    <IconButton className="go-action" onClick={onClick}>
+      <OpenInNewIcon />
+    </IconButton>
+  </Tooltip>
+);
+
+const UpdateJobButton = (onClick: () => void) => (
+  <Tooltip title="Update Job">
+    <IconButton className="special-action" onClick={onClick}>
+      <JoinFull />
+    </IconButton>
+  </Tooltip>
+);
+
+const CoverJobButton = (onClick: () => void) => (
+  <Tooltip title="Cover Job">
+    <IconButton className="special-action" onClick={onClick}>
+      <Face6TwoTone />
+    </IconButton>
+  </Tooltip>
+);
+
+const OpenCvButton = (onClick: () => void) => (
+  <Tooltip title="Open CV">
+    <IconButton
+      onClick={onClick}
+      sx={{
+        color: '#10b981',
+        '&:hover': {
+          color: '#059669',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)'
+        }
+      }}
+    >
+      <ArrowForwardIcon />
+    </IconButton>
+  </Tooltip>
+);
+
+const CopyDescriptionButton = (onClick: () => void) => (
+  <Tooltip title="Copy job description">
+    <IconButton
+      onClick={onClick}
+      size="small"
+      sx={{ color: '#6b7280', '&:hover': { color: '#374151' } }}
+    >
+      <ContentCopyIcon fontSize="small" />
+    </IconButton>
+  </Tooltip>
+);
+
+const CopyFormattedContentButton = (onClick: () => void) => (
+  <Tooltip title="Copy job Formatted Content">
+    <IconButton
+      onClick={onClick}
+      size="small"
+      sx={{ color: '#6b7280', '&:hover': { color: '#374151' } }}
+    >
+      <ContentCopyIcon fontSize="small" />
+    </IconButton>
+  </Tooltip>
+);
+
+const DownloadTxtButton = (onClick: () => void) => (
+  <Tooltip title="Download as .TXT">
+    <IconButton
+      onClick={onClick}
+      size="small"
+      sx={{ color: '#6b7280', '&:hover': { color: '#374151' } }}
+    >
+      <ArrowForwardIcon fontSize="small" />
+    </IconButton>
+  </Tooltip>
+);
+
+const MoreActionsButton = (onClick: (event: React.MouseEvent<HTMLElement>) => void) => (
+  <Tooltip title="More Actions">
+    <IconButton onClick={onClick}>
+      <MoreVertIcon />
+    </IconButton>
+  </Tooltip>
+);
 
 interface JobDetailModalProps {
-  job: JobPosting | null;
+  jobId: string | undefined;
   open: boolean;
-  onClose: (reopen:boolean) => void;
+  onClose: (reopen: boolean) => void;
   handleGoAction: any;
   handleRejectAction: any;
   handleWaitAction: any;
@@ -54,7 +142,7 @@ interface JobDetailModalProps {
   handleLockAction: any;
 }
 
-export default function JobDetailModal({ job, open, onClose,
+export default function JobDetailModal({ jobId, open, onClose,
   handleGoAction,
   handleRejectAction,
   handleWaitAction,
@@ -73,23 +161,22 @@ export default function JobDetailModal({ job, open, onClose,
   // Get job description from Redux store
   const jobDescription = useAppSelector(state => state.textJob.descriptions);
   const skillsJob = useAppSelector(state => state.skills.skills);
-
-  if (!job) return null;
+  const job = useAppSelector(state => state.data.jobPostings.find(j => j._id === jobId));
 
   const fetchJobDetails = async () => {
 
-    if (job._id && user)
+    if (job?._id && user && (!job.ignore || !job.appliedbyme))
     //   console.log(cookies);
 
     {
       getAuthToken().then(async token => {
-        if (token){
+        if (token) {
           await dispatch(
             getPostJob({ jobId: job._id, token }))
-            await setTimeout(() => {
-              onClose(true)
-            }, 1500);
-          }
+          await setTimeout(() => {
+            onClose(true)
+          }, 1500);
+        }
       }
       )
         ;
@@ -97,6 +184,27 @@ export default function JobDetailModal({ job, open, onClose,
 
   };
 
+  const oldGiorni = job && new Date().getTime() > (job.lastupdate + (1000 * 60 * 60 * 24 * 7))
+
+  useEffect(() => {
+    if (job 
+          && !job.closed 
+        //  && oldGiorni
+        )
+      fetchJobDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // if (job && job.closed)
+    //   onClose(true);
+    
+    if (job && job._id){
+        const jobId = job._id;
+        dispatch(clearAllJobDescriptions());
+        dispatch(fetchSkills(jobId));
+        dispatch(fetchJobText(jobId));
+    }
+  }, [ job?.lastupdate]);
+
+  if (!job) return null;
 
 
   const handleCopyDescription = async () => {
@@ -120,6 +228,21 @@ export default function JobDetailModal({ job, open, onClose,
       setTimeout(() => setCopySuccess(false), 2000); // Hide success message after 2 seconds
     } catch (err) {
       console.error('Failed to copy Presentation Letter: ', err);
+    }
+  };
+
+  const handleTXTFormattedContent = async () => {
+    try {
+      // Get the job description text from the Redux store or fallback to job.description
+      const textToCopy = job.presentationLetter?.coverLetter || 'No Presentation Letter available';
+      const element = document.createElement("a");
+      const file = new Blob([textToCopy], { type: 'text/plain' });
+      element.href = URL.createObjectURL(file);
+      element.download = `Cover_Letter_${job.companyName}_${job.title}.txt`;
+      element.click();
+      URL.revokeObjectURL(element.href);
+    } catch (err) {
+      console.error('Failed to download Presentation Letter: ', err);
     }
   };
 
@@ -218,6 +341,10 @@ export default function JobDetailModal({ job, open, onClose,
         <DetailItem>
           <div className="label">Experience Level</div>
           <div className="value">{job.formattedExperienceLevel || 'N/A'}</div>
+        </DetailItem>
+        <DetailItem>
+          <div className="label">Exployee Status</div>
+          <div className="value">{job.formattedEmploymentStatus || 'N/A'}</div>
         </DetailItem>
         <DetailItem>
           <div className="label">Remote Allowed</div>
@@ -336,18 +463,7 @@ export default function JobDetailModal({ job, open, onClose,
     <ContentSection>
       <Box display="flex" alignItems="center" gap={1} mb={2}>
         <SectionTitle style={{ margin: 0 }}>Job Description</SectionTitle>
-        <Tooltip title="Copy job description">
-          <IconButton
-            onClick={handleCopyDescription}
-            size="small"
-            sx={{
-              color: '#6b7280',
-              '&:hover': { color: '#374151' }
-            }}
-          >
-            <ContentCopyIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
+        {CopyDescriptionButton(handleCopyDescription)}
         {job._id}
         {copySuccess && (
           <Typography
@@ -370,55 +486,39 @@ export default function JobDetailModal({ job, open, onClose,
     <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
       <CircularProgress />
       BUILDING CURRICULUM VITAE
-      <Tooltip title="Open Job">
-        <IconButton
-          className="go-action"
-          onClick={() => handleGoAction(job)}
-        >
-          <OpenInNewIcon />
-        </IconButton>
-      </Tooltip>
+      {OpenJobButton(() => handleGoAction(job))}
     </Box>
   )
 
-  const JobPresentationInPart =     
-     ( job.presentationLetter && job.presentationLetter.coverLetter &&
-          <ContentSection>
-            <Box display="flex" alignItems="center" gap={1} mb={2}>
-              <SectionTitle>Cover Letter (AI Generated)</SectionTitle>
-              <Tooltip title="Copy job Formatted Content">
-                <IconButton
-                  onClick={handleCopyFormattedContent}
-                  size="small"
-                  sx={{
-                    color: '#6b7280',
-                    '&:hover': { color: '#374151' }
-                  }}
-                >
-                  <ContentCopyIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
+  const JobPresentationInPart =
+    (job.presentationLetter && job.presentationLetter.coverLetter &&
+      <ContentSection>
+        <Box display="flex" alignItems="center" gap={1} mb={2}>
+          <SectionTitle>Cover Letter (AI Generated)</SectionTitle>
+          {CopyFormattedContentButton(handleCopyFormattedContent)}
+          {DownloadTxtButton(handleTXTFormattedContent)}
 
 
-              {copySuccess && (
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: '#10b981',
-                    fontWeight: 500,
-                    ml: 1
-                  }}
-                >
-                  Copied!
-                </Typography>
-              )}
-            </Box>
-            <FormattedContent dangerouslySetInnerHTML={{ __html: job.presentationLetter.coverLetter.replaceAll('\n', '<br/>') }} />
-            <hr />
-            <SectionTitle>Linkedin Top (AI Generated)</SectionTitle>
-            <FormattedContent dangerouslySetInnerHTML={{ __html: job.presentationLetter.linkedin_top.replaceAll('\n', '<br/>') }} />
-          </ContentSection>
-        )
+
+          {copySuccess && (
+            <Typography
+              variant="caption"
+              sx={{
+                color: '#10b981',
+                fontWeight: 500,
+                ml: 1
+              }}
+            >
+              Copied!
+            </Typography>
+          )}
+        </Box>
+        <FormattedContent dangerouslySetInnerHTML={{ __html: job.presentationLetter.coverLetter.replaceAll('\n', '<br/>') }} />
+        <hr />
+        <SectionTitle>Linkedin Top (AI Generated)</SectionTitle>
+        <FormattedContent dangerouslySetInnerHTML={{ __html: job.presentationLetter.linkedin_top.replaceAll('\n', '<br/>') }} />
+      </ContentSection>
+    )
 
   const contentBody = (
     <>
@@ -484,19 +584,8 @@ export default function JobDetailModal({ job, open, onClose,
           {isMobile ? (
             // Mobile: Show only essential buttons and menu
             <>
-              <Tooltip title="Open Job">
-                <IconButton
-                  className="go-action"
-                  onClick={() => handleGoAction(job)}
-                >
-                  <OpenInNewIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="More Actions">
-                <IconButton onClick={handleMenuClick}>
-                  <MoreVertIcon />
-                </IconButton>
-              </Tooltip>
+              {OpenJobButton(() => handleGoAction(job))}
+              {MoreActionsButton(handleMenuClick)}
               <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
@@ -547,24 +636,10 @@ export default function JobDetailModal({ job, open, onClose,
           ) : (
             // Desktop: Show all buttons
             <>
-              <Tooltip title="Open Job">
-                <IconButton
-                  className="go-action"
-                  onClick={() => handleGoAction(job)}
-                >
-                  <OpenInNewIcon />
-                </IconButton>
-              </Tooltip>
+              {OpenJobButton(() => handleGoAction(job))}
               {user &&
                 <>
-                  <Tooltip title="Update Job">
-                    <IconButton
-                      className="special-action"
-                      onClick={fetchJobDetails}
-                    >
-                      <JoinFull />
-                    </IconButton>
-                  </Tooltip>
+                  {UpdateJobButton(fetchJobDetails)}
                   <Tooltip title={job.ignore ? "Undo Ignore" : "Ignore Job"}>
                     <IconButton
                       className="reject-action"
@@ -592,14 +667,7 @@ export default function JobDetailModal({ job, open, onClose,
                     </IconButton>
                   </Tooltip>
 
-                  <Tooltip title="Cover Job">
-                    <IconButton
-                      className="special-action"
-                      onClick={handlePresentation}
-                    >
-                      <Face6TwoTone />
-                    </IconButton>
-                  </Tooltip>
+                  {CoverJobButton(handlePresentation)}
                   <Tooltip title={job.closed ? "Reopen Job" : "Close Job"}>
                     <IconButton
                       className="lock-action"
@@ -608,20 +676,7 @@ export default function JobDetailModal({ job, open, onClose,
                       <LockIcon />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Open CV">
-                    <IconButton
-                      onClick={handleOpenCV}
-                      sx={{
-                        color: '#10b981',
-                        '&:hover': {
-                          color: '#059669',
-                          backgroundColor: 'rgba(16, 185, 129, 0.1)'
-                        }
-                      }}
-                    >
-                      <ArrowForwardIcon />
-                    </IconButton>
-                  </Tooltip>
+                  {OpenCvButton(handleOpenCV)}
                 </>}
             </>
           )}
@@ -629,6 +684,8 @@ export default function JobDetailModal({ job, open, onClose,
       </StyledDialogActions>
     </>
   )
+
+
   return (
     <StyledDialog open={open} onClose={() => onClose(false)} maxWidth="md" fullWidth>
       <StyledDialogTitle

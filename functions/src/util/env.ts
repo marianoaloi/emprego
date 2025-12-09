@@ -11,8 +11,10 @@ export const config = {
     "authSource=%24external&authMechanism=MONGODB-X509&"+
     "retryWrites=true&w=majority&appName=Cluster0",
     database: "linkedinjobs",
+    databaseRAG: "RAG_CV",
     collection: "jobs",
     collectionLocalCode: "local_code",
+    collectionsChucks: "cv_rag_chunks",
     certificatePath: path.resolve(__dirname + "/X509-cert-2864290664025085959.pem")
   },
   server: {

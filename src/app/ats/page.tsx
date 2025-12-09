@@ -228,7 +228,7 @@ export default function ATSPage() {
 
             <JumpLine dangerouslySetInnerHTML={{ __html: '<br/>'.repeat(jumpSocialCount) }} />
             <ATSSection>
-              <SocialMedia />
+              <SocialMedia hidden={false}/>
             </ATSSection>
 
             <JumpLine dangerouslySetInnerHTML={{ __html: '<br/>'.repeat(jumpSkillCount) }} />
@@ -251,6 +251,10 @@ export default function ATSPage() {
 
             <ATSSection>
               <Certificate data={cvData.certificates} lang={cvData.languageCodeOfJobDescription} />
+            </ATSSection>
+            
+            <ATSSection>
+              <SocialMedia hidden={true}/>
             </ATSSection>
           </ATSContent>
         ) : (

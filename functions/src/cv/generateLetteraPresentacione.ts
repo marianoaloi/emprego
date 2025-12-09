@@ -7,10 +7,9 @@ import { configDotenv } from "dotenv";
 import cors from "cors";
 
 import prompt from "./promptPres";
-import { config } from "../util/env";
-import clientPromise from "../util/mongo";
 import { Collection } from "mongodb";
-import { drive } from "../util/gdrive";
+import { getSearchChuck } from "../util/getJsonCurriculum";
+import getCollections from "../util/getCollections";
 
 configDotenv();
 
@@ -97,12 +96,8 @@ export const generateLetteraPresentacione = functions
                     return;
                 }
 
-                const resp = await drive.files.get({
-                    fileId: process.env.FILE_ID || "ERROR+API",
-                    alt: 'media'
-                })
 
-                const rdata = typeof (resp.data) === 'string' ? JSON.parse(resp.data) : resp.data;
+                const rdata = await getSearchChuck(data.data.jobDescription);
 
                 if (!rdata) {
                     res.status(500).json({
@@ -133,7 +128,7 @@ export const generateLetteraPresentacione = functions
                     const jsonDoc = await JSON.parse(text);
                     const id = data.data.id;
                     if (id) {
-                        const collectionJob: Collection = await getCollectionJob();
+                        const collectionJob: Collection = (await getCollections()).jobs;
                         await collectionJob.updateOne({ _id: id }, { $set: { presentationLetter: jsonDoc } });
                     }
 
@@ -157,15 +152,4 @@ export const generateLetteraPresentacione = functions
             }
         });
     });
-var dbSigleton: any = null;
-async function getCollectionJob()  {
-    if (dbSigleton) return dbSigleton;
 
-
-    const client = await clientPromise;
-    const db = client.db(config.mongodb.database);
-    await db.admin().ping();
-    functions.logger.log("Database ping successful");
-    return dbSigleton = db.collection(config.mongodb.collection);
-
-}

@@ -4,6 +4,7 @@
 import { Request } from "express";
 import { Db } from "mongodb";
 import { config } from "./util/env";
+import { skillFilter } from "./skillFilter";
 
 export const supperFilter = async (req: Request, query: any, db: Db) => {
   (query as any)[0].$match["applyingInfo.closed"] = false;
@@ -134,89 +135,12 @@ export const supperFilter = async (req: Request, query: any, db: Db) => {
   }
 
   if (req.body.percentualMatch) {
-    query.splice(1, 0,
-      {
-        $lookup: {
-          from: "skils",
-          let: {
-            id: "$_id"
-          },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    {
-                      $eq: ["$$id", "$_id"]
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              $project: {
-                _id: 0,
-                match: {
-                  $map: {
-                    as: "match",
-                    input: {
-                      $objectToArray: "$skillMatchStatuses"
-                    },
-                    in: {
-                      $cond: [
-                        "$$match.v.skillOnProfile",
-                        1,
-                        0
-                      ]
-                    }
-                  }
-                }
-              }
-            },
-            {
-              $project: {
-                sum: {
-                  $sum: "$match"
-                },
-                size: {
-                  $size: "$match"
-                }
-              }
-            },
-            {
-              $match:
-              {
-                size: {
-                  $gt: 0
-                }
-              }
-            },
-            {
-              $project:
-              {
-                perc: {
-                  $divide: ["$sum", "$size"]
-                }
-              }
-            }
-          ],
-          as: "skills"
-        }
-      }
-    );
-    query.splice(2, 0,
-      {
-        $match:
-        /**
-         * query: The query in MQL.
-         */
-        {
-          "skills.0.perc": req.body.percentualMatchGreaterThan  ?
-            { $gte: req.body.percentualMatch / 100 } :
-            { $lte: req.body.percentualMatch / 100 }
-        }
-      },
-    )
+    skillFilter(req, query);
+  }
+
+  
+  if (req.body.regexFilter) {
+    (query as any)[0].$match["description.text"] = { $regex: req.body.regexFilter, $options: "i" };
   }
 
   dateQuery(req, query);

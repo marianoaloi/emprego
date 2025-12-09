@@ -16,6 +16,16 @@
         },
         {
             "type": "node-terminal",
+            "name": "simple back (emprego)",
+            "request": "launch",
+            "command": "npm run serveSimple",
+            "cwd": "${workspaceFolder}/functions",
+            "env": {
+                "ADMIN_EMAIL":"mariano@aloi.com.br"
+            }
+        },
+        {
+            "type": "node-terminal",
             "name": "front (emprego)",
             "request": "launch",
             "command": "npm run dev",
@@ -31,11 +41,20 @@
     ],
     "compounds": [
         {
-            "name": "Run Both (Front + Back)",
+            "name": "With browser (Front + Back)",
             "configurations": [
                 "front (emprego)",
                 "back (emprego)",
                 "browser"
+            ],
+            "stopAll": true
+        },
+        
+        {
+            "name": "Front & Back",
+            "configurations": [
+                "front (emprego)",
+                "back (emprego)"
             ],
             "stopAll": true
         }

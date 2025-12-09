@@ -45,3 +45,5 @@ next-env.d.ts
 functions/cert/**
 functions/lib/**
 functions/node_modules/**
+
+nul
