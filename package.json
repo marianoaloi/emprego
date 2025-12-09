@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "crypto-js": "^4.2.0",
     "firebase": "^12.1.0",
     "js-cookie": "^3.0.5",
     "moment-timezone": "^0.6.0",
@@ -20,6 +19,8 @@
     "react-simple-wysiwyg": "^3.4.1"
   },
   "devDependencies": {
+    "crypto-js": "^4.2.0",
+    "@google/genai": "^1.29.1",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@eslint/eslintrc": "^3",

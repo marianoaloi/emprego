@@ -35,7 +35,7 @@ async function getJsonCurriculumContent(): Promise<Object> {
 }
 
 
-const reorganizeProjects = (r, a) => {
+const reorganizeProjects = (r:any, a:any) => {
 
   const companyId = a.company_id
   if (!companyId || !a.field)

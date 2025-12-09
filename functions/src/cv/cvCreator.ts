@@ -98,7 +98,7 @@ export const generateCv = functions
 
   
 
-        const rdata = await getJsonCurriculum();
+        const rdata : any = await getJsonCurriculum();
 
         if (!rdata) {
           res.status(500).json({
@@ -127,7 +127,7 @@ export const generateCv = functions
           .replaceAll(/\*\*([^*]+)\*\*/gi, "<b>$1</b>");
 
         try {
-          const jsonDoc = await JSON.parse(text);
+          const jsonDoc : any = await JSON.parse(text);
 
           // // Convert markdown to HTML in text fields
           // if (jsonDoc.summary) {
