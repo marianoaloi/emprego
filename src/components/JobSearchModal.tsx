@@ -23,6 +23,7 @@ import { JobSearchFilter, RemoteWorkType, SystemRecruiterType, LanguageCode, Wor
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { setFilter, resetFilters } from '@/lib/features/filter/filterSlice';
 import italianProvinces from './ItalianProvinces.json';
+import countries from '@/constants/Country.json';
 import { BoxMultiItens } from './JobSearchModal.styled';
 
 interface JobSearchModalProps {
@@ -304,15 +305,21 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
             </Box>
 
             <Box>
-              <TextField
-                fullWidth
-                label="Country"
-                value={localFilters.country || ''}
-                onChange={(e) => handleInputChange('country', e.target.value)}
-                placeholder="Enter country"
-                margin="normal"
-                sx={{ mt: 2 }}
-              />
+              <FormControl fullWidth margin="normal" sx={{ mt: 2 }}>
+                <InputLabel>Country</InputLabel>
+                <Select
+                  value={localFilters.country || ''}
+                  label="Country"
+                  onChange={(e) => handleInputChange('country', e.target.value)}
+                >
+                  <MenuItem value="">Select country</MenuItem>
+                  {countries.map((country) => (
+                    <MenuItem key={country.code} value={country.code}>
+                      {country.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Box>
 
             <Box>
