@@ -34,6 +34,8 @@ export interface JobSearchFilter {
     expireAt?: -1 | 0 | 1;
     listedAt?: -1 | 0 | 1;
     originalListedAt?: -1 | 0 | 1;
+    'predictedApplyingInfo.appliedByMeProbability'?: -1 | 0 | 1;
+    // predictedApplyingInfo?:{appliedByMeProbability?: -1 | 0 | 1};
   }
 }
 
@@ -41,7 +43,7 @@ export interface JobSearchFilter {
 export const DEFAULT_JOB_FILTER: JobSearchFilter = {
   limit: 100,
   sort: {
-    lastupdate: -1,
+    'predictedApplyingInfo.appliedByMeProbability': -1,
   },
   applied: undefined,
   companyName: undefined,

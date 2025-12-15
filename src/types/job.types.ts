@@ -56,5 +56,6 @@ export interface JobPosting {
   presentationLetter?:{
     coverLetter: string;
     linkedin_top: string;
-  }
+  };
+  appliedByMeProbability?: number;
 }

@@ -27,6 +27,8 @@ export const projectData = {
             salaryInsights: 1,
             applicantTrackingSystem: 1,
             presentationLetter: 1,
+            appliedByMeProbability:'$predictedApplyingInfo.appliedByMeProbability',
+            
             foto: {
               $concat: [
                 "$companyDetails.comlinkedinvoyagerdecojobswebsharedWebJobPostingCompany.companyResolutionResult.logo.image.comlinkedincommonVectorImage.rootUrl",

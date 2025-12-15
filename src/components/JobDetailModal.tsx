@@ -339,6 +339,10 @@ export default function JobDetailModal({ jobId, open, onClose,
           <div className="value">{job.formattedLocation || 'N/A'}</div>
         </DetailItem>
         <DetailItem>
+          <div className="label">Probability I apply me</div>
+          <div className="value">{job.appliedByMeProbability || 'N/A'}</div>
+        </DetailItem>
+        <DetailItem>
           <div className="label">Experience Level</div>
           <div className="value">{job.formattedExperienceLevel || 'N/A'}</div>
         </DetailItem>

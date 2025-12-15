@@ -60,7 +60,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
     setLocalFilters(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSortChange = (field: 'lastupdate' | 'expireAt' | 'listedAt' | 'originalListedAt', value: -1 | 0 | 1) => {
+  const handleSortChange = (field: 'lastupdate' | 'expireAt' | 'listedAt' | 'originalListedAt'| 'predictedApplyingInfo.appliedByMeProbability', value: -1 | 0 | 1) => {
     setLocalFilters(prev => ({
       ...prev,
       sort: {
@@ -504,6 +504,22 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
                     <MenuItem value={-1}>Descending</MenuItem>
                   </Select>
                 </FormControl>
+              </Box>
+
+              <Box>
+                <FormControl fullWidth>
+                  <InputLabel>Prob Apply</InputLabel>
+                  <Select
+                    value={localFilters.sort?.['predictedApplyingInfo.appliedByMeProbability'] ?? 0}
+                    label="Prob Apply"
+                    onChange={(e) => handleSortChange('predictedApplyingInfo.appliedByMeProbability', e.target.value as -1 | 0 | 1)}
+                  >
+                    <MenuItem value={0}>No Sort</MenuItem>
+                    <MenuItem value={1}>Ascending</MenuItem>
+                    <MenuItem value={-1}>Descending</MenuItem>
+
+                  </Select>
+                  </FormControl>
               </Box>
             </Box>
           </Box>
