@@ -20,20 +20,37 @@ export const PRESET_FILTERS: PresetFilter[] = [
       workTypes: []
     }
   },
-  {
-    id: 'remote-java-linkedin',
-    label: 'Remote Java Link 70',
+  {id:'Prob_90_perc',
+    label: 'Prob_90_perc',
     filter: {
       ...DEFAULT_JOB_FILTER,
       limit: 20,
       nostatus: true,
       wait: true,
-      percentualMatch: 70,
-      systemRecruter: "LinkedIn",
+      appliedByMeProbability: 90,
       percentualMatchGreaterThan: true,
-      workRemoteAllowed: true,
-      skillsFilter: ["Java"],
-      workTypes: ["Part-time", "Full-time"]
+      skillsFilter: [],
+      workTypes: []
+    }
+  },
+  {
+    id: 'remote-java-llm-linkedin',
+    label: 'Remote Java LLM Link',
+    filter: {
+      ...DEFAULT_JOB_FILTER,
+      "limit": 20,
+      "sort": {
+        "predictedApplyingInfo.appliedByMeProbability": -1
+      },
+      "nostatus": true,
+      "percentualMatch": 50,
+      "percentualMatchGreaterThan": true,
+      "systemRecruter": "LinkedIn",
+      "llmDescription": "Java[^s]",
+      "wait": true,
+      "workTypes": ["Part-time", "Full-time"],
+      "workRemoteAllowed": true,
+      "skillsFilter": []
     }
   },
   {
@@ -46,21 +63,6 @@ export const PRESET_FILTERS: PresetFilter[] = [
       wait: true,
       percentualMatch: 50,
       systemRecruter: "LinkedIn",
-      percentualMatchGreaterThan: true,
-      workRemoteAllowed: true,
-      skillsFilter: ["Java"],
-      workTypes: ["Part-time", "Full-time"]
-    }
-  },
-  {
-    id: 'remote-java-70',
-    label: 'Remote Java 70',
-    filter: {
-      ...DEFAULT_JOB_FILTER,
-      limit: 20,
-      nostatus: true,
-      wait: true,
-      percentualMatch: 70,
       percentualMatchGreaterThan: true,
       workRemoteAllowed: true,
       skillsFilter: ["Java"],
@@ -105,7 +107,6 @@ export const PRESET_FILTERS: PresetFilter[] = [
       "sort": {
         "lastupdate": -1
       },
-      systemRecruter: "Others",
       "formattedLocation": "Italy",
       "nostatus": true,
       "wait": true,
@@ -124,9 +125,25 @@ export const PRESET_FILTERS: PresetFilter[] = [
       limit: 20,
       nostatus: true,
       wait: true,
+      percentualMatch: 1,
       percentualMatchGreaterThan: true,
       workRemoteAllowed: true,
       skillsFilter: ["Java"],
+      workTypes: ["Part-time", "Full-time"]
+    }
+  },
+  {
+    id: 'remote-ML-all',
+    label: 'Remote ML',
+    filter: {
+      ...DEFAULT_JOB_FILTER,
+      limit: 20,
+      nostatus: true,
+      wait: true,
+      percentualMatch: 1,
+      percentualMatchGreaterThan: true,
+      workRemoteAllowed: true,
+      skillsFilter: ["Machine Learning"],
       workTypes: ["Part-time", "Full-time"]
     }
   },

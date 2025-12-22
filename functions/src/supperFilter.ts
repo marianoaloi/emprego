@@ -18,6 +18,10 @@ export const supperFilter = async (req: Request, query: any, db: Db) => {
     (query as any)[0].$match["workRemoteAllowed"] = req.body.workRemoteAllowed;
   }
 
+  if(req.body.appliedByMeProbability){
+    (query as any)[0].$match["predictedApplyingInfo.appliedByMeProbability"] = { "$gte": req.body.appliedByMeProbability / 100};
+  }
+
   if (req.body.systemRecruter) {
     switch (req.body.systemRecruter) {
       case "LinkedIn":
@@ -47,6 +51,9 @@ export const supperFilter = async (req: Request, query: any, db: Db) => {
 
   if (req.body.title) {
     (query as any)[0].$match["title"] = { $regex: req.body.title, $options: "i" };
+  }
+  if (req.body.llmDescription) {
+    (query as any)[0].$match["llm"] = { $regex: req.body.llmDescription, $options: "i" };
   }
   if (req.body.companyName) {
     (query as any)[0].$match["companyDetails.comlinkedinvoyagerdecojobswebsharedWebJobPostingCompany.companyResolutionResult.name"] = { $regex: req.body.companyName, $options: "i" };

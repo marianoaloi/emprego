@@ -33,7 +33,7 @@ const Certificate: React.FC<CertificateProps> = ({ data, lang }) => {
   return (
     <CertificateContainer>
       <CertificateTitle>
-        {lang === 'it' ? 'CERTIFICAZIONI' : 'CERTIFICATIONS'}
+        {lang === 'it' ? 'CERTIFICAZIONI' : lang === 'pt' ? 'CERTIFICADOS' : 'CERTIFICATIONS'}
       </CertificateTitle>
       
       <CertificateList>

@@ -78,7 +78,7 @@ const Experience: React.FC<ExperienceProps> = ({ data, lang }) => {
   return (
     <ExperienceContainer>
       <ExperienceTitle>
-        {lang === 'it' ? 'ESPERIENZA PROFESSIONALE' : 'PROFESSIONAL EXPERIENCE'}
+        {lang === 'it' ? 'ESPERIENZA PROFESSIONALE' : lang === 'pt' ? 'EXPERIÊNCIA PROFISSIONAL' : 'PROFESSIONAL EXPERIENCE'}
       </ExperienceTitle>
       {sortedData.map((item, index) => (
         <ExperienceItem key={index}>
@@ -87,9 +87,9 @@ const Experience: React.FC<ExperienceProps> = ({ data, lang }) => {
             {item.company}
           </CompanyInfo>
           <Duration>
-            {lang === 'it' ? 'Inizio' : 'Start'}:{convertDate(item.start)} &nbsp;
-            {lang === 'it' ? 'Fine' : 'End'}:{item.end ? convertDate(item.end) : (lang === 'it' ? 'Presente' : 'Present')}  &nbsp;
-            {lang === 'it' ? 'Durata' : 'Duration'}:{calculateDateDifference(item.start, item.end, lang)}
+            {lang === 'it' ? 'Inizio' : lang === 'pt' ? 'Início' : 'Start'}:{convertDate(item.start)} &nbsp;
+            {lang === 'it' ? 'Fine' : lang === 'pt' ? 'Fim' : 'End'}:{item.end ? convertDate(item.end) : (lang === 'it' ? 'Presente' : lang === 'pt' ? 'Presente' : 'Present')}  &nbsp;
+            {lang === 'it' ? 'Durata' : lang === 'pt' ? 'Duração' : 'Duration'}:{calculateDateDifference(item.start, item.end, lang)}
           </Duration>
           <JobDescription dangerouslySetInnerHTML={{ __html: identParagraph(item.description) }}/>
           <TechnologiesList>

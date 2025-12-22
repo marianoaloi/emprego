@@ -1,0 +1,110 @@
+[
+    {
+        "code": "ae",
+        "name": "Emirates"
+    },
+    {
+        "code": "ca",
+        "name": "Canada"
+    },
+    {
+        "code": "ch",
+        "name": "Switzerland"
+    },
+    {
+        "code": "cz",
+        "name": "Czechia"
+    },
+    {
+        "code": "de",
+        "name": "Germany"
+    },
+    {
+        "code": "es",
+        "name": "Spain"
+    },
+    {
+        "code": "fr",
+        "name": "France"
+    },
+    {
+        "code": "gb",
+        "name": "Kingdom"
+    },
+    {
+        "code": "gr",
+        "name": "Greece"
+    },
+    {
+        "code": "gt",
+        "name": "Guatemala"
+    },
+    {
+        "code": "hk",
+        "name": "Hong Kong"
+    },
+    {
+        "code": "hu",
+        "name": "Hungary"
+    },
+    {
+        "code": "id",
+        "name": "Indonesia"
+    },
+    {
+        "code": "ie",
+        "name": "Ireland"
+    },
+    {
+        "code": "in",
+        "name": "India"
+    },
+    {
+        "code": "it",
+        "name": "Italy"
+    },
+    {
+        "code": "lt",
+        "name": "Lithuania"
+    },
+    {
+        "code": "md",
+        "name": "Moldova"
+    },
+    {
+        "code": "my",
+        "name": "Malaysia"
+    },
+    {
+        "code": "oo",
+        "name": "World"
+    },
+    {
+        "code": "pl",
+        "name": "Poland"
+    },
+    {
+        "code": "pt",
+        "name": "Portugal"
+    },
+    {
+        "code": "ro",
+        "name": "Romania"
+    },
+    {
+        "code": "rs",
+        "name": "Serbia"
+    },
+    {
+        "code": "se",
+        "name": "Sweden"
+    },
+    {
+        "code": "ua",
+        "name": "Ukraine"
+    },
+    {
+        "code": "us",
+        "name": "United States"
+    }
+]

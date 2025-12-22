@@ -24,11 +24,11 @@ const Skills: React.FC<SkillsProps> = ({ data,lang }) => {
     .sort((a, b) => b.skillLevel - a.skillLevel);
 
   const getSkillLevelText = (level: number): string => {
-    if (level >= 90) return lang === 'it' ? 'Esperto' : 'Expert';
-    if (level >= 75) return lang === 'it' ? 'Avanzato' : 'Advanced';
-    if (level >= 60) return lang === 'it' ? 'Intermedio' : 'Intermediate';
-    if (level >= 40) return lang === 'it' ? 'Base' : 'Basic';
-    return lang === 'it' ? 'Principiante' : 'Beginner';
+    if (level >= 90) return lang === 'it' ? 'Esperto' : lang === 'pt' ? 'Experiente' : 'Expert';
+    if (level >= 75) return lang === 'it' ? 'Avanzato' : lang === 'pt' ? 'Avançado' : 'Advanced';
+    if (level >= 60) return lang === 'it' ? 'Intermedio' : lang === 'pt' ? 'Intermediário':'Intermediate';
+    if (level >= 40) return lang === 'it' ? 'Base' : lang === 'pt' ? 'Básico' : 'Basic';
+    return lang === 'it' ? 'Principiante' : lang === 'pt' ? 'Iniciante' : 'Beginner';
   };
 
   return (

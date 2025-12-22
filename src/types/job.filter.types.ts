@@ -24,16 +24,20 @@ export interface JobSearchFilter {
   remote?: RemoteWorkType;
   systemRecruter?: SystemRecruiterType;
   title?: string;
+  llmDescription?: string;
   wait?: boolean;
   workTypes?: WorkType[]; // Multiple work type selection
   workRemoteAllowed?: boolean; // Filter for jobs that allow remote work
   regexFilter?: string; // Regex pattern to filter job content
   skillsFilter?: string[]; // Array of skills to filter by
+  appliedByMeProbability?: number;
   sort?: {
     lastupdate?: -1 | 0 | 1;
     expireAt?: -1 | 0 | 1;
     listedAt?: -1 | 0 | 1;
     originalListedAt?: -1 | 0 | 1;
+    'predictedApplyingInfo.appliedByMeProbability'?: -1 | 0 | 1;
+    // predictedApplyingInfo?:{appliedByMeProbability?: -1 | 0 | 1};
   }
 }
 
@@ -41,7 +45,7 @@ export interface JobSearchFilter {
 export const DEFAULT_JOB_FILTER: JobSearchFilter = {
   limit: 100,
   sort: {
-    lastupdate: -1,
+    'predictedApplyingInfo.appliedByMeProbability': -1,
   },
   applied: undefined,
   companyName: undefined,
@@ -59,9 +63,11 @@ export const DEFAULT_JOB_FILTER: JobSearchFilter = {
   remote: undefined,
   systemRecruter: undefined,
   title: "",
+  llmDescription: undefined,
   wait: undefined,
   workTypes: ["Full-time", "Part-time"],
   workRemoteAllowed: undefined,
   regexFilter: undefined,
   skillsFilter: undefined,
+  appliedByMeProbability: undefined,
 };

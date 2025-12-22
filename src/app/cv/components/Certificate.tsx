@@ -25,7 +25,7 @@ const Certificate: React.FC<CertificateProps> = ({ data, lang }) => {
 
  return (
     <CertificateContainer>
-        <CertificateTitle>{lang === 'it' ? 'Certificazioni' : 'Certificates'}</CertificateTitle>
+        <CertificateTitle>{lang === 'it' ? 'Certificazioni' : lang === 'pt' ? 'Certificados' :'Certificates'}</CertificateTitle>
       
       <CertificateGrid>
         {data.map((item, index) => (

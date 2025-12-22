@@ -31,11 +31,11 @@ const Experience: React.FC<ExperienceProps> = ({ data, lang }) => {
 
   return (
     <ExperienceContainer>
-      <ExperienceTitle>{lang === 'it' ? 'Esperienza Professionale' : 'Professional Experience'}</ExperienceTitle>
+      <ExperienceTitle>{lang === 'it' ? 'Esperienza Professionale' : lang === 'pt' ? 'Experiência Profissional' : 'Professional Experience'}</ExperienceTitle>
       {data.map((item, index) => (
         <ExperienceItem key={index}>
           <JobTitle>{item.title}</JobTitle>
-          <CompanyInfo>{item.company} | {convertDate(item.start)} - {item.end ? convertDate(item.end) : lang === 'it' ? 'Presente' : 'Present'} <Duration>({calculateDateDifference(item.start, item.end, lang)})</Duration></CompanyInfo>
+          <CompanyInfo>{item.company} | {convertDate(item.start)} - {item.end ? convertDate(item.end) : lang === 'it' ? 'Presente' : lang === 'pt' ? 'Presente' : 'Present'} <Duration>({calculateDateDifference(item.start, item.end, lang)})</Duration></CompanyInfo>
           <JobDescription dangerouslySetInnerHTML={{ __html: identParagraph(item.description) }} />
           <TechnologiesContainer>
             {

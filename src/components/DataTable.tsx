@@ -184,6 +184,11 @@ export default function DataTable() {
                   {formatLastUpdate(job.lastupdate)}
                 </LastUpdateSpan>
               </Tooltip>
+              <Tooltip title={job.appliedByMeProbability}>
+                <LastUpdateSpan>
+                  {job.appliedByMeProbability ? Math.round(job.appliedByMeProbability * 10000)/100 + '%': 'N/A'}
+                </LastUpdateSpan>
+              </Tooltip>
             </SubheaderContainer>
           }
         />

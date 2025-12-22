@@ -23,6 +23,7 @@ import { JobSearchFilter, RemoteWorkType, SystemRecruiterType, LanguageCode, Wor
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { setFilter, resetFilters } from '@/lib/features/filter/filterSlice';
 import italianProvinces from './ItalianProvinces.json';
+import countries from '@/constants/Country.json';
 import { BoxMultiItens } from './JobSearchModal.styled';
 
 interface JobSearchModalProps {
@@ -59,7 +60,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
     setLocalFilters(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSortChange = (field: 'lastupdate' | 'expireAt' | 'listedAt' | 'originalListedAt', value: -1 | 0 | 1) => {
+  const handleSortChange = (field: 'lastupdate' | 'expireAt' | 'listedAt' | 'originalListedAt'| 'predictedApplyingInfo.appliedByMeProbability', value: -1 | 0 | 1) => {
     setLocalFilters(prev => ({
       ...prev,
       sort: {
@@ -167,6 +168,21 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
               </FormControl>
 
 
+            </Box>
+
+            <Box>
+              <BoxMultiItens>
+                <TextField
+                  fullWidth
+                  type="number"
+                  label="Percentual prob"
+                  value={localFilters.appliedByMeProbability || ''}
+                  onChange={(e) => handleInputChange('appliedByMeProbability', parseInt(e.target.value) || 0)}
+                  placeholder="Enter percentage (0-100)"
+                  margin="normal"
+                  inputProps={{ min: 0, max: 100 }}
+                />    
+                </BoxMultiItens>
             </Box>
 
             <Box>
@@ -294,6 +310,18 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
             <Box>
               <TextField
                 fullWidth
+                label="Job LLM"
+                value={localFilters.llmDescription || ''}
+                onChange={(e) => handleInputChange('llmDescription', e.target.value)}
+                placeholder="Enter job LLM"
+                margin="normal"
+                sx={{ mt: 2 }}
+              />
+            </Box>
+
+            <Box>
+              <TextField
+                fullWidth
                 label="Company Name"
                 value={localFilters.companyName || ''}
                 onChange={(e) => handleInputChange('companyName', e.target.value)}
@@ -304,15 +332,21 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
             </Box>
 
             <Box>
-              <TextField
-                fullWidth
-                label="Country"
-                value={localFilters.country || ''}
-                onChange={(e) => handleInputChange('country', e.target.value)}
-                placeholder="Enter country"
-                margin="normal"
-                sx={{ mt: 2 }}
-              />
+              <FormControl fullWidth margin="normal" sx={{ mt: 2 }}>
+                <InputLabel>Country</InputLabel>
+                <Select
+                  value={localFilters.country || ''}
+                  label="Country"
+                  onChange={(e) => handleInputChange('country', e.target.value)}
+                >
+                  <MenuItem value="">Select country</MenuItem>
+                  {countries.map((country) => (
+                    <MenuItem key={country.code} value={country.code}>
+                      {country.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Box>
 
             <Box>
@@ -497,6 +531,22 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
                     <MenuItem value={-1}>Descending</MenuItem>
                   </Select>
                 </FormControl>
+              </Box>
+
+              <Box>
+                <FormControl fullWidth>
+                  <InputLabel>Prob Apply</InputLabel>
+                  <Select
+                    value={localFilters.sort?.['predictedApplyingInfo.appliedByMeProbability'] ?? 0}
+                    label="Prob Apply"
+                    onChange={(e) => handleSortChange('predictedApplyingInfo.appliedByMeProbability', e.target.value as -1 | 0 | 1)}
+                  >
+                    <MenuItem value={0}>No Sort</MenuItem>
+                    <MenuItem value={1}>Ascending</MenuItem>
+                    <MenuItem value={-1}>Descending</MenuItem>
+
+                  </Select>
+                  </FormControl>
               </Box>
             </Box>
           </Box>

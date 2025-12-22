@@ -13,7 +13,7 @@ const Summary: React.FC<SummaryProps> = ({ data, lang }) => {
   return (
     <SummaryContainer>
       <SummaryTitle>
-        {lang === "it" ? "RIASSUNTO PROFESSIONALE" : "PROFESSIONAL SUMMARY"}
+        {lang === "it" ? "RIASSUNTO PROFESSIONALE" : lang === "pt" ? "RESUMO PROFISSIONAL" : "PROFESSIONAL SUMMARY"}
       </SummaryTitle>
       <SummaryContent dangerouslySetInnerHTML={{ __html: identParagraph(data) }} />
       {/* <SummaryContent>
