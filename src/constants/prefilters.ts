@@ -20,6 +20,39 @@ export const PRESET_FILTERS: PresetFilter[] = [
       workTypes: []
     }
   },
+  {id:'Prob_90_perc',
+    label: 'Prob_90_perc',
+    filter: {
+      ...DEFAULT_JOB_FILTER,
+      limit: 20,
+      nostatus: true,
+      wait: true,
+      appliedByMeProbability: 90,
+      percentualMatchGreaterThan: true,
+      skillsFilter: [],
+      workTypes: []
+    }
+  },
+  {
+    id: 'remote-java-llm-linkedin',
+    label: 'Remote Java LLM Link',
+    filter: {
+      ...DEFAULT_JOB_FILTER,
+      "limit": 20,
+      "sort": {
+        "predictedApplyingInfo.appliedByMeProbability": -1
+      },
+      "nostatus": true,
+      "percentualMatch": 50,
+      "percentualMatchGreaterThan": true,
+      "systemRecruter": "LinkedIn",
+      "llmDescription": "Java[^s]",
+      "wait": true,
+      "workTypes": ["Part-time", "Full-time"],
+      "workRemoteAllowed": true,
+      "skillsFilter": []
+    }
+  },
   {
     id: 'remote-java-linkedin-50',
     label: 'Remote Java Link 50',

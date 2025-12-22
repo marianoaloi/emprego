@@ -129,7 +129,7 @@ export default (db: Db) => {
         }, {
           "$limit": limit,
         }, {
-          "$skip": offset,
+          "$skip": offset * limit,
        },
         {
           "$project":

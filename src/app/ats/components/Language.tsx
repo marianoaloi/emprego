@@ -18,31 +18,31 @@ interface LanguagesProps {
 const Languages: React.FC<LanguagesProps> = ({ lang }) => {
   const data: LanguageItem[] = [
     {
-      name: (lang === "it" ? "Portoghese" : "Portuguese"),
+      name: (lang === "it" ? "Portoghese" : lang === "pt" ? "Português" : "Portuguese"),
       value: 100
     },
     {
-      name: (lang === "it" ? "Inglese" : "English"),
+      name: (lang === "it" ? "Inglese" : lang === "pt" ? "Inglês" : "English"),
       value: 80
     },
     {
-      name: (lang === "it" ? "Italiano" : "Italian"),
+      name: (lang === "it" ? "Italiano" : lang === "pt" ? "Italiano" : "Italian"),
       value: 70
     }
   ];
 
   const getLanguageLevelText = (level: number): string => {
-    if (level >= 95) return lang === 'it' ? 'Madrelingua' : 'Native';
-    if (level >= 85) return lang === 'it' ? 'Fluente' : 'Fluent';
-    if (level >= 70) return lang === 'it' ? 'Avanzato' : 'Advanced';
-    if (level >= 50) return lang === 'it' ? 'Intermedio' : 'Intermediate';
-    return lang === 'it' ? 'Base' : 'Basic';
+    if (level >= 95) return lang === 'it' ? 'Madrelingua' : lang === 'pt' ? 'Língua Materna' : 'Native';
+    if (level >= 85) return lang === 'it' ? 'Fluente' : lang === 'pt' ? 'Fluente' : 'Fluent';
+    if (level >= 70) return lang === 'it' ? 'Avanzato' : lang === 'pt' ? 'Avançado' : 'Advanced';
+    if (level >= 50) return lang === 'it' ? 'Intermedio' : lang === 'pt' ?  'Intermediário' :'Intermediate';
+    return lang === 'it' ? 'Base' : lang === 'pt' ? 'Básico' : 'Basic';
   };
 
   return (
     <LanguageContainer>
       <LanguageTitle>
-        {lang === "it" ? "LINGUE" : "LANGUAGES"}
+        {lang === "it" ? "LINGUE" : lang === "pt" ? "LINGUAGENS" : "LANGUAGES"}
       </LanguageTitle>
       <SkillsList>
         {data.map((item, index) => (

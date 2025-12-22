@@ -16,9 +16,9 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ lang }) => {
       <Name> Mariano Aloi</Name>
       <ContactInfo>
         <ContactItem>Email: mariano@aloi.com.br</ContactItem>
-        <ContactItem>{lang === 'it' ? 'Telefono' : 'Phone'}: +39 378 091 4635</ContactItem>
+        <ContactItem>{lang === 'it' ? 'Telefono' : lang === 'pt' ? 'Telefone' : 'Phone'}: +39 378 091 4635</ContactItem>
         
-        <ContactItem>{lang === 'it' ? 'Indirizzo' : 'Address'}: Udine, Italy</ContactItem>
+        <ContactItem>{lang === 'it' ? 'Indirizzo' : lang === 'pt' ? 'Endereço' : 'Address'}: Udine, Italy</ContactItem>
       </ContactInfo>
     </PersonalInfoContainer>
   );

@@ -175,6 +175,21 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
                 <TextField
                   fullWidth
                   type="number"
+                  label="Percentual prob"
+                  value={localFilters.appliedByMeProbability || ''}
+                  onChange={(e) => handleInputChange('appliedByMeProbability', parseInt(e.target.value) || 0)}
+                  placeholder="Enter percentage (0-100)"
+                  margin="normal"
+                  inputProps={{ min: 0, max: 100 }}
+                />    
+                </BoxMultiItens>
+            </Box>
+
+            <Box>
+              <BoxMultiItens>
+                <TextField
+                  fullWidth
+                  type="number"
                   label="Percentual Match"
                   value={localFilters.percentualMatch || ''}
                   onChange={(e) => handleInputChange('percentualMatch', parseInt(e.target.value) || 0)}
@@ -287,6 +302,18 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
                 value={localFilters.title || ''}
                 onChange={(e) => handleInputChange('title', e.target.value)}
                 placeholder="Enter job title"
+                margin="normal"
+                sx={{ mt: 2 }}
+              />
+            </Box>
+
+            <Box>
+              <TextField
+                fullWidth
+                label="Job LLM"
+                value={localFilters.llmDescription || ''}
+                onChange={(e) => handleInputChange('llmDescription', e.target.value)}
+                placeholder="Enter job LLM"
                 margin="normal"
                 sx={{ mt: 2 }}
               />

@@ -459,7 +459,7 @@ export default function CVLoadPage() {
                 <FormInput
                   type="date"
                   placeholder="End date"
-                  value={exp.end.length > 6 ? `${exp.end.substring(0, 7)}-01` : exp.end}
+                  value={exp.end && exp.end.length > 6 ? `${exp.end.substring(0, 7)}-01` : exp.end}
                   onChange={(e) => handleExperienceChange(expIndex, 'end', e.target.value)}
                 />
               </GridContainer>
