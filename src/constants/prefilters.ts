@@ -12,7 +12,7 @@ export const PRESET_FILTERS: PresetFilter[] = [
     label: 'Friuli',
     filter: {
       ...DEFAULT_JOB_FILTER,
-      limit: 20,
+      limit: 60,
       formattedLocation: "friuli",
       nostatus: true,
       wait: true,
@@ -20,8 +20,51 @@ export const PRESET_FILTERS: PresetFilter[] = [
       workTypes: []
     }
   },
+  {id:'Prob_90_perc_remote',
+    label: 'Probabilidade de 90% - Remote Java',
+    filter: {
+      ...DEFAULT_JOB_FILTER,
+      limit: 60,
+      nostatus: true,
+      wait: true,
+      appliedByMeProbability: 90,
+      percentualMatchGreaterThan: true,
+      workRemoteAllowed: true,
+      skillsFilter: [],
+      workTypes: ["Part-time", "Full-time"],
+      llmDescription: "Java[^s]",
+    }
+  },
+  {id:'Prob_90_perc_remote',
+    label: 'Probabilidade de 90% - Remote',
+    filter: {
+      ...DEFAULT_JOB_FILTER,
+      limit: 60,
+      nostatus: true,
+      wait: true,
+      appliedByMeProbability: 90,
+      percentualMatchGreaterThan: true,
+      workRemoteAllowed: true,
+      skillsFilter: [],
+      workTypes: ["Part-time", "Full-time"],
+    }
+  },
+  {id:'Prob_90_perc-linkedin',
+    label: 'Probabilidade de 90% - LinkedIn',
+    filter: {
+      ...DEFAULT_JOB_FILTER,
+      limit: 60,
+      nostatus: true,
+      wait: true,
+      appliedByMeProbability: 90,
+      systemRecruter: "LinkedIn",
+      percentualMatchGreaterThan: true,
+      skillsFilter: [],
+      workTypes: []
+    }
+  },
   {id:'Prob_90_perc',
-    label: 'Prob_90_perc',
+    label: 'has 90% probability accept',
     filter: {
       ...DEFAULT_JOB_FILTER,
       limit: 20,

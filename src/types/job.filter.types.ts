@@ -43,7 +43,7 @@ export interface JobSearchFilter {
 
 // Default filter values
 export const DEFAULT_JOB_FILTER: JobSearchFilter = {
-  limit: 100,
+  limit: 20,
   sort: {
     'predictedApplyingInfo.appliedByMeProbability': -1,
   },
@@ -57,17 +57,17 @@ export const DEFAULT_JOB_FILTER: JobSearchFilter = {
   ignore: undefined,
   lang: undefined,
   locationGranular: undefined,
-  nostatus: undefined,
   percentualMatch: 0,
   percentualMatchGreaterThan: undefined,
   remote: undefined,
   systemRecruter: undefined,
   title: "",
   llmDescription: undefined,
-  wait: undefined,
   workTypes: ["Full-time", "Part-time"],
   workRemoteAllowed: undefined,
   regexFilter: undefined,
   skillsFilter: undefined,
   appliedByMeProbability: undefined,
+  nostatus: true,
+  wait: true,
 };
