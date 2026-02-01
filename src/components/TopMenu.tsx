@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
 import { MoreVert as MoreVertIcon, Home, Dashboard, Description, Work, RestartAlt } from '@mui/icons-material';
@@ -19,6 +19,7 @@ import {
 } from './TopMenu.styled';
 import AuthProvider from './auth/authProvider';
 import { useAuth } from './auth/AuthContext';
+import { PRESET_FILTERS } from '@/constants/prefilters';
 
 export default function TopMenu() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,6 +34,14 @@ export default function TopMenu() {
     setNavMenuAnchor(event.currentTarget);
   };
 
+  useEffect(() => {
+    
+  if(filters){
+    const actualFilter = PRESET_FILTERS.find(pre => JSON.stringify(pre.filter) === JSON.stringify(filters))
+    if(actualFilter)
+      setTitle(`Emprego - ${actualFilter.label}`)
+  }
+  }, [filters]);
 
 
 
