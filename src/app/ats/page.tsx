@@ -219,7 +219,7 @@ export default function ATSPage() {
         {cvData ? (
           <ATSContent>
             <ATSSection>
-              <PersonalInfo lang={cvData.languageCodeOfJobDescription} />
+              <PersonalInfo lang={cvData.languageCodeOfJobDescription} invalitita={cvData.invalitita} />
             </ATSSection>
 
             <ATSSection>
@@ -228,7 +228,7 @@ export default function ATSPage() {
 
             <JumpLine dangerouslySetInnerHTML={{ __html: '<br/>'.repeat(jumpSocialCount) }} />
             <ATSSection>
-              <SocialMedia hidden={false}/>
+              <SocialMedia hidden={false} invalitita={cvData.invalitita} />
             </ATSSection>
 
             <JumpLine dangerouslySetInnerHTML={{ __html: '<br/>'.repeat(jumpSkillCount) }} />
@@ -254,7 +254,7 @@ export default function ATSPage() {
             </ATSSection>
             
             <ATSSection>
-              <SocialMedia hidden={true}/>
+              <SocialMedia hidden={true} invalitita={cvData.invalitita} />
             </ATSSection>
           </ATSContent>
         ) : (

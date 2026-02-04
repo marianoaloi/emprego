@@ -10,7 +10,7 @@ import { API_BASE_URL, fetchRetry } from '../UtilREquest';
 export const DataRequest = async (filter?: JobSearchFilter): Promise<JobPosting[]> => {
     const finalFilter = { ...DEFAULT_JOB_FILTER, ...filter };
 
-    const response = await fetchRetry(`${API_BASE_URL}/data`, 10_000, 5, {
+    const response = await fetchRetry(`${API_BASE_URL}/data${window.location.search}`, 10_000, 5, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -16,6 +16,7 @@ export default function LoadCVPage() {
     const [loading, setLoading] = useState(false);
     const { user, loading: authLoading, getAuthToken } = useAuth();
     const [lang, setLang] = useState("en");
+    const [invalitita, setInvalitita] = useState(false);
     const [skillsJob, setSkillsJob] = useState<string | null>(null);
 
     if (!user && !authLoading) {
@@ -33,6 +34,7 @@ export default function LoadCVPage() {
                 jobDescription: jobDescription,
                 authToken: token,
                 lang: lang,
+                invalitita: invalitita,
                 skills: skillsJob ? skillsJob.split(";") : [],
             });
             const cvData = result.data;
@@ -90,6 +92,19 @@ export default function LoadCVPage() {
                                     <option value="pt">Portuguese</option>
                                     <option value="it">Italian</option>
                                 </select>
+                            </div>
+
+                            <div className="mb-4">
+                                <label htmlFor="invalitita" className="block text-sm font-medium text-gray-700 mb-2">
+                                    Invalitita
+                                </label>
+                                <input
+                                    id="invalitita"
+                                    type="checkbox"
+                                    checked={invalitita}
+                                    onChange={(e) => setInvalitita(e.target.checked)}
+                                    className="border p-3 rounded w-full"
+                                />
                             </div>
 
                             {/* Opportunity ID */}

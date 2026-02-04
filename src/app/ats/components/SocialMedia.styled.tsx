@@ -21,7 +21,7 @@ export const SocialMediaGrid = styled.div`
   justify-content: center;
 `;
 
-export const SocialHidden = styled.div(
+export const SocialHidden = styled.a(
   {
     color: 'lightgray',
     // fontSize: '1px'

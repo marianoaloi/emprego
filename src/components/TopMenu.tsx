@@ -19,7 +19,7 @@ import {
 } from './TopMenu.styled';
 import AuthProvider from './auth/authProvider';
 import { useAuth } from './auth/AuthContext';
-import { PRESET_FILTERS } from '@/constants/prefilters';
+import { PRESET_FILTERS, PresetFilter } from '@/constants/prefilters';
 
 export default function TopMenu() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,14 +34,7 @@ export default function TopMenu() {
     setNavMenuAnchor(event.currentTarget);
   };
 
-  useEffect(() => {
-    
-  if(filters){
-    const actualFilter = PRESET_FILTERS.find(pre => JSON.stringify(pre.filter) === JSON.stringify(filters))
-    if(actualFilter)
-      setTitle(`Emprego - ${actualFilter.label}`)
-  }
-  }, [filters]);
+  
 
 
 
@@ -68,6 +61,34 @@ export default function TopMenu() {
     setTitle(`Emprego - ${title}`)
   }
 
+  const cleanObj = (obj:any) => Object.fromEntries(Object.entries(obj).filter(field => field[1]))
+  const compareObject = (obj1:any, obj2:any) => {
+    obj1 = cleanObj(obj1)
+    obj2 = cleanObj(obj2)
+    if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+      return false;
+    }
+    for (const key in obj1) {
+      if(typeof obj1[key] === 'object' && typeof obj2[key] === 'object'){
+        if(!compareObject(obj1[key], obj2[key])){
+          return false}}
+      
+      else if (obj1[key] !== obj2[key]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
+  useEffect(() => {
+    
+  if(filters){
+    const actualFilter:PresetFilter | undefined= PRESET_FILTERS.find(pre => compareObject(pre.filter,filters))
+    if(actualFilter)
+      setTitle(`Emprego - ${actualFilter.label}`)
+  }
+  }, [filters]);
 
   const navigationItems = [
     { label: 'Home', path: '/', openSternal: false, icon: <Home /> },

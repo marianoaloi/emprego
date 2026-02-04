@@ -93,6 +93,7 @@ export default function CVLoadPage() {
   const [formData, setFormData] = useState<CVData>({
 
     summary: '',
+    invalitita: false,
     relevantSkills: [{ skillName: '', skillLevel: 1 }],
     experience: [{
       title: '',
@@ -387,6 +388,16 @@ export default function CVLoadPage() {
               }}
             />
           </EditorContainer>
+        </Section>
+
+        {/* Invalitita */}
+        <Section>
+          <SectionTitle>Invalitita</SectionTitle>
+          <input
+            type="checkbox"
+            checked={formData.invalitita}
+            onChange={(e) => setFormData(prev => ({ ...prev, invalitita: e.target.checked }))}
+          />
         </Section>
 
         {/* Skills */}

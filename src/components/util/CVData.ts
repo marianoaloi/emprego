@@ -2,6 +2,7 @@ export default
     interface CVData {
 
     summary: string;
+    invalitita:boolean;
     relevantSkills: Array<{
         skillName: string;
         skillLevel: number;

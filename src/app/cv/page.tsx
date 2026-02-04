@@ -191,7 +191,7 @@ export default function CVPage() {
       <CVContainer id="cv" ref={cvRef}>
         {cvData ? (
           <>
-            <PersonalInfo />
+            <PersonalInfo invalitita={cvData.invalitita} />
             <div>
               <CVContent>
                 <div>
@@ -203,7 +203,7 @@ export default function CVPage() {
               </CVContent>
             </div>
             <JumpLine dangerouslySetInnerHTML={{ __html: '<br/>'.repeat(jumpSocialCount) }} />
-            <SocialMedia />
+            <SocialMedia invalitita={cvData.invalitita} />
             <JumpLine dangerouslySetInnerHTML={{ __html: '<br/>'.repeat(jumpLineCount) }} />
             <Experience data={cvData.experience} lang={cvData.languageCodeOfJobDescription} />
             <EducationSection>
