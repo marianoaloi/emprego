@@ -20,7 +20,6 @@ export interface JobSearchFilter {
   locationGranular?: string;
   nostatus?: boolean;
   percentualMatch?: number; // Percentual Match filter (0-100 integer)
-  percentualMatchGreaterThan?: boolean; // true = greater than, false = less than
   remote?: RemoteWorkType;
   systemRecruter?: SystemRecruiterType;
   title?: string;
@@ -58,7 +57,6 @@ export const DEFAULT_JOB_FILTER: JobSearchFilter = {
   lang: undefined,
   locationGranular: undefined,
   percentualMatch: 0,
-  percentualMatchGreaterThan: undefined,
   remote: undefined,
   systemRecruter: undefined,
   title: "",

@@ -28,7 +28,6 @@ export const PRESET_FILTERS: PresetFilter[] = [
       nostatus: true,
       wait: true,
       appliedByMeProbability: 70,
-      percentualMatchGreaterThan: true,
       workRemoteAllowed: true,
       skillsFilter: [],
       workTypes: ["Part-time", "Full-time"],
@@ -43,7 +42,6 @@ export const PRESET_FILTERS: PresetFilter[] = [
       nostatus: true,
       wait: true,
       appliedByMeProbability: 70,
-      percentualMatchGreaterThan: true,
       workRemoteAllowed: true,
       skillsFilter: [],
       workTypes: ["Part-time", "Full-time"],
@@ -58,7 +56,6 @@ export const PRESET_FILTERS: PresetFilter[] = [
       wait: true,
       appliedByMeProbability: 70,
       systemRecruter: "LinkedIn",
-      percentualMatchGreaterThan: true,
       skillsFilter: [],
       workTypes: []
     }
@@ -71,7 +68,6 @@ export const PRESET_FILTERS: PresetFilter[] = [
       nostatus: true,
       wait: true,
       appliedByMeProbability: 70,
-      percentualMatchGreaterThan: true,
       skillsFilter: [],
       workTypes: []
     }
@@ -87,7 +83,6 @@ export const PRESET_FILTERS: PresetFilter[] = [
       },
       "nostatus": true,
       "percentualMatch": 50,
-      "percentualMatchGreaterThan": true,
       "systemRecruter": "LinkedIn",
       "llmDescription": "Java[^s]",
       "wait": true,
@@ -106,7 +101,6 @@ export const PRESET_FILTERS: PresetFilter[] = [
       wait: true,
       percentualMatch: 50,
       systemRecruter: "LinkedIn",
-      percentualMatchGreaterThan: true,
       workRemoteAllowed: true,
       skillsFilter: ["Java"],
       workTypes: ["Part-time", "Full-time"]
@@ -121,7 +115,6 @@ export const PRESET_FILTERS: PresetFilter[] = [
       nostatus: true,
       wait: true,
       percentualMatch: 50,
-      percentualMatchGreaterThan: true,
       workRemoteAllowed: true,
       skillsFilter: ["Java"],
       workTypes: ["Part-time", "Full-time"]
@@ -138,7 +131,6 @@ export const PRESET_FILTERS: PresetFilter[] = [
       "nostatus": true,
       "wait": true,
       percentualMatch: 1,
-      percentualMatchGreaterThan: true,
       "workRemoteAllowed": true,
       "skillsFilter": ["Java"],
       "workTypes": ["Part-time", "Full-time"],
@@ -154,7 +146,6 @@ export const PRESET_FILTERS: PresetFilter[] = [
       "nostatus": true,
       "wait": true,
       percentualMatch: 1,
-      percentualMatchGreaterThan: true,
       "workRemoteAllowed": true,
       "skillsFilter": ["Java"],
       "workTypes": ["Part-time", "Full-time"],
@@ -169,7 +160,6 @@ export const PRESET_FILTERS: PresetFilter[] = [
       nostatus: true,
       wait: true,
       percentualMatch: 1,
-      percentualMatchGreaterThan: true,
       workRemoteAllowed: true,
       skillsFilter: ["Java"],
       workTypes: ["Part-time", "Full-time"]
@@ -184,7 +174,6 @@ export const PRESET_FILTERS: PresetFilter[] = [
       nostatus: true,
       wait: true,
       percentualMatch: 1,
-      percentualMatchGreaterThan: true,
       workRemoteAllowed: true,
       skillsFilter: ["Machine Learning"],
       workTypes: ["Part-time", "Full-time"]
@@ -199,7 +188,6 @@ export const PRESET_FILTERS: PresetFilter[] = [
       nostatus: true,
       wait: true,
       percentualMatch: 70,
-      percentualMatchGreaterThan: true,
       workRemoteAllowed: true,
       workTypes: ["Part-time", "Full-time"]
     }
@@ -214,7 +202,6 @@ export const PRESET_FILTERS: PresetFilter[] = [
       wait: true,
       percentualMatch: 70,
       systemRecruter: "LinkedIn",
-      percentualMatchGreaterThan: true,
       workRemoteAllowed: true,
       skillsFilter: ["Java"],
       workTypes: ["Part-time", "Full-time"]

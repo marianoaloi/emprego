@@ -205,10 +205,10 @@ export const BoxMultiItens = styled.div`
     align-items: center;
 
     div {
-        width: 80%;
+        width: 100%;
     }
     label {
-        width: 20%;
+        width: 100%;
         display: flex;
         flex-direction: column;
     }

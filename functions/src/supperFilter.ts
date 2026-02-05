@@ -19,7 +19,13 @@ export const supperFilter = async (req: Request, query: any, db: Db) => {
   }
 
   if(req.body.appliedByMeProbability){
-    (query as any)[0].$match["predictedApplyingInfo.appliedByMeProbability"] = { "$gte": req.body.appliedByMeProbability / 100};
+    
+    const appliedByMeProbabilityGreaterThan = req.body.appliedByMeProbability > 0;
+    const appliedByMeProbability = req.body.appliedByMeProbability * (appliedByMeProbabilityGreaterThan ? 1 : -1);
+    (query as any)[0].$match["predictedApplyingInfo.appliedByMeProbability"] = 
+    appliedByMeProbabilityGreaterThan ?
+    { $gte: appliedByMeProbability / 100 } :
+    { $lte: appliedByMeProbability / 100 };
   }
 
   if (req.body.systemRecruter) {

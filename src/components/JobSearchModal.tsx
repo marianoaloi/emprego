@@ -110,6 +110,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
                 />
               }
               label="Permite Work Remote"
+              title="Filter jobs that allow remote work"
               sx={{ mt: 1 }}
             />
           </Box>
@@ -121,7 +122,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
 
 
             <Box>
-              <FormControl fullWidth margin="normal">
+              <FormControl fullWidth margin="normal" title="Filter by recruitment system platform">
                 <InputLabel>System Recruiter</InputLabel>
                 <Select
                   value={localFilters.systemRecruter || ''}
@@ -137,7 +138,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
             </Box>
 
             <Box>
-              <FormControl fullWidth margin="normal">
+              <FormControl fullWidth margin="normal" title="Filter jobs by language preference">
                 <InputLabel>Language</InputLabel>
                 <Select
                   value={localFilters.lang || ''}
@@ -153,7 +154,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
             </Box>
 
             <Box>
-              <FormControl fullWidth margin="normal">
+              <FormControl fullWidth margin="normal" title="Filter by work location arrangement">
                 <InputLabel>Remote Work Type</InputLabel>
                 <Select
                   value={localFilters.remote || ''}
@@ -176,12 +177,13 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
                   fullWidth
                   type="number"
                   label="Percentual prob"
+                  title="Minimum probability percentage that you would apply to this job"
                   value={localFilters.appliedByMeProbability || ''}
                   onChange={(e) => handleInputChange('appliedByMeProbability', parseInt(e.target.value) || 0)}
-                  placeholder="Enter percentage (0-100)"
+                  placeholder="Enter percentage (-100-100)"
                   margin="normal"
-                  inputProps={{ min: 0, max: 100 }}
-                />    
+                  inputProps={{ min: -100, max: 100 }}
+                />
                 </BoxMultiItens>
             </Box>
 
@@ -191,24 +193,15 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
                   fullWidth
                   type="number"
                   label="Percentual Match"
+                  title="Minimum match percentage between your profile and job requirements"
                   value={localFilters.percentualMatch || ''}
                   onChange={(e) => handleInputChange('percentualMatch', parseInt(e.target.value) || 0)}
-                  placeholder="Enter percentage (0-100)"
+                  placeholder="Enter percentage (-100-100)"
                   margin="normal"
-                  inputProps={{ min: 0, max: 100 }}
+                  inputProps={{ min: -100, max: 100 }}
                 />
 
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={localFilters.percentualMatchGreaterThan || false}
-                      onChange={(e) => handleInputChange('percentualMatchGreaterThan', e.target.checked)}
-                    />
-                  }
-                  label="GT"
-                  title="Greater than (unchecked = less than)"
-                  sx={{ mt: 1 }}
-                />
+
               </BoxMultiItens>
             </Box>
 
@@ -217,6 +210,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
                 fullWidth
                 type="number"
                 label="Limit"
+                title="Maximum number of jobs to display in results"
                 value={localFilters.limit || ''}
                 onChange={(e) => handleInputChange('limit', parseInt(e.target.value) || 0)}
                 placeholder="Enter limit"
@@ -229,6 +223,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
               <TextField
                 fullWidth
                 label="Location"
+                title="Filter jobs by location (city, region, or country)"
                 value={localFilters.formattedLocation || ''}
                 onChange={(e) => handleInputChange('formattedLocation', e.target.value)}
                 placeholder="Enter location"
@@ -253,6 +248,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
                   <TextField
                     {...params}
                     label="Work Types"
+                    title="Filter by employment type (can select multiple)"
                     placeholder="Select work types (multiple)"
                     margin="normal"
                   />
@@ -275,6 +271,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
                   <TextField
                     {...params}
                     label="Location Granular"
+                    title="Filter jobs by specific Italian province"
                     placeholder="Select Italian province"
                     margin="normal"
                   />
@@ -287,6 +284,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
               <TextField
                 fullWidth
                 label="Job IDs"
+                title="Filter by specific job IDs (comma-separated)"
                 value={localFilters.id || ''}
                 onChange={(e) => handleInputChange('id', e.target.value)}
                 placeholder="Comma-separated IDs"
@@ -299,6 +297,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
               <TextField
                 fullWidth
                 label="Job Title"
+                title="Search jobs by title or position name"
                 value={localFilters.title || ''}
                 onChange={(e) => handleInputChange('title', e.target.value)}
                 placeholder="Enter job title"
@@ -311,6 +310,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
               <TextField
                 fullWidth
                 label="Job LLM"
+                title="Search using AI-generated job description keywords"
                 value={localFilters.llmDescription || ''}
                 onChange={(e) => handleInputChange('llmDescription', e.target.value)}
                 placeholder="Enter job LLM"
@@ -323,6 +323,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
               <TextField
                 fullWidth
                 label="Company Name"
+                title="Filter jobs by company name"
                 value={localFilters.companyName || ''}
                 onChange={(e) => handleInputChange('companyName', e.target.value)}
                 placeholder="Enter company name"
@@ -332,7 +333,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
             </Box>
 
             <Box>
-              <FormControl fullWidth margin="normal" sx={{ mt: 2 }}>
+              <FormControl fullWidth margin="normal" sx={{ mt: 2 }} title="Filter jobs by country">
                 <InputLabel>Country</InputLabel>
                 <Select
                   value={localFilters.country || ''}
@@ -353,6 +354,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
               <TextField
                 fullWidth
                 label="Regex Filter"
+                title="Advanced filter using regular expression patterns"
                 value={localFilters.regexFilter || ''}
                 onChange={(e) => handleInputChange('regexFilter', e.target.value)}
                 placeholder="Enter regex pattern to filter job content"
@@ -375,6 +377,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
                   <TextField
                     {...params}
                     label="Skills Filter"
+                    title="Filter jobs by required skills (type and press Enter for multiple)"
                     placeholder="Type skills and press Enter (multiple)"
                     margin="normal"
                   />
@@ -387,6 +390,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
               <TextField
                 fullWidth
                 label="Start Date Filter"
+                title="Filter jobs posted after this date (use formats like 2025-08-01 or *-1M for relative dates)"
                 value={localFilters.datai || ''}
                 onChange={(e) => handleInputChange('datai', e.target.value)}
                 placeholder="e.g., 2025-08-01, *-1M"
@@ -399,6 +403,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
               <TextField
                 fullWidth
                 label="End Date Filter"
+                title="Filter jobs posted before this date (use formats like 2025-08-01 or *-1M for relative dates)"
                 value={localFilters.dataf || ''}
                 onChange={(e) => handleInputChange('dataf', e.target.value)}
                 placeholder="e.g., 2025-08-01, *-1M"
@@ -423,6 +428,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
                   />
                 }
                 label="Applied"
+                title="Show only jobs you have already applied to"
               />
             </Box>
 
@@ -435,6 +441,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
                   />
                 }
                 label="Ignore"
+                title="Show only jobs you have marked to ignore"
               />
             </Box>
 
@@ -447,6 +454,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
                   />
                 }
                 label="No Status"
+                title="Show jobs without any status assigned"
               />
             </Box>
 
@@ -459,6 +467,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
                   />
                 }
                 label="Wait"
+                title="Show jobs you are waiting to hear back from"
               />
             </Box>
           </Box>
@@ -474,7 +483,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
               gap={2}
             >
               <Box>
-                <FormControl fullWidth>
+                <FormControl fullWidth title="Sort jobs by their last update date">
                   <InputLabel>Last Update</InputLabel>
                   <Select
                     value={localFilters.sort?.lastupdate ?? 0}
@@ -489,7 +498,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
               </Box>
 
               <Box>
-                <FormControl fullWidth>
+                <FormControl fullWidth title="Sort jobs by their expiration date">
                   <InputLabel>Expire At</InputLabel>
                   <Select
                     value={localFilters.sort?.expireAt ?? 0}
@@ -504,7 +513,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
               </Box>
 
               <Box>
-                <FormControl fullWidth>
+                <FormControl fullWidth title="Sort jobs by when they were first listed">
                   <InputLabel>Listed At</InputLabel>
                   <Select
                     value={localFilters.sort?.listedAt ?? 0}
@@ -519,7 +528,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
               </Box>
 
               <Box>
-                <FormControl fullWidth>
+                <FormControl fullWidth title="Sort jobs by their original listing date">
                   <InputLabel>Original Listed At</InputLabel>
                   <Select
                     value={localFilters.sort?.originalListedAt ?? 0}
@@ -534,7 +543,7 @@ export default function JobSearchModal({ isOpen, onClose ,cleanTitle}: JobSearch
               </Box>
 
               <Box>
-                <FormControl fullWidth>
+                <FormControl fullWidth title="Sort jobs by probability of application">
                   <InputLabel>Prob Apply</InputLabel>
                   <Select
                     value={localFilters.sort?.['predictedApplyingInfo.appliedByMeProbability'] ?? 0}

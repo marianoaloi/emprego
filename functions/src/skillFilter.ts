@@ -92,6 +92,9 @@ export const skillFilter = async (req: Request, query: any) => {
     query.splice(1, 0,
         subLookUp
     );
+    
+    const percentualMatchGreaterThan = req.body.percentualMatch > 0;
+    const percentualMatch = req.body.percentualMatch * (percentualMatchGreaterThan ? 1 : -1);
     const subQuery: any =
     {
         $match:
@@ -99,9 +102,9 @@ export const skillFilter = async (req: Request, query: any) => {
          * query: The query in MQL.
          */
         {
-            "skills.0.perc": req.body.percentualMatchGreaterThan ?
-                { $gte: req.body.percentualMatch / 100 } :
-                { $lte: req.body.percentualMatch / 100 }
+            "skills.0.perc": percentualMatchGreaterThan ?
+                { $gte: percentualMatch / 100 } :
+                { $lte: percentualMatch / 100 }
         }
     };
 

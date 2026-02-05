@@ -142,7 +142,7 @@ export default (db: Db) => {
 
       const data = await db.collection(config.mongodb.collection)
         .aggregate(
-          query
+          query , { allowDiskUse: true }
         ).toArray();
 
       res.status(200).json(data);
@@ -169,7 +169,7 @@ export default (db: Db) => {
       await supperFilter(req, query, db);
 
       const result = await db.collection(config.mongodb.collection)
-        .aggregate(query)
+        .aggregate(query , { allowDiskUse: true })
         .toArray();
 
       const count = result.length > 0 ? result[0].total : 0;
